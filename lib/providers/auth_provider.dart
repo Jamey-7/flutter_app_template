@@ -129,6 +129,23 @@ class AuthService {
       throw const AuthFailure('Unable to update password. Please try again.');
     }
   }
+
+  /// Update user email
+  static Future<void> updateEmail(String newEmail) async {
+    try {
+      Logger.log('Updating user email', tag: 'AuthService');
+      await supabase.auth.updateUser(
+        UserAttributes(email: newEmail),
+      );
+      Logger.log('Email update requested successfully', tag: 'AuthService');
+    } on AuthException catch (e, stackTrace) {
+      Logger.error('Email update failed', e, stackTrace, tag: 'AuthService');
+      throw AuthFailure(_mapAuthError(e));
+    } catch (e, stackTrace) {
+      Logger.error('Email update failed', e, stackTrace, tag: 'AuthService');
+      throw const AuthFailure('Unable to update email. Please try again.');
+    }
+  }
 }
 
 class AuthFailure implements Exception {

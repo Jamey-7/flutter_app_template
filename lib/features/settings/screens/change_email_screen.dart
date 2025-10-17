@@ -1,48 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/responsive/breakpoints.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/forms/validators.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class ChangeEmailScreen extends ConsumerStatefulWidget {
+  const ChangeEmailScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<ChangeEmailScreen> createState() => _ChangeEmailScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _newEmailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _newEmailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleSignIn() async {
+  Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
+      // First, re-authenticate the user with their password
+      final currentUser = ref.read(currentUserProvider).value;
+      if (currentUser?.email == null) {
+        throw Exception('No current user email found');
+      }
+
       await AuthService.signIn(
-        email: _emailController.text.trim(),
+        email: currentUser!.email!,
         password: _passwordController.text,
       );
-      
-      // Navigate to welcome screen - router will handle redirect based on subscription
+
+      // Then update the email
+      await AuthService.updateEmail(_newEmailController.text.trim());
+
       if (mounted) {
-        context.go('/welcome');
+        await AppDialog.show(
+          context,
+          type: AppDialogType.success,
+          title: 'Email Update Requested',
+          message:
+              'We\'ve sent a confirmation email to your new address. Please check your email and click the verification link to complete the change.',
+          confirmText: 'OK',
+        );
+
+        if (mounted) {
+          context.pop();
+        }
       }
     } on AuthFailure catch (e) {
       if (mounted) {
@@ -50,7 +71,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context, 'Error: ${e.toString()}');
+        AppSnackBar.showError(
+          context,
+          'Failed to update email. Please check your password and try again.',
+        );
       }
     } finally {
       if (mounted) {
@@ -62,6 +86,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Change Email'),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -74,8 +101,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Icon(
+                      Icons.email_outlined,
+                      size: 80,
+                      color: context.colors.primary,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
                     Text(
-                      'Welcome Back',
+                      'Update Your Email',
                       style: context.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -83,7 +116,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Sign in to continue',
+                      'Enter your new email address and current password to confirm.',
                       style: context.textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -91,9 +124,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: AppSpacing.xxl),
                     AppTextField(
-                      controller: _emailController,
+                      controller: _newEmailController,
                       type: AppTextFieldType.email,
-                      label: 'Email',
+                      label: 'New Email Address',
                       prefixIcon: const Icon(Icons.email_outlined),
                       validator: Validators.email,
                       textInputAction: TextInputAction.next,
@@ -102,38 +135,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     AppTextField(
                       controller: _passwordController,
                       type: AppTextFieldType.password,
-                      label: 'Password',
+                      label: 'Current Password',
                       prefixIcon: const Icon(Icons.lock_outline),
-                      validator: (value) => Validators.password(value, minLength: 6),
+                      validator: Validators.required,
                       textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => _handleSignIn(),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: AppButton.text(
-                        text: 'Forgot Password?',
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                context.push('/forgot-password');
-                              },
-                      ),
+                      onSubmitted: (_) => _handleSubmit(),
+                      helperText: 'Enter your current password to confirm',
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     AppButton.primary(
-                      text: 'Sign In',
-                      onPressed: _handleSignIn,
+                      text: 'Update Email',
+                      onPressed: _handleSubmit,
                       isLoading: _isLoading,
                       isFullWidth: true,
+                      icon: Icons.check,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     AppButton.text(
-                      text: 'Don\'t have an account? Sign Up',
+                      text: 'Cancel',
                       onPressed: _isLoading
                           ? null
                           : () {
-                              context.push('/signup');
+                              context.pop();
                             },
                     ),
                   ],

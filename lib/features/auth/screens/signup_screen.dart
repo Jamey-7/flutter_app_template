@@ -47,17 +47,25 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await AuthService.signUp(
+      final response = await AuthService.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
 
       if (mounted) {
-        // Navigate to email verification pending screen
-        context.pushReplacement(
-          '/email-verification-pending',
-          extra: _emailController.text.trim(),
-        );
+        // If email confirmation is disabled, user gets session immediately
+        // If email confirmation is enabled, session will be null
+        if (response.session != null) {
+          // User logged in immediately - go to welcome
+          AppSnackBar.showSuccess(context, 'Account created successfully!');
+          context.go('/welcome');
+        } else {
+          // Email verification required - go to pending screen
+          context.pushReplacement(
+            '/email-verification-pending',
+            extra: _emailController.text.trim(),
+          );
+        }
       }
     } on AuthFailure catch (e) {
       if (mounted) {

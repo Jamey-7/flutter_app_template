@@ -23,6 +23,13 @@ class HomeScreen extends ConsumerWidget {
         title: const Text('Home'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/settings');
+            },
+            tooltip: 'Settings',
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
               try {
@@ -34,6 +41,7 @@ class HomeScreen extends ConsumerWidget {
                 }
               }
             },
+            tooltip: 'Sign Out',
           ),
         ],
       ),
@@ -138,23 +146,55 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.xl),
 
-              AppCard.flat(
-                color: AppColors.info.withValues(alpha: 0.1),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, color: AppColors.info),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: Text(
-                        'Phase 3 Complete! UI foundation system is now in place.',
-                        style: context.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.info,
-                          fontWeight: FontWeight.w500,
+              // Premium access CTA (home screen is only accessible to paid users)
+              appState.subscription.when(
+                data: (subscription) {
+                  // Home screen is only accessible to paid users
+                  // Free users are redirected to welcome screen by router
+                  return AppCard.elevated(
+                    color: AppColors.success.withValues(alpha: 0.05),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: AppColors.success,
+                              size: 32,
+                            ),
+                            const SizedBox(width: AppSpacing.md),
+                            Expanded(
+                              child: Text(
+                                'Premium Access',
+                                style: context.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.success,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
+                        const SizedBox(height: AppSpacing.md),
+                        Text(
+                          'You have full access to all premium features!',
+                          style: context.textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        AppButton.primary(
+                          text: 'Go to App',
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('/app');
+                          },
+                          icon: Icons.arrow_forward,
+                          isFullWidth: true,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (error, stackTrace) => const SizedBox.shrink(),
               ),
             ],
           ),
@@ -232,6 +272,35 @@ class _InfoRow extends StatelessWidget {
             style: context.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: valueColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FeatureBullet extends StatelessWidget {
+  final String text;
+
+  const FeatureBullet(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Icon(
+            Icons.check,
+            size: 16,
+            color: context.colors.primary,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            text,
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: AppColors.textSecondary,
             ),
           ),
         ],

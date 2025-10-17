@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/subscription_provider.dart';
 
@@ -11,6 +12,13 @@ class PaywallScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Subscription Required'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            context.go('/welcome');
+          },
+          tooltip: 'Close',
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
