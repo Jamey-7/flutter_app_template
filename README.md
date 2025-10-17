@@ -259,3 +259,4 @@ This template gives you:
 - ✅ Clean architecture
 
 **Just add your features and ship!**
+# flutter_app_template
