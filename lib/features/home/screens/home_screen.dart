@@ -4,6 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/app_state_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/subscription_provider.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/responsive/breakpoints.dart';
+import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -24,12 +30,7 @@ class HomeScreen extends ConsumerWidget {
                 ref.invalidate(subscriptionProvider);
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error signing out: $e'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  AppSnackBar.showError(context, 'Error signing out: $e');
                 }
               }
             },
@@ -38,31 +39,29 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(context.responsivePadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Welcome message
               Text(
                 'Welcome!',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: context.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 appState.subscription.when(
                   data: (_) => 'You are successfully authenticated and have an active subscription.',
                   loading: () => 'Loading subscription details...',
                   error: (error, _) => 'Subscription status unavailable: $error',
                 ),
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xl),
 
-              // Auth state card
               _StateCard(
                 title: 'Authentication State',
                 icon: Icons.person_outline,
@@ -70,7 +69,7 @@ class HomeScreen extends ConsumerWidget {
                   _InfoRow(
                     label: 'Status',
                     value: appState.isAuthenticated ? 'Signed In' : 'Signed Out',
-                    valueColor: appState.isAuthenticated ? Colors.green : Colors.red,
+                    valueColor: appState.isAuthenticated ? AppColors.success : AppColors.error,
                   ),
                   if (appState.user != null) ...[
                     _InfoRow(
@@ -84,9 +83,8 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
 
-              // Subscription state card
               appState.subscription.when(
                 data: (subscription) => _StateCard(
                   title: 'Subscription State',
@@ -95,7 +93,7 @@ class HomeScreen extends ConsumerWidget {
                     _InfoRow(
                       label: 'Status',
                       value: subscription.isActive ? 'Active' : 'Inactive',
-                      valueColor: subscription.isActive ? Colors.green : Colors.orange,
+                      valueColor: subscription.isActive ? AppColors.success : AppColors.warning,
                     ),
                     _InfoRow(
                       label: 'Tier',
@@ -118,8 +116,8 @@ class HomeScreen extends ConsumerWidget {
                   icon: Icons.card_membership_outlined,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: LinearProgressIndicator(minHeight: 6),
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                      child: AppLinearProgress(),
                     ),
                   ],
                 ),
@@ -128,32 +126,31 @@ class HomeScreen extends ConsumerWidget {
                   icon: Icons.warning_amber_rounded,
                   children: [
                     Text('Failed to load subscription: $error'),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
+                    const SizedBox(height: AppSpacing.md),
+                    AppButton.primary(
+                      text: 'Retry',
                       onPressed: () => ref.read(subscriptionProvider.notifier).refreshSubscription(),
-                      child: const Text('Retry'),
+                      icon: Icons.refresh,
+                      size: AppButtonSize.small,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xl),
 
-              // Info message
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.blue.shade200),
-                ),
+              AppCard.flat(
+                color: AppColors.info.withValues(alpha: 0.1),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: Colors.blue.shade700),
-                    const SizedBox(width: 12),
+                    Icon(Icons.info_outline, color: AppColors.info),
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: Text(
-                        'Phase 2 Complete! Auth and subscription state management is working.',
-                        style: TextStyle(color: Colors.blue.shade900),
+                        'Phase 3 Complete! UI foundation system is now in place.',
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.info,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
@@ -184,37 +181,21 @@ class _StateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return AppCard.elevated(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(icon, size: 24),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.md),
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: context.textTheme.titleLarge,
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           ...children,
         ],
       ),
@@ -236,22 +217,20 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14,
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: AppColors.textSecondary,
             ),
           ),
           Text(
             value,
-            style: TextStyle(
+            style: context.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              fontSize: 14,
               color: valueColor,
             ),
           ),

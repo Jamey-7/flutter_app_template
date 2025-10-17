@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/responsive/breakpoints.dart';
+import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_text_field.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
+import '../../../shared/forms/validators.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -35,11 +41,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           password: _passwordController.text,
         );
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Account created! Please sign in.'),
-              backgroundColor: Colors.green,
-            ),
+          AppSnackBar.showSuccess(
+            context,
+            'Account created! Please sign in.',
           );
           setState(() => _isSignUp = false);
         }
@@ -51,18 +55,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } on AuthFailure catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message), backgroundColor: Colors.red),
-        );
+        AppSnackBar.showError(context, e.message);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        AppSnackBar.showError(context, 'Error: ${e.toString()}');
       }
     } finally {
       if (mounted) {
@@ -77,7 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(context.responsivePadding),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Form(
@@ -86,99 +83,59 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Title
                     Text(
                       _isSignUp ? 'Create Account' : 'Welcome Back',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: context.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.sm),
                     Text(
                       _isSignUp
                           ? 'Sign up to get started'
                           : 'Sign in to continue',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey,
-                          ),
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 48),
-
-                    // Email field
-                    TextFormField(
+                    const SizedBox(height: AppSpacing.xxl),
+                    AppTextField(
                       controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.email_outlined),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
+                      type: AppTextFieldType.email,
+                      label: 'Email',
+                      prefixIcon: const Icon(Icons.email_outlined),
+                      validator: Validators.email,
+                      textInputAction: TextInputAction.next,
                     ),
-                    const SizedBox(height: 16),
-
-                    // Password field
-                    TextFormField(
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
                       controller: _passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.lock_outline),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
+                      type: AppTextFieldType.password,
+                      label: 'Password',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      validator: (value) => Validators.password(value, minLength: 6),
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _handleSubmit(),
                     ),
-                    const SizedBox(height: 24),
-
-                    // Submit button
-                    FilledButton(
-                      onPressed: _isLoading ? null : _handleSubmit,
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(_isSignUp ? 'Sign Up' : 'Sign In'),
+                    const SizedBox(height: AppSpacing.lg),
+                    AppButton.primary(
+                      text: _isSignUp ? 'Sign Up' : 'Sign In',
+                      onPressed: _handleSubmit,
+                      isLoading: _isLoading,
+                      isFullWidth: true,
                     ),
-                    const SizedBox(height: 16),
-
-                    // Toggle sign up/sign in
-                    TextButton(
+                    const SizedBox(height: AppSpacing.md),
+                    AppButton.text(
+                      text: _isSignUp
+                          ? 'Already have an account? Sign In'
+                          : 'Don\'t have an account? Sign Up',
                       onPressed: _isLoading
                           ? null
                           : () {
                               setState(() => _isSignUp = !_isSignUp);
                             },
-                      child: Text(
-                        _isSignUp
-                            ? 'Already have an account? Sign In'
-                            : 'Don\'t have an account? Sign Up',
-                      ),
                     ),
                   ],
                 ),

@@ -69,6 +69,14 @@ class Subscription extends _$Subscription {
 
   Future<SubscriptionInfo> _fetchSubscription() async {
     try {
+      if (!SubscriptionService._isInitialized) {
+        Logger.log(
+          'RevenueCat not initialized, using free tier',
+          tag: 'SubscriptionNotifier',
+        );
+        return SubscriptionInfo.free();
+      }
+
       Logger.log('Fetching subscription info', tag: 'SubscriptionNotifier');
 
       final customerInfo = await Purchases.getCustomerInfo();
@@ -110,6 +118,8 @@ class Subscription extends _$Subscription {
 
 /// Subscription service for purchase operations
 class SubscriptionService {
+  static bool _isInitialized = false;
+
   /// Initialize RevenueCat with API key
   static Future<void> initialize(String apiKey) async {
     try {
@@ -123,6 +133,7 @@ class SubscriptionService {
       }
 
       await Purchases.configure(PurchasesConfiguration(apiKey));
+      _isInitialized = true;
       Logger.log('RevenueCat initialized', tag: 'SubscriptionService');
     } catch (e, stackTrace) {
       Logger.error(
