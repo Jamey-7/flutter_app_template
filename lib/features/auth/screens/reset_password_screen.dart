@@ -1,50 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/responsive/breakpoints.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/forms/validators.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class ResetPasswordScreen extends ConsumerStatefulWidget {
+  const ResetPasswordScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<ResetPasswordScreen> createState() =>
+      _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleSignIn() async {
+  Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      await AuthService.signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
+      await AuthService.updatePassword(_passwordController.text);
+
+      if (mounted) {
+        // Show success dialog
+        await AppDialog.show(
+          context,
+          type: AppDialogType.success,
+          title: 'Password Reset Successfully',
+          message:
+              'Your password has been changed. You can now sign in with your new password.',
+          confirmText: 'Go to Sign In',
+        );
+
+        if (mounted) {
+          context.go('/login');
+        }
+      }
     } on AuthFailure catch (e) {
       if (mounted) {
         AppSnackBar.showError(context, e.message);
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context, 'Error: ${e.toString()}');
+        AppSnackBar.showError(
+          context,
+          'Failed to reset password. Please try again.',
+        );
       }
     } finally {
       if (mounted) {
@@ -56,6 +76,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Reset Password'),
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -68,8 +92,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Icon(
+                      Icons.lock_open,
+                      size: 80,
+                      color: context.colors.primary,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
                     Text(
-                      'Welcome Back',
+                      'Create New Password',
                       style: context.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -77,7 +107,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Sign in to continue',
+                      'Enter your new password below.',
                       style: context.textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -85,50 +115,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: AppSpacing.xxl),
                     AppTextField(
-                      controller: _emailController,
-                      type: AppTextFieldType.email,
-                      label: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      validator: Validators.email,
+                      controller: _passwordController,
+                      type: AppTextFieldType.password,
+                      label: 'New Password',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      validator: (value) =>
+                          Validators.password(value, minLength: 8),
                       textInputAction: TextInputAction.next,
+                      helperText: 'At least 8 characters',
                     ),
                     const SizedBox(height: AppSpacing.md),
                     AppTextField(
-                      controller: _passwordController,
+                      controller: _confirmPasswordController,
                       type: AppTextFieldType.password,
-                      label: 'Password',
+                      label: 'Confirm New Password',
                       prefixIcon: const Icon(Icons.lock_outline),
-                      validator: (value) => Validators.password(value, minLength: 6),
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => _handleSignIn(),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: AppButton.text(
-                        text: 'Forgot Password?',
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                Navigator.of(context).pushNamed('/forgot-password');
-                              },
+                      validator: (value) => Validators.match(
+                        value,
+                        _passwordController.text,
+                        fieldName: 'Passwords',
                       ),
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _handleSubmit(),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     AppButton.primary(
-                      text: 'Sign In',
-                      onPressed: _handleSignIn,
+                      text: 'Reset Password',
+                      onPressed: _handleSubmit,
                       isLoading: _isLoading,
                       isFullWidth: true,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    AppButton.text(
-                      text: 'Don\'t have an account? Sign Up',
-                      onPressed: _isLoading
-                          ? null
-                          : () {
-                              Navigator.of(context).pushNamed('/signup');
-                            },
+                      icon: Icons.check,
                     ),
                   ],
                 ),

@@ -57,12 +57,18 @@ class AuthService {
   static Future<AuthResponse> signUp({
     required String email,
     required String password,
+    String? emailRedirectTo,
   }) async {
     try {
       Logger.log('Attempting sign up for: $email', tag: 'AuthService');
+      
+      // Get redirect URL from environment or use provided one
+      final redirectUrl = emailRedirectTo ?? _getRedirectUrl();
+      
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
+        emailRedirectTo: redirectUrl,
       );
       Logger.log('Sign up successful', tag: 'AuthService');
       return response;
@@ -98,12 +104,29 @@ class AuthService {
       Logger.log('Requesting password reset for: $email', tag: 'AuthService');
       await supabase.auth.resetPasswordForEmail(
         email,
-        redirectTo: _passwordResetRedirect(),
+        redirectTo: _getRedirectUrl(),
       );
       Logger.log('Password reset email sent', tag: 'AuthService');
     } catch (e, stackTrace) {
       Logger.error('Password reset failed', e, stackTrace, tag: 'AuthService');
       rethrow;
+    }
+  }
+
+  /// Update user password (after reset)
+  static Future<void> updatePassword(String newPassword) async {
+    try {
+      Logger.log('Updating user password', tag: 'AuthService');
+      await supabase.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+      Logger.log('Password updated successfully', tag: 'AuthService');
+    } on AuthException catch (e, stackTrace) {
+      Logger.error('Password update failed', e, stackTrace, tag: 'AuthService');
+      throw AuthFailure(_mapAuthError(e));
+    } catch (e, stackTrace) {
+      Logger.error('Password update failed', e, stackTrace, tag: 'AuthService');
+      throw const AuthFailure('Unable to update password. Please try again.');
     }
   }
 }
@@ -131,7 +154,8 @@ String _mapAuthError(AuthException exception) {
       : 'Authentication failed. Please try again.';
 }
 
-String? _passwordResetRedirect() {
-  const fallback = String.fromEnvironment('SUPABASE_PASSWORD_RESET_REDIRECT');
-  return fallback.isEmpty ? null : fallback;
+/// Get the redirect URL from environment variables
+String? _getRedirectUrl() {
+  const redirectUrl = String.fromEnvironment('SUPABASE_REDIRECT_URL');
+  return redirectUrl.isEmpty ? null : redirectUrl;
 }
