@@ -262,3 +262,4 @@ This template gives you:
 # flutter_app_template
 # flutter_app_template
 # flutter_app_template
+# flutter_app_template
