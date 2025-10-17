@@ -4,16 +4,19 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/subscriptions/screens/paywall_screen.dart';
 import '../../shared/widgets/loading_screen.dart';
-import '../../providers/app_state_provider.dart';
+import 'router_refresh_notifier.dart';
 
 /// Router provider with route guards
 final routerProvider = Provider<GoRouter>((ref) {
-  final appState = ref.watch(appStateProvider);
+  final refreshNotifier = ref.watch(routerRefreshProvider);
 
   final router = GoRouter(
     initialLocation: '/login',
     debugLogDiagnostics: true,
+    refreshListenable: refreshNotifier,
     redirect: (context, state) {
+      final appState = refreshNotifier.appState;
+      
       if (appState.isLoading) {
         return state.matchedLocation == '/loading' ? null : '/loading';
       }
@@ -79,9 +82,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 
   // Dispose router when provider is disposed
-  ref.onDispose(() {
-    router.dispose();
-  });
+  ref.onDispose(router.dispose);
 
   return router;
 });

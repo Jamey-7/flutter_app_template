@@ -1,10 +1,13 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/logger/logger.dart';
 import '../core/supabase_client.dart';
 
-class CurrentUserNotifier extends StreamNotifier<User?> {
+part 'auth_provider.g.dart';
+
+@riverpod
+class CurrentUser extends _$CurrentUser {
   @override
   Stream<User?> build() {
     ref.keepAlive();
@@ -20,13 +23,6 @@ class CurrentUserNotifier extends StreamNotifier<User?> {
     });
   }
 }
-
-/// Provider for current authenticated user
-/// Streams auth state changes from Supabase
-final currentUserProvider = StreamNotifierProvider<CurrentUserNotifier, User?>(
-  CurrentUserNotifier.new,
-  name: 'currentUserProvider',
-);
 
 /// Auth service for sign in/out operations
 class AuthService {

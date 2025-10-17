@@ -2,7 +2,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -10,7 +10,10 @@ import '../core/logger/logger.dart';
 import '../models/subscription_info.dart';
 import 'auth_provider.dart';
 
-class SubscriptionNotifier extends AsyncNotifier<SubscriptionInfo> {
+part 'subscription_provider.g.dart';
+
+@riverpod
+class Subscription extends _$Subscription {
   @override
   Future<SubscriptionInfo> build() async {
     if (!_isRevenueCatSupported()) {
@@ -104,11 +107,6 @@ class SubscriptionNotifier extends AsyncNotifier<SubscriptionInfo> {
     }
   }
 }
-
-final subscriptionProvider = AsyncNotifierProvider<SubscriptionNotifier, SubscriptionInfo>(
-  SubscriptionNotifier.new,
-  name: 'subscriptionProvider',
-);
 
 /// Subscription service for purchase operations
 class SubscriptionService {
