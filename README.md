@@ -261,3 +261,4 @@ This template gives you:
 **Just add your features and ship!**
 # flutter_app_template
 # flutter_app_template
+# flutter_app_template
