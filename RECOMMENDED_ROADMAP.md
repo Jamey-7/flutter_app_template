@@ -274,14 +274,14 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 - [ ] Material 3 customization (remove purple, clean defaults)
 
 ### 3.2 Reusable Components
-- [ ] `AppButton` - Primary, secondary, text variants with loading states
-- [ ] `AppTextField` - With validation, error states, icons
-- [ ] `AppCard` - Consistent card styling
-- [ ] `AppDialog` - Confirmation, error, success dialogs
-- [ ] `AppSnackBar` - Success, error, info variants
-- [ ] `AppLoadingIndicator` - Consistent loading UI
-- [ ] `EmptyState` - For empty lists/no data
-- [ ] `ErrorState` - For error scenarios with retry
+- [ ] `lib/shared/widgets/app_button.dart` - Primary, secondary, text variants with loading states
+- [ ] `lib/shared/widgets/app_text_field.dart` - With validation, error states, icons
+- [ ] `lib/shared/widgets/app_card.dart` - Consistent card styling
+- [ ] `lib/shared/widgets/app_dialog.dart` - Confirmation, error, success dialogs
+- [ ] `lib/shared/widgets/app_snack_bar.dart` - Success, error, info variants
+- [ ] `lib/shared/widgets/app_loading_indicator.dart` - Consistent loading UI
+- [ ] `lib/shared/widgets/empty_state.dart` - For empty lists/no data
+- [ ] `lib/shared/widgets/error_state.dart` - For error scenarios with retry
 
 ### 3.3 Icon System
 - [ ] `lib/core/icons/app_icons.dart` - Icon utility
@@ -297,12 +297,16 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 - [ ] Responsive padding/spacing helpers
 
 ### 3.5 Form System
-- [ ] Email validator
-- [ ] Password validator (min length, complexity)
-- [ ] Form field wrapper with consistent error display
+- [ ] `lib/shared/forms/validators.dart` - Email, password, phone validators
+- [ ] `lib/shared/forms/form_field_wrapper.dart` - Consistent error display
 - [ ] Form submission handler with loading/error states
 
-**Estimated Time:** 8-12 hours
+### 3.6 Testing
+- [ ] Component tests for AppButton (all variants)
+- [ ] Component tests for AppTextField (validation, errors)
+- [ ] Widget tests for form validators
+
+**Estimated Time:** 10-14 hours (includes component tests)
 **Impact:** CRITICAL - Blocks all other UI work
 
 ---
@@ -311,42 +315,51 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 
 **Now you can build auth screens with proper components!**
 
-### 4.1 Sign Up Flow
-- [ ] `signup_screen.dart` using AppButton, AppTextField
-- [ ] Email validation
+### 4.1 Deep Linking Setup (DO THIS FIRST!)
+- [ ] iOS URL scheme setup (Info.plist) - `myapp://`
+- [ ] Android intent filters (AndroidManifest.xml)
+- [ ] Web redirect handling
+- [ ] Router integration for deep links
+- [ ] Test with simple redirect
+
+**Note:** Deep linking MUST be done first - password reset and email verification depend on it.
+
+### 4.2 Sign Up Flow
+- [ ] `lib/features/auth/screens/signup_screen.dart` using AppButton, AppTextField
+- [ ] Email validation using shared validators
 - [ ] Password confirmation
 - [ ] Terms acceptance checkbox
 - [ ] Loading states during signup
 - [ ] Success confirmation
 
-### 4.2 Password Reset Flow
-- [ ] `forgot_password_screen.dart`
-- [ ] `reset_password_screen.dart`
+### 4.3 Password Reset Flow
+- [ ] `lib/features/auth/screens/forgot_password_screen.dart`
+- [ ] `lib/features/auth/screens/reset_password_screen.dart`
 - [ ] Email input with validation
 - [ ] Supabase magic link integration
-- [ ] Deep link handling for reset links
+- [ ] Deep link handling for reset links (uses 4.1)
 - [ ] Success/error states
 
-### 4.3 Email Verification
+### 4.4 Email Verification
 - [ ] Handle Supabase email confirmation
 - [ ] Verification pending screen
 - [ ] Resend verification option
-- [ ] Deep link handling
+- [ ] Deep link handling (uses 4.1)
 
-### 4.4 Settings Screen
-- [ ] `settings_screen.dart`
+### 4.5 Settings Screen
+- [ ] `lib/features/settings/screens/settings_screen.dart`
 - [ ] Change email (with re-auth)
 - [ ] Change password (with old password)
-- [ ] Account deletion option
+- [ ] Account deletion option with confirmation
 - [ ] Logout confirmation dialog
 
-### 4.5 Deep Linking
-- [ ] iOS URL scheme setup (Info.plist)
-- [ ] Android intent filters (AndroidManifest.xml)
-- [ ] Web redirect handling
-- [ ] Router integration for deep links
+### 4.6 Testing
+- [ ] Widget tests for signup screen
+- [ ] Widget tests for login screen (refactored with Phase 3 components)
+- [ ] Widget tests for forgot password flow
+- [ ] Unit tests for auth service methods
 
-**Estimated Time:** 10-15 hours
+**Estimated Time:** 12-17 hours (includes auth flow tests)
 **Dependencies:** Phase 3 (UI components)
 
 ---
@@ -354,22 +367,24 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 ## 💳 **Phase 5: Complete Monetization**
 
 ### 5.1 RevenueCat Product Setup
-- [ ] Environment config for product IDs
-- [ ] Fetch offerings from RevenueCat
+- [ ] Environment config for product IDs (.env + example)
+- [ ] `lib/repositories/subscription_repository.dart` - Fetch offerings from RevenueCat
 - [ ] Parse packages and pricing
 - [ ] Handle multiple subscription tiers
 - [ ] Handle one-time purchases (if needed)
 
 ### 5.2 Full Paywall Implementation
+- [ ] `lib/features/subscriptions/screens/paywall_screen.dart` - Replace placeholder
 - [ ] Display real products from RevenueCat
 - [ ] Show pricing in user's local currency
 - [ ] Feature comparison (Free vs Premium)
 - [ ] Subscription terms display
-- [ ] Purchase flow with loading states
-- [ ] Success confirmation
-- [ ] Error handling (purchase failed, cancelled, etc.)
+- [ ] Purchase flow with loading states (using AppButton, AppLoadingIndicator)
+- [ ] Success confirmation (using AppDialog)
+- [ ] Error handling (using ErrorState widget)
 
 ### 5.3 Subscription Management
+- [ ] `lib/features/subscriptions/screens/subscription_details_screen.dart`
 - [ ] View current subscription details
 - [ ] Manage subscription (link to App Store/Play Store)
 - [ ] Restore purchases flow
@@ -381,108 +396,130 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 - [ ] Server-side validation (if needed)
 - [ ] Handle edge cases (refunds, chargebacks)
 
-**Estimated Time:** 8-12 hours
+### 5.5 Testing
+- [ ] Widget tests for paywall screen
+- [ ] Widget tests for subscription details screen
+- [ ] Unit tests for subscription service
+- [ ] Test purchase flows (sandbox mode)
+
+**Estimated Time:** 10-14 hours (includes subscription tests)
 **Dependencies:** Phase 3 (UI), Phase 4 (settings screen)
 
 ---
 
-## 🌐 **Phase 6: Networking & API Layer** (Optional)
+## 📱 **Phase 6: Platform Configuration**
 
-**Only if you need external APIs beyond Supabase!**
-
-### 6.1 Dio HTTP Client
-- [ ] `lib/core/network/dio_client.dart`
-- [ ] Request/response interceptors
-- [ ] Auth token injection
-- [ ] Retry logic
-- [ ] Timeout configuration
-- [ ] Error transformation
-
-### 6.2 Repository Pattern
-- [ ] Base repository class
-- [ ] API error handling
-- [ ] Response parsing
-- [ ] Caching strategy (if needed)
-
-### 6.3 Example API Integration
-- [ ] Example third-party API call
-- [ ] Riverpod provider integration
-- [ ] Loading/error states
-- [ ] Retry mechanism
-
-**Estimated Time:** 4-6 hours (if needed)
-**Dependencies:** None
-**Skip if:** You're only using Supabase/RevenueCat
-
----
-
-## 🧪 **Phase 7: Testing & Quality**
-
-### 7.1 Unit Tests
-- [ ] Auth service tests (mock Supabase)
-- [ ] Subscription service tests (mock RevenueCat)
-- [ ] Validator tests (email, password)
-- [ ] Model tests (JSON serialization)
-- [ ] 80%+ code coverage
-
-### 7.2 Widget Tests
-- [ ] Login screen test
-- [ ] Signup screen test
-- [ ] Paywall screen test
-- [ ] Settings screen test
-- [ ] Reusable component tests (AppButton, AppTextField, etc.)
-
-### 7.3 Integration Tests
-- [ ] Full auth flow (signup → verify → login → logout)
-- [ ] Subscription flow (login → paywall → subscribe → home)
-- [ ] Router guard tests
-- [ ] Deep link handling tests
-
-### 7.4 Golden Tests (Optional)
-- [ ] Screenshot tests for key screens
-- [ ] Visual regression detection
-
-**Estimated Time:** 12-20 hours
-**Dependencies:** All features implemented
-
----
-
-## 📱 **Phase 8: Platform Configuration**
-
-### 8.1 iOS Setup
-- [ ] Update bundle ID
-- [ ] Configure app icons
-- [ ] Splash screen
-- [ ] Permissions in Info.plist
-- [ ] Deep link URL scheme
+### 6.1 iOS Setup
+- [ ] Update bundle ID in Xcode
+- [ ] Configure app icons (AppIcon.appiconset)
+- [ ] Splash screen setup
+- [ ] Permissions in Info.plist (camera, photos, etc.)
+- [ ] Deep link URL scheme (completed in Phase 4)
 - [ ] Supabase redirect URL registration
-- [ ] RevenueCat iOS setup
-- [ ] Test on iOS device
+- [ ] RevenueCat iOS configuration
+- [ ] Test on iOS device/simulator
 
-### 8.2 Android Setup
-- [ ] Update package name
-- [ ] Configure app icons (adaptive)
-- [ ] Splash screen
-- [ ] Permissions in AndroidManifest
-- [ ] Deep link intent filters
+### 6.2 Android Setup
+- [ ] Update package name in build.gradle
+- [ ] Configure app icons (adaptive icons)
+- [ ] Splash screen setup
+- [ ] Permissions in AndroidManifest.xml
+- [ ] Deep link intent filters (completed in Phase 4)
 - [ ] Supabase redirect URL registration
-- [ ] RevenueCat Android setup
-- [ ] Test on Android device
+- [ ] RevenueCat Android configuration
+- [ ] Test on Android device/emulator
 
-### 8.3 Web Setup
-- [ ] Update meta tags
-- [ ] Favicon
-- [ ] Supabase redirect URL
+### 6.3 Web Setup
+- [ ] Update meta tags in index.html
+- [ ] Favicon configuration
+- [ ] Supabase redirect URL for web
 - [ ] PWA configuration (optional)
-- [ ] Test on web
+- [ ] Test on web browser
 
-### 8.4 macOS/Windows/Linux
+### 6.4 macOS/Windows/Linux
 - [ ] Entitlements (network access)
-- [ ] App icons
-- [ ] Basic testing
+- [ ] App icons for each platform
+- [ ] Basic functionality testing
 
 **Estimated Time:** 6-10 hours
-**Dependencies:** None (can be done anytime)
+**Dependencies:** None (can be done anytime after Phase 4)
+**Note:** Deep linking is already configured in Phase 4
+
+---
+
+## 🧪 **Phase 7: Integration Testing & Quality**
+
+**Note:** Unit and widget tests are added incrementally in Phases 3-5. This phase focuses on integration tests.
+
+### 7.1 Integration Tests
+- [ ] `test/integration/auth_flow_test.dart`
+  - Full auth flow (signup → email verify → login → logout)
+  - Password reset flow end-to-end
+  - Session persistence across app restarts
+
+- [ ] `test/integration/subscription_flow_test.dart`
+  - Subscription flow (login → paywall → subscribe → home)
+  - Restore purchases flow
+  - Subscription expiration handling
+
+- [ ] `test/integration/router_test.dart`
+  - Router guard tests (unauthenticated redirects)
+  - Subscription guard tests (paywall redirects)
+  - Deep link handling tests
+
+### 7.2 Code Coverage Analysis
+- [ ] Run flutter test --coverage
+- [ ] Verify 70%+ code coverage
+- [ ] Add tests for uncovered critical paths
+
+### 7.3 Golden Tests (Optional)
+- [ ] Screenshot tests for key screens
+- [ ] Visual regression detection for theme changes
+
+### 7.4 Performance Testing
+- [ ] App startup time analysis
+- [ ] Router redirect performance
+- [ ] Memory leak detection
+
+**Estimated Time:** 6-10 hours
+**Dependencies:** Phases 3-6 complete
+**Note:** Most unit/widget tests already done in Phases 3-5
+
+---
+
+## 🌐 **Phase 8: Networking & API Layer** (Optional)
+
+**Skip this phase if your app only uses Supabase/RevenueCat APIs**
+
+### 8.1 Dio HTTP Client Setup
+- [ ] `lib/core/network/dio_client.dart`
+  - Base URL configuration
+  - Request/response interceptors
+  - Auth token injection
+  - Retry logic
+  - Timeout configuration
+  - Error transformation to AppException
+
+### 8.2 API Repository Example
+- [ ] `lib/repositories/api_example_repository.dart`
+  - One concrete example (weather API, quotes API, etc.)
+  - Show Dio + Riverpod integration pattern
+  - Error handling with try-catch
+  - Loading states
+  - Response parsing
+
+### 8.3 Example Screen Using API
+- [ ] `lib/features/example/screens/api_example_screen.dart`
+  - Demonstrates API call usage
+  - Shows loading indicator
+  - Shows error state with retry
+  - Shows success state with data
+
+**Why add this?** Most apps need external APIs. This provides the pattern developers can replicate.
+
+**Estimated Time:** 2-4 hours
+**Dependencies:** Phase 3 (for UI components)
+**Skip if:** Only using Supabase/RevenueCat (no external APIs needed)
 
 ---
 
@@ -560,18 +597,20 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 
 | Phase | Hours | Priority |
 |-------|-------|----------|
-| Phase 3: UI Foundation | 8-12 | CRITICAL |
-| Phase 4: Auth Complete | 10-15 | HIGH |
-| Phase 5: Monetization | 8-12 | HIGH |
-| Phase 6: Networking | 4-6 | OPTIONAL |
-| Phase 7: Testing | 12-20 | HIGH |
-| Phase 8: Platform Config | 6-10 | MEDIUM |
+| Phase 3: UI Foundation | 10-14 | CRITICAL |
+| Phase 4: Auth Complete | 12-17 | HIGH |
+| Phase 5: Monetization | 10-14 | HIGH |
+| Phase 6: Platform Config | 6-10 | MEDIUM |
+| Phase 7: Integration Testing | 6-10 | HIGH |
+| Phase 8: Networking | 2-4 | OPTIONAL |
 | Phase 9: Localization | 8-12 | MEDIUM |
 | Phase 10: Documentation | 6-8 | HIGH |
 
-**Total: 62-95 hours** (depending on scope)
+**Total: 60-89 hours** (depending on scope)
 
-**Core Template (Phases 3-5, 7-8, 10): ~50-65 hours**
+**Core Template (Phases 3-7, 10): ~50-73 hours**
+
+**Note:** Testing is now incremental (done in Phases 3-5, then integration in Phase 7)
 
 ---
 
@@ -635,7 +674,7 @@ After completing all phases, someone should be able to:
 - ⬜ Error/success dialogs
 - ⬜ Snackbar variants
 
-**Estimated Time for Phase 3:** 8-12 hours
+**Estimated Time for Phase 3:** 10-14 hours (includes component tests)
 
 ### 📈 Template Completion Status
 
@@ -646,9 +685,9 @@ After completing all phases, someone should be able to:
 | Phase 3: UI Foundation | 🔄 Next | 0% |
 | Phase 4: Complete Auth | ⏳ Pending | 0% |
 | Phase 5: Monetization | ⏳ Pending | 15% (service layer only) |
-| Phase 6: Networking | ⏳ Optional | 0% |
-| Phase 7: Testing | 🔄 Partial | 20% (basic tests) |
-| Phase 8: Platform Config | ⏳ Pending | 0% |
+| Phase 6: Platform Config | ⏳ Pending | 0% |
+| Phase 7: Integration Testing | 🔄 Partial | 20% (basic tests) |
+| Phase 8: Networking | ⏳ Optional | 0% |
 | Phase 9: Localization | ⏳ Pending | 0% |
 | Phase 10: Documentation | 🔄 Partial | 45% (README + optimizations doc) |
 
@@ -662,24 +701,21 @@ After completing all phases, someone should be able to:
 ## 🚀 **Recommended Implementation Order**
 
 ### Sprint 1 (Week 1) - Foundation
-- Phase 3: UI Foundation System
-- Basic testing of components
+- Phase 3: UI Foundation System (with component tests)
 
 ### Sprint 2 (Week 2) - Auth
-- Phase 4: Complete Authentication
-- Auth flow tests
+- Phase 4: Complete Authentication (with auth flow tests)
 
-### Sprint 3 (Week 3) - Monetization
-- Phase 5: Complete Monetization
-- Platform configuration basics
+### Sprint 3 (Week 3) - Monetization & Platform
+- Phase 5: Complete Monetization (with subscription tests)
+- Phase 6: Platform Configuration
 
 ### Sprint 4 (Week 4) - Quality
-- Phase 7: Testing & Quality
-- Phase 8: Platform Configuration
+- Phase 7: Integration Testing
 - Phase 10: Documentation
 
 ### Optional Sprint 5 - Polish
-- Phase 6: Networking (if needed)
+- Phase 8: Networking (if needed)
 - Phase 9: Localization
 - Final polish
 
