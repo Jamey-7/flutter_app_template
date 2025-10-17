@@ -56,6 +56,7 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
     ✅ auth/screens/login_screen.dart
     ✅ home/screens/home_screen.dart
     ✅ subscriptions/screens/paywall_screen.dart
+    ⬜ app/ (empty - Phase 4, paid app demo section)
     ⬜ settings/ (empty - Phase 4)
   ✅ models/
     ✅ app_state.dart
@@ -264,6 +265,8 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 
 **Why first?** Every feature you build needs these components. Build once, use everywhere.
 
+**Goal:** Create reusable UI components and theme system that make building screens 5x faster.
+
 ### 3.1 Theme System
 - [ ] `lib/core/theme/app_theme.dart` - Light/dark themes
 - [ ] Color constants (blacks, whites, greys)
@@ -311,9 +314,11 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 
 ---
 
-## 🔐 **Phase 4: Complete Authentication Flows**
+## 🔐 **Phase 4: Complete Authentication Flows + Paid App Demo**
 
 **Now you can build auth screens with proper components!**
+
+**Goal:** Complete all authentication flows AND demonstrate the paid app pattern (where developers build their app features).
 
 ### 4.1 Deep Linking Setup (DO THIS FIRST!)
 - [ ] iOS URL scheme setup (Info.plist) - `myapp://`
@@ -359,7 +364,45 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 - [ ] Widget tests for forgot password flow
 - [ ] Unit tests for auth service methods
 
-**Estimated Time:** 12-17 hours (includes auth flow tests)
+### 4.7 Paid App Demo (Pattern Example) ⭐
+
+**Purpose:** Show developers the complete pattern for gating features behind subscriptions
+
+- [ ] `lib/features/app/screens/app_home_screen.dart`
+  - Entry point for paid users (after subscribing)
+  - Shows "Welcome! You have full access" message
+  - Links to example app features
+  - Add comment: "// TODO: Build your app features here"
+
+- [ ] `lib/features/app/screens/example_feature_screen.dart`
+  - Example gated feature (e.g., "Advanced Tools" or "Pro Feature")
+  - Demonstrates subscription-gated content pattern
+  - Shows what paid users can access
+
+- [ ] `lib/features/app/widgets/subscription_badge.dart`
+  - Visual indicator showing subscribed status
+  - Reusable widget showing "Subscribed" or checkmark badge
+  - Used throughout app section
+
+- [ ] Update `lib/features/home/screens/home_screen.dart`:
+  - Free tier: Show "Subscribe to Unlock App" CTA → Navigate to paywall
+  - Paid tier: Show "Go to App" button → Navigate to app section
+  - Clear visual distinction between tiers
+
+- [ ] Update `lib/core/router/app_router.dart`:
+  - Add `/app` route group with subscription guard
+  - Add routes: `/app`, `/app/example-feature`
+  - Add clear comments explaining subscription gating pattern
+  - Example redirect logic for free users → paywall
+
+**Why This Matters:**
+- Developers see WHERE to build their app features
+- Clear example of subscription gating in practice
+- Shows complete flow: auth → subscription → paid app access
+- Template becomes self-documenting
+- No confusion about "now what after subscribing?"
+
+**Estimated Time:** 14-20 hours (includes auth flows + paid app demo)
 **Dependencies:** Phase 3 (UI components)
 
 ---
@@ -377,7 +420,7 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 - [ ] `lib/features/subscriptions/screens/paywall_screen.dart` - Replace placeholder
 - [ ] Display real products from RevenueCat
 - [ ] Show pricing in user's local currency
-- [ ] Feature comparison (Free vs Premium)
+- [ ] Feature comparison (Free vs Paid)
 - [ ] Subscription terms display
 - [ ] Purchase flow with loading states (using AppButton, AppLoadingIndicator)
 - [ ] Success confirmation (using AppDialog)
@@ -598,7 +641,7 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 | Phase | Hours | Priority |
 |-------|-------|----------|
 | Phase 3: UI Foundation | 10-14 | CRITICAL |
-| Phase 4: Auth Complete | 12-17 | HIGH |
+| Phase 4: Auth + Paid App Demo | 14-20 | HIGH |
 | Phase 5: Monetization | 10-14 | HIGH |
 | Phase 6: Platform Config | 6-10 | MEDIUM |
 | Phase 7: Integration Testing | 6-10 | HIGH |
@@ -606,9 +649,9 @@ Your foundation is excellent. Phases 1 & 2 are solidly implemented with modern p
 | Phase 9: Localization | 8-12 | MEDIUM |
 | Phase 10: Documentation | 6-8 | HIGH |
 
-**Total: 60-89 hours** (depending on scope)
+**Total: 62-92 hours** (depending on scope)
 
-**Core Template (Phases 3-7, 10): ~50-73 hours**
+**Core Template (Phases 3-7, 10): ~52-76 hours**
 
 **Note:** Testing is now incremental (done in Phases 3-5, then integration in Phase 7)
 
@@ -665,7 +708,9 @@ After completing all phases, someone should be able to:
 9. ✅ Environment validation prevents misconfiguration
 10. ✅ Tests verify provider behavior
 
-### 🚧 What's Next (Phase 3)
+### 🚧 What's Next (Phase 3-4)
+
+**Phase 3: UI Foundation (10-14h)**
 - ⬜ Theme system (colors, typography, spacing)
 - ⬜ Reusable button component
 - ⬜ Reusable text field component
@@ -674,7 +719,12 @@ After completing all phases, someone should be able to:
 - ⬜ Error/success dialogs
 - ⬜ Snackbar variants
 
-**Estimated Time for Phase 3:** 10-14 hours (includes component tests)
+**Phase 4: Complete Auth + Paid App Demo (14-20h)**
+- ⬜ Deep linking setup
+- ⬜ Signup, password reset, email verification flows
+- ⬜ Settings screen
+- ⬜ **Paid app section demo** (shows where to build app features) ⭐
+- ⬜ Router guards for subscription gating
 
 ### 📈 Template Completion Status
 
@@ -703,8 +753,9 @@ After completing all phases, someone should be able to:
 ### Sprint 1 (Week 1) - Foundation
 - Phase 3: UI Foundation System (with component tests)
 
-### Sprint 2 (Week 2) - Auth
-- Phase 4: Complete Authentication (with auth flow tests)
+### Sprint 2 (Week 2) - Auth + Paid App Pattern
+- Phase 4: Complete Authentication + Paid App Demo (with auth flow tests)
+  - Includes paid app section showing where to build app features ⭐
 
 ### Sprint 3 (Week 3) - Monetization & Platform
 - Phase 5: Complete Monetization (with subscription tests)
