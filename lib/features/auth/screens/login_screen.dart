@@ -136,8 +136,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               SizedBox(
                                 height: context.responsive<double>(
                                   mobile: 80,
-                                  tablet: 100,
-                                  desktop: 120,
+                                  tablet: 0,
+                                  desktop: 0,
                                 ),
                               ),
 
@@ -496,7 +496,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 40),
+                          SizedBox(
+                            height: context.responsive<double>(
+                              mobile: 40,
+                              tablet: 24,
+                              desktop: 32,
+                            ),
+                          ),
                             ],
                           ),
                         ),

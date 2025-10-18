@@ -115,7 +115,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         padding: EdgeInsets.symmetric(
                           horizontal: context.responsiveHorizontalPadding,
                         ),
-                        child: _emailSent ? _buildSuccessView() : _buildFormView(),
+                    child: _emailSent ? _buildSuccessView() : _buildFormView(),
                       ),
                     ),
                   ),
@@ -156,8 +156,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           SizedBox(
             height: context.responsive<double>(
               mobile: 80,
-              tablet: 100,
-              desktop: 120,
+              tablet: 0,
+              desktop: 0,
             ),
           ),
 
@@ -300,7 +300,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
           ),
 
-          const SizedBox(height: 40),
+          SizedBox(
+            height: context.responsive<double>(
+              mobile: 40,
+              tablet: 24,
+              desktop: 32,
+            ),
+          ),
         ],
       ),
     );
@@ -316,8 +322,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         SizedBox(
           height: context.responsive<double>(
             mobile: 80,
-            tablet: 100,
-            desktop: 120,
+            tablet: 0,
+            desktop: 0,
           ),
         ),
 
@@ -398,7 +404,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           ],
         ),
 
-        const SizedBox(height: 40),
+        SizedBox(
+          height: context.responsive<double>(
+            mobile: 40,
+            tablet: 24,
+            desktop: 32,
+          ),
+        ),
 
         // Send Another Email button
         Container(

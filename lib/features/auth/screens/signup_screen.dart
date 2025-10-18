@@ -135,30 +135,30 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ? Alignment.topCenter
                       : Alignment.center,
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: context.responsive<double>(
-                          mobile: context.screenWidth,
-                          tablet: 600,
-                          desktop: 500,
+                        constraints: BoxConstraints(
+                          maxWidth: context.responsive<double>(
+                            mobile: context.screenWidth,
+                            tablet: 600,
+                            desktop: 500,
+                          ),
                         ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.responsiveHorizontalPadding,
-                        ),
-                        child: Form(
-                      key: _formKey,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.responsiveHorizontalPadding,
+                          ),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
                               // Top spacing
                               SizedBox(
                                 height: context.responsive<double>(
                                   mobile: 80,
-                                  tablet: 100,
-                                  desktop: 120,
+                                  tablet: 0,
+                                  desktop: 0,
                                 ),
                               ),
 
@@ -560,7 +560,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 40),
+                          SizedBox(
+                            height: context.responsive<double>(
+                              mobile: 40,
+                              tablet: 24,
+                              desktop: 32,
+                            ),
+                          ),
                             ],
                           ),
                         ),
