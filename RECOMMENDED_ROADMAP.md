@@ -1150,22 +1150,22 @@ Wrote tests with pragmatic approach for template use case.
 #### Optional Future Enhancements ⬜
 
 **Advanced Auth Flow Tests (Optional):**
-- [ ] Full end-to-end signup → verify → login flow with mocked Supabase
-- [ ] Session persistence across app restarts
-- [ ] Auth state change handling with provider updates
-- [ ] Network error simulation
+- [ ] Skip Not Doing - Full end-to-end signup → verify → login flow with mocked Supabase
+- [ ] Skip Not Doing - Session persistence across app restarts
+- [ ] Skip Not Doing - Auth state change handling with provider updates
+- [ ] Skip Not Doing - Network error simulation
 
 **Advanced Router Tests (Optional):**
-- [ ] Deep link navigation testing
-- [ ] Router guard re-evaluation on subscription changes
-- [ ] Route transition animations
+- [ ] Skip Not Doing - Deep link navigation testing
+- [ ] Skip Not Doing - Router guard re-evaluation on subscription changes
+- [ ] Skip Not Doing - Route transition animations
 
 **Subscription Flow Tests (Optional):**
-- [ ] `test/integration/subscription_flow_test.dart`
-- [ ] `test/helpers/mock_revenuecat.dart`
-- [ ] Subscription purchase flow with mocked RevenueCat
-- [ ] Restore purchases flow
-- [ ] Subscription expiration handling
+- [ ] Skip Not Doing - `test/integration/subscription_flow_test.dart`
+- [ ] Skip Not Doing - `test/helpers/mock_revenuecat.dart`
+- [ ] Skip Not Doing - Subscription purchase flow with mocked RevenueCat
+- [ ] Skip Not Doing - Restore purchases flow
+- [ ] Skip Not Doing - Subscription expiration handling
 
 **Current State:**
 The core test infrastructure is **production-ready**. We have comprehensive tests for:
@@ -1181,18 +1181,18 @@ The optional enhancements above would test full end-to-end flows with mocked ext
 - Subscription flow tests: 2-3 hours
 
 ### 7.2 Code Coverage Analysis
-- [ ] Run flutter test --coverage
-- [ ] Verify 70%+ code coverage
-- [ ] Add tests for uncovered critical paths
+- [ ] Skip Not Doing - Run flutter test --coverage
+- [ ] Skip Not Doing - Verify 70%+ code coverage
+- [ ] Skip Not Doing - Add tests for uncovered critical paths
 
 ### 7.3 Golden Tests (Optional)
-- [ ] Screenshot tests for key screens
-- [ ] Visual regression detection for theme changes
+- [ ] Skip Not Doing - Screenshot tests for key screens
+- [ ] Skip Not Doing - Visual regression detection for theme changes
 
 ### 7.4 Performance Testing
-- [ ] App startup time analysis
-- [ ] Router redirect performance
-- [ ] Memory leak detection
+- [ ] Skip Not Doing - App startup time analysis
+- [ ] Skip Not Doing - Router redirect performance
+- [ ] Skip Not Doing - Memory leak detection
 
 **Remaining Time:** 2-6 hours (for 7.2-7.4)
 **Dependencies:** Phases 3-6 complete ✅
@@ -1205,28 +1205,28 @@ The optional enhancements above would test full end-to-end flows with mocked ext
 **Skip this phase if your app only uses Supabase/RevenueCat APIs**
 
 ### 8.1 Dio HTTP Client Setup
-- [ ] `lib/core/network/dio_client.dart`
-  - Base URL configuration
-  - Request/response interceptors
-  - Auth token injection
-  - Retry logic
-  - Timeout configuration
-  - Error transformation to AppException
+- [ ] Skip Not Doing - `lib/core/network/dio_client.dart`
+  - Skip Not Doing - Base URL configuration
+  - Skip Not Doing - Request/response interceptors
+  - Skip Not Doing - Auth token injection
+  - Skip Not Doing - Retry logic
+  - Skip Not Doing - Timeout configuration
+  - Skip Not Doing - Error transformation to AppException
 
 ### 8.2 API Repository Example
-- [ ] `lib/repositories/api_example_repository.dart`
-  - One concrete example (weather API, quotes API, etc.)
-  - Show Dio + Riverpod integration pattern
-  - Error handling with try-catch
-  - Loading states
-  - Response parsing
+- [ ] Skip Not Doing - `lib/repositories/api_example_repository.dart`
+  - Skip Not Doing - One concrete example (weather API, quotes API, etc.)
+  - Skip Not Doing - Show Dio + Riverpod integration pattern
+  - Skip Not Doing - Error handling with try-catch
+  - Skip Not Doing - Loading states
+  - Skip Not Doing - Response parsing
 
 ### 8.3 Example Screen Using API
-- [ ] `lib/features/example/screens/api_example_screen.dart`
-  - Demonstrates API call usage
-  - Shows loading indicator
-  - Shows error state with retry
-  - Shows success state with data
+- [ ] Skip Not Doing - `lib/features/example/screens/api_example_screen.dart`
+  - Skip Not Doing - Demonstrates API call usage
+  - Skip Not Doing - Shows loading indicator
+  - Skip Not Doing - Shows error state with retry
+  - Skip Not Doing - Shows success state with data
 
 **Why add this?** Most apps need external APIs. This provides the pattern developers can replicate.
 
