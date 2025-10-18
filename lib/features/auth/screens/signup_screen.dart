@@ -21,7 +21,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
   bool _acceptedTerms = false;
 
@@ -29,7 +28,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -138,20 +136,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       prefixIcon: const Icon(Icons.lock_outline),
                       validator: (value) =>
                           Validators.password(value, minLength: 8),
-                      textInputAction: TextInputAction.next,
-                      helperText: 'At least 8 characters',
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    AppTextField(
-                      controller: _confirmPasswordController,
-                      type: AppTextFieldType.password,
-                      label: 'Confirm Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      validator: (value) => Validators.match(
-                        value,
-                        _passwordController.text,
-                        fieldName: 'Passwords',
-                      ),
                       textInputAction: TextInputAction.done,
                       onSubmitted: (_) => _handleSignUp(),
                     ),

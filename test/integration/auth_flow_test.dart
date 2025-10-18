@@ -183,7 +183,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify all required fields are present
-      expect(find.byType(TextFormField), findsNWidgets(3)); // Email, Password, Confirm Password
+      expect(find.byType(TextFormField), findsNWidgets(2)); // Email, Password
       expect(find.byType(Checkbox), findsOneWidget); // Terms checkbox
       expect(find.byType(AppButton), findsAtLeastNWidgets(1)); // Sign up button
     });

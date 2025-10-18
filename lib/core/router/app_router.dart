@@ -15,6 +15,7 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/subscriptions/screens/paywall_screen.dart';
 import '../../features/subscriptions/screens/subscription_details_screen.dart';
 import '../../shared/widgets/loading_screen.dart';
+import '../logger/logger.dart';
 import 'router_refresh_notifier.dart';
 
 /// Router provider with route guards
@@ -30,6 +31,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       
       if (appState.isLoading) {
         return state.matchedLocation == '/loading' ? null : '/loading';
+      }
+
+      // Exit loading screen on auth/subscription errors
+      if (appState.hasError && state.matchedLocation == '/loading') {
+        Logger.warning(
+          'Exiting loading screen due to app state error',
+          tag: 'Router',
+        );
+        return '/welcome';
       }
 
       final isAuthenticated = appState.isAuthenticated;

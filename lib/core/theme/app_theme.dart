@@ -20,6 +20,8 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(88, 48),
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
           ),
@@ -94,8 +96,8 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.dark(
-        primary: AppColors.primary,
-        onPrimary: AppColors.white,
+        primary: AppColors.white,
+        onPrimary: AppColors.black,
         secondary: AppColors.secondary,
         onSecondary: AppColors.white,
         error: AppColors.error,
@@ -112,6 +114,8 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(88, 48),
+          backgroundColor: AppColors.white,
+          foregroundColor: AppColors.black,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
           ),
@@ -188,7 +192,7 @@ class AppTheme {
 
 class AppColors {
   // Primary colors
-  static const Color primary = Color(0xFF2563EB);
+  static const Color primary = Color(0xFF000000);
   static const Color primaryDark = Color(0xFF1E40AF);
   static const Color primaryLight = Color(0xFF3B82F6);
   

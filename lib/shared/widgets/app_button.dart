@@ -80,7 +80,7 @@ class AppButton extends StatelessWidget {
             disabledBackgroundColor: AppColors.grey300,
             disabledForegroundColor: AppColors.grey500,
           ),
-          child: _buildContent(context),
+          child: _buildContent(context, isDisabled),
         ),
       AppButtonVariant.secondary => OutlinedButton(
           onPressed: effectiveOnPressed,
@@ -94,7 +94,7 @@ class AppButton extends StatelessWidget {
             ),
             disabledForegroundColor: AppColors.grey500,
           ),
-          child: _buildContent(context),
+          child: _buildContent(context, isDisabled),
         ),
       AppButtonVariant.text => TextButton(
           onPressed: effectiveOnPressed,
@@ -105,14 +105,14 @@ class AppButton extends StatelessWidget {
             foregroundColor: context.colors.primary,
             disabledForegroundColor: AppColors.grey500,
           ),
-          child: _buildContent(context),
+          child: _buildContent(context, isDisabled),
         ),
     };
 
     return isFullWidth ? SizedBox(width: double.infinity, child: button) : button;
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(BuildContext context, bool isDisabled) {
     if (isLoading) {
       return SizedBox(
         height: _getIconSize(),
@@ -129,17 +129,22 @@ class AppButton extends StatelessWidget {
     }
 
     if (icon != null) {
+      final iconColor = _resolveForegroundColor(context, isDisabled);
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: _getIconSize()),
+          Icon(
+            icon,
+            size: _getIconSize(),
+            color: iconColor,
+          ),
           const SizedBox(width: AppSpacing.sm),
-          Text(text, style: _getTextStyle(context)),
+          Text(text, style: _getTextStyle(context, isDisabled)),
         ],
       );
     }
 
-    return Text(text, style: _getTextStyle(context));
+    return Text(text, style: _getTextStyle(context, isDisabled));
   }
 
   Size _getMinSize() {
@@ -175,11 +180,26 @@ class AppButton extends StatelessWidget {
     };
   }
 
-  TextStyle? _getTextStyle(BuildContext context) {
-    return switch (size) {
+  TextStyle? _getTextStyle(BuildContext context, bool isDisabled) {
+    final baseStyle = switch (size) {
       AppButtonSize.small => context.textTheme.labelMedium,
       AppButtonSize.medium => context.textTheme.labelLarge,
       AppButtonSize.large => context.textTheme.titleMedium,
+    };
+
+    final color = _resolveForegroundColor(context, isDisabled);
+    return baseStyle?.copyWith(color: color);
+  }
+
+  Color _resolveForegroundColor(BuildContext context, bool isDisabled) {
+    if (isDisabled) {
+      return AppColors.grey500;
+    }
+
+    return switch (variant) {
+      AppButtonVariant.primary => context.colors.onPrimary,
+      AppButtonVariant.secondary => context.colors.primary,
+      AppButtonVariant.text => context.colors.primary,
     };
   }
 }

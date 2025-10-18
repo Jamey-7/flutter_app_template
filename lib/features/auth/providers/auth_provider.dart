@@ -6,6 +6,17 @@ import '../../../core/supabase_client.dart';
 
 part 'auth_provider.g.dart';
 
+/// Current user provider with automatic session recovery
+/// 
+/// Handles token expiration gracefully:
+/// - Valid tokens: auto-refreshed by Supabase
+/// - Invalid/expired tokens: cleared and treated as signed out
+/// - Prevents provider rebuild cascades with .distinct()
+/// 
+/// To test error recovery manually:
+/// 1. Sign in normally
+/// 2. In Supabase dashboard: Delete user's refresh token from auth.refresh_tokens
+/// 3. Hot restart app → should redirect to welcome (not error/loop)
 @riverpod
 class CurrentUser extends _$CurrentUser {
   @override
@@ -13,14 +24,45 @@ class CurrentUser extends _$CurrentUser {
     ref.keepAlive();
     Logger.log('Initializing auth state stream', tag: 'AuthProvider');
 
-    return supabase.auth.onAuthStateChange.map((data) {
-      final user = data.session?.user;
-      Logger.log(
-        'Auth state changed: ${user != null ? 'signed in (${user.email})' : 'signed out'}',
-        tag: 'AuthProvider',
-      );
-      return user;
-    });
+    return supabase.auth.onAuthStateChange
+        .map((data) {
+          final user = data.session?.user;
+          Logger.log(
+            'Auth state changed: ${user != null ? 'signed in (${user.email})' : 'signed out'}',
+            tag: 'AuthProvider',
+          );
+          return user;
+        })
+        .handleError((error) {
+          // Gracefully handle invalid refresh token errors
+          if (error is AuthException) {
+            final isInvalidToken = error.code == 'refresh_token_not_found' ||
+                error.message.toLowerCase().contains('invalid refresh token');
+            
+            if (isInvalidToken) {
+              Logger.warning(
+                'Invalid refresh token detected, clearing session: ${error.message}',
+                tag: 'AuthProvider',
+              );
+              // Clear the invalid session asynchronously (non-blocking)
+              supabase.auth.signOut().catchError((e) {
+                Logger.error(
+                  'Failed to clear invalid session',
+                  e,
+                  null,
+                  tag: 'AuthProvider',
+                );
+              });
+              // Return null instead of throwing - treats as signed out
+              return null;
+            }
+          }
+          
+          // Log and re-throw other errors
+          Logger.error('Auth stream error', error, null, tag: 'AuthProvider');
+          throw error;
+        })
+        .distinct((prev, next) => prev?.id == next?.id); // Prevent duplicate emissions
   }
 }
 

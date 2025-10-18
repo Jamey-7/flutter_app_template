@@ -32,12 +32,26 @@ class Subscription extends _$Subscription {
       }
 
       if (next.hasError && next.error != null) {
-        Logger.error(
-          'Auth provider error',
-          next.error!,
-          next.stackTrace,
-          tag: 'SubscriptionNotifier',
-        );
+        // Check if it's a token error we can ignore
+        final error = next.error;
+        final isTokenError = error is AuthException &&
+            (error.code == 'refresh_token_not_found' ||
+             error.message.toLowerCase().contains('invalid refresh token'));
+        
+        if (isTokenError) {
+          Logger.log(
+            'Auth token error detected, resetting to free tier',
+            tag: 'SubscriptionNotifier',
+          );
+        } else {
+          Logger.error(
+            'Auth provider error',
+            error!,
+            next.stackTrace,
+            tag: 'SubscriptionNotifier',
+          );
+        }
+        
         state = AsyncValue.data(SubscriptionInfo.free());
         return;
       }
