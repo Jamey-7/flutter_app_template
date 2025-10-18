@@ -624,46 +624,300 @@ See `PHASE_4_COMPLETED.md` for detailed documentation.
 
 ---
 
-## 💳 **Phase 5: Complete Monetization**
+## 💳 **Phase 5: Complete RevenueCat Monetization**
 
-### 5.1 RevenueCat Product Setup
-- [ ] Environment config for product IDs (.env + example)
-- [ ] `lib/repositories/subscription_repository.dart` - Fetch offerings from RevenueCat
-- [ ] Parse packages and pricing
-- [ ] Handle multiple subscription tiers
-- [ ] Handle one-time purchases (if needed)
+**Status:** ⏳ Ready to Start  
+**Estimated Time:** 8-10 hours total  
+**Dependencies:** Phase 2 (SubscriptionService) ✅, Phase 3 (UI components) ✅, Phase 4 (settings screen) ✅
 
-### 5.2 Full Paywall Implementation
-- [ ] `lib/features/subscriptions/screens/paywall_screen.dart` - Replace placeholder
-- [ ] Display real products from RevenueCat
-- [ ] Show pricing in user's local currency
-- [ ] Feature comparison (Free vs Paid)
-- [ ] Subscription terms display
-- [ ] Purchase flow with loading states (using AppButton, AppLoadingIndicator)
-- [ ] Success confirmation (using AppDialog)
-- [ ] Error handling (using ErrorState widget)
+**Approach:** Build with **real RevenueCat SDK calls** from the start using the existing `SubscriptionService` from Phase 2. No mock data - works immediately when users add their RevenueCat API key. Web platform gracefully falls back to free tier (already handled in Phase 2).
 
-### 5.3 Subscription Management
-- [ ] `lib/features/subscriptions/screens/subscription_details_screen.dart`
-- [ ] View current subscription details
-- [ ] Manage subscription (link to App Store/Play Store)
-- [ ] Restore purchases flow
-- [ ] Subscription expiration handling
-- [ ] Grace period handling
-- [ ] Cancellation handling
+---
 
-### 5.4 Purchase Receipt Validation
-- [ ] Server-side validation (if needed)
-- [ ] Handle edge cases (refunds, chargebacks)
+### 5.1 Offerings Provider ⏱️ 1 hour
 
-### 5.5 Testing
-- [ ] Widget tests for paywall screen
-- [ ] Widget tests for subscription details screen
-- [ ] Unit tests for subscription service
-- [ ] Test purchase flows (sandbox mode)
+Create a Riverpod provider to fetch and manage RevenueCat offerings.
 
-**Estimated Time:** 10-14 hours (includes subscription tests)
-**Dependencies:** Phase 3 (UI), Phase 4 (settings screen)
+- [ ] Create `lib/providers/offerings_provider.dart`
+  - [ ] Use `@riverpod` annotation for code generation
+  - [ ] Call `SubscriptionService.getOfferings()` from Phase 2
+  - [ ] Return `AsyncValue<Offerings?>` for state management
+  - [ ] Handle loading state while fetching
+  - [ ] Handle error state with error messages
+  - [ ] Handle empty state (no offerings configured)
+  - [ ] Auto-refresh when paywall screen loads
+  - [ ] Logging with Logger.log() for debugging
+
+**Key Implementation:**
+```dart
+@riverpod
+Future<Offerings?> offerings(Ref ref) async {
+  return await SubscriptionService.getOfferings();
+}
+```
+
+---
+
+### 5.2 Complete Paywall Screen ⏱️ 4-5 hours
+
+Replace the placeholder paywall with a production-ready implementation using real RevenueCat offerings.
+
+**File:** `lib/features/subscriptions/screens/paywall_screen.dart`
+
+#### 5.2.1 Fetch Real Offerings
+- [ ] Watch `offeringsProvider` with `ref.watch()`
+- [ ] Handle `AsyncValue` states:
+  - [ ] **Loading:** Show AppLoadingIndicator with "Loading plans..."
+  - [ ] **Error:** Show ErrorState with retry button
+  - [ ] **Data (null):** Show EmptyState with "No plans available"
+  - [ ] **Data (offerings):** Display product cards
+
+#### 5.2.2 Product Cards Display
+- [ ] Map through `offerings.current.availablePackages`
+- [ ] For each package, display:
+  - [ ] Product title (`package.storeProduct.title`)
+  - [ ] Product description (`package.storeProduct.description`)
+  - [ ] **Real pricing** (`package.storeProduct.priceString`) - automatic localization!
+  - [ ] Billing cycle (monthly, yearly, etc.)
+  - [ ] "Best Value" badge for yearly plans
+  - [ ] "Save X%" calculation for annual vs monthly
+- [ ] Use AppCard.elevated for each product
+- [ ] Responsive layout with context.responsivePadding
+
+#### 5.2.3 Feature Comparison Section
+- [ ] "Free vs Premium" heading
+- [ ] Two-column comparison using AppCard
+- [ ] Free tier features (limited)
+- [ ] Premium tier features (all access)
+- [ ] Checkmark icons for included features
+- [ ] Lock icons for locked features
+
+#### 5.2.4 Purchase Flow
+- [ ] AppButton.primary for each package: "Subscribe"
+- [ ] OnPressed handler:
+  - [ ] Set loading state (isLoading: true)
+  - [ ] Call `SubscriptionService.purchasePackage(package)`
+  - [ ] Handle success:
+    - [ ] Refresh `subscriptionProvider`
+    - [ ] Show success dialog: "Welcome to Premium!"
+    - [ ] Navigate to `/home` with `context.go()`
+  - [ ] Handle errors:
+    - [ ] User cancellation: silent (not an error)
+    - [ ] PlatformException: user-friendly message
+    - [ ] Network errors: "Check your connection"
+    - [ ] Already subscribed: "You're already premium!"
+  - [ ] Set loading state back to false
+- [ ] Disable buttons while loading
+- [ ] Show AppLoadingIndicator on active button
+
+#### 5.2.5 Restore Purchases
+- [ ] Already implemented (keep existing functionality)
+- [ ] Ensure it refreshes subscriptionProvider after restore
+
+#### 5.2.6 Terms & Conditions Footer
+- [ ] Small text at bottom
+- [ ] "Terms of Service" and "Privacy Policy" links
+- [ ] Subscription terms text
+- [ ] Platform-specific store policies
+
+**Key RevenueCat SDK Calls:**
+```dart
+// Fetch offerings
+final offerings = await Purchases.getOfferings();
+final packages = offerings.current?.availablePackages;
+
+// Display pricing (automatic localization!)
+final priceString = package.storeProduct.priceString; // "$9.99"
+
+// Purchase
+final customerInfo = await Purchases.purchasePackage(package);
+
+// Check entitlement
+if (customerInfo.entitlements.all["premium"]?.isActive == true) {
+  // User is now premium
+}
+```
+
+---
+
+### 5.3 Subscription Details Screen ⏱️ 2-3 hours
+
+Create a new screen to show subscription information and management options.
+
+**File:** `lib/features/subscriptions/screens/subscription_details_screen.dart`
+
+#### 5.3.1 Current Subscription Display
+- [ ] Watch `subscriptionProvider` for current subscription
+- [ ] Display in AppCard.elevated:
+  - [ ] Plan name (tier)
+  - [ ] Subscription status badge (Active/Expired/Trial)
+  - [ ] Renewal date or expiration date
+  - [ ] Product identifier
+- [ ] Format dates nicely (e.g., "Renews on Dec 31, 2024")
+- [ ] Use SubscriptionBadge widget for status
+
+#### 5.3.2 Manage Subscription Buttons
+- [ ] Platform-specific buttons using `Platform.isIOS`/`Platform.isAndroid`
+- [ ] **iOS:** 
+  - [ ] "Manage in App Store" button
+  - [ ] Opens: `https://apps.apple.com/account/subscriptions`
+  - [ ] Use `url_launcher` package
+- [ ] **Android:**
+  - [ ] "Manage in Play Store" button
+  - [ ] Opens Play Store subscriptions page
+  - [ ] Use package name from app
+- [ ] Use AppButton.secondary for manage buttons
+- [ ] Handle URL launch errors gracefully
+
+#### 5.3.3 Subscription Benefits
+- [ ] List of premium features unlocked
+- [ ] Checkmark icon for each feature
+- [ ] "You have access to:" heading
+- [ ] Use Column with Row items
+
+#### 5.3.4 Cancellation Information
+- [ ] AppCard with info icon
+- [ ] "How to cancel" instructions
+- [ ] Platform-specific steps
+- [ ] "What happens after cancellation" explanation
+- [ ] Access until end of billing period
+
+#### 5.3.5 Add to Settings
+- [ ] Update `lib/features/settings/screens/settings_screen.dart`
+- [ ] Add "Manage Subscription" tile in subscription card
+- [ ] Only show for users with active subscriptions
+- [ ] Navigate to subscription details screen
+
+---
+
+### 5.4 Environment Configuration ⏱️ 30 minutes
+
+Document RevenueCat configuration for developers.
+
+- [ ] Update `.env.example` with detailed comments:
+  ```env
+  # RevenueCat API Key
+  # Get this from: https://app.revenuecat.com/settings/api-keys
+  # Use the public SDK key (starts with "appl_" for iOS or "goog_" for Android)
+  REVENUECAT_API_KEY=your_revenuecat_api_key
+  
+  # RevenueCat Entitlement Identifier (optional)
+  # This is configured in your RevenueCat dashboard under "Entitlements"
+  # Default: "premium" (used to check if user has active subscription)
+  REVENUECAT_ENTITLEMENT_ID=premium
+  ```
+
+- [ ] Add documentation comment in code explaining:
+  - [ ] Where to find API key
+  - [ ] How to set up entitlements in RevenueCat dashboard
+  - [ ] Platform support: iOS/Android/macOS only
+  - [ ] Web automatically falls back to free tier
+  - [ ] How offerings are configured in RevenueCat
+
+---
+
+### 5.5 Testing ⏱️ 1-2 hours
+
+Write tests with mocked RevenueCat SDK responses.
+
+#### 5.5.1 Offerings Provider Tests
+- [ ] Create `test/offerings_provider_test.dart`
+- [ ] Mock `Purchases.getOfferings()` responses
+- [ ] Test successful fetch
+- [ ] Test error handling
+- [ ] Test null offerings
+- [ ] Test empty packages
+
+#### 5.5.2 Paywall Screen Tests
+- [ ] Create `test/paywall_screen_test.dart`
+- [ ] Test loading state renders
+- [ ] Test error state with retry
+- [ ] Test empty state message
+- [ ] Test product cards render with sample offerings
+- [ ] Test purchase button triggers purchase flow
+- [ ] Test navigation after successful purchase
+- [ ] Mock package data for UI testing
+
+#### 5.5.3 Subscription Details Tests
+- [ ] Create `test/subscription_details_screen_test.dart`
+- [ ] Test subscription info display
+- [ ] Test manage subscription buttons (iOS/Android)
+- [ ] Test benefits list renders
+- [ ] Test with active/expired subscriptions
+
+**Mock Example:**
+```dart
+// Mock Purchases.getOfferings()
+when(() => mockPurchases.getOfferings()).thenAnswer(
+  (_) async => Offerings({
+    'monthly': Package(/* ... */),
+    'yearly': Package(/* ... */),
+  }),
+);
+```
+
+---
+
+### **Phase 5 Summary**
+
+| Task | Time | Key SDK Calls |
+|------|------|---------------|
+| 5.1: Offerings Provider | 1h | `Purchases.getOfferings()` |
+| 5.2: Paywall Screen | 4-5h | `getOfferings()`, `purchasePackage()` |
+| 5.3: Subscription Details | 2-3h | Platform.isIOS/Android, url_launcher |
+| 5.4: Environment Config | 30m | Documentation |
+| 5.5: Testing | 1-2h | Mock SDK responses |
+| **Total** | **8-10h** | **Production-ready monetization** |
+
+---
+
+### **Files to Create/Modify**
+
+**New Files:**
+1. `lib/providers/offerings_provider.dart` - Fetches RevenueCat offerings
+2. `lib/features/subscriptions/screens/subscription_details_screen.dart` - Manage subscription
+
+**Modified Files:**
+1. `lib/features/subscriptions/screens/paywall_screen.dart` - Complete rebuild with real SDK
+2. `lib/features/settings/screens/settings_screen.dart` - Add "Manage Subscription" link
+3. `.env.example` - Add entitlement ID documentation
+
+**New Tests:**
+1. `test/offerings_provider_test.dart`
+2. `test/paywall_screen_test.dart`
+3. `test/subscription_details_screen_test.dart`
+
+---
+
+### **Key Advantages of This Approach**
+
+✅ **No Mock Data** - Real SDK calls from day one  
+✅ **Works Immediately** - Add API key and it works  
+✅ **Uses Existing Infrastructure** - Leverages SubscriptionService from Phase 2  
+✅ **Simpler** - Don't write code twice (mock then real)  
+✅ **Production-Ready** - Same code in development and production  
+✅ **Platform-Aware** - Web gracefully handled (already done in Phase 2)  
+✅ **Automatic Pricing** - RevenueCat handles localization and currency  
+✅ **Faster Development** - 8-10 hours vs 10-14 hours  
+
+---
+
+### **Success Criteria**
+
+After Phase 5 completion:
+- ✅ Paywall fetches real offerings from RevenueCat
+- ✅ Displays actual pricing from App Store/Play Store
+- ✅ Purchase flow completes successfully in sandbox
+- ✅ Subscription activates and grants access to `/app` routes
+- ✅ Restore purchases functional
+- ✅ Subscription details screen shows real subscription data
+- ✅ Manage subscription buttons work (iOS/Android)
+- ✅ All error scenarios handled gracefully
+- ✅ Tests passing with mocked SDK responses
+- ✅ Works on iOS and Android with user's RevenueCat API key
+- ✅ Web gracefully falls back to free tier (already handled)
+
+**Total Estimated Time:** 8-10 hours
 
 ---
 
