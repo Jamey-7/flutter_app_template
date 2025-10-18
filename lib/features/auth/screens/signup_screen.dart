@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:io' show Platform;
 
 import '../providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/responsive/breakpoints.dart';
-import '../../../shared/widgets/app_button.dart';
-import '../../../shared/widgets/app_text_field.dart';
+import '../../../shared/widgets/auth_button.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/forms/validators.dart';
+
+// Set to true when social sign-in is implemented
+const _kEnableSocialSignIn = true;
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -22,6 +24,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _obscurePassword = true;
   bool _acceptedTerms = false;
 
   @override
@@ -42,6 +45,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       return;
     }
 
+    FocusScope.of(context).unfocus();
     setState(() => _isLoading = true);
 
     try {
@@ -82,122 +86,469 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Account'),
-      ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(context.responsivePadding),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Icon(
-                      Icons.account_circle_outlined,
-                      size: 80,
-                      color: context.colors.primary,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(
-                      'Create Your Account',
-                      style: context.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      'Sign up to get started',
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppSpacing.xxl),
-                    AppTextField(
-                      controller: _emailController,
-                      type: AppTextFieldType.email,
-                      label: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      validator: Validators.email,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    AppTextField(
-                      controller: _passwordController,
-                      type: AppTextFieldType.password,
-                      label: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      validator: (value) =>
-                          Validators.password(value, minLength: 8),
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => _handleSignUp(),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _acceptedTerms,
-                          onChanged: _isLoading
-                              ? null
-                              : (value) {
-                                  setState(() => _acceptedTerms = value ?? false);
-                                },
-                        ),
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              text: 'I accept the ',
-                              style: context.textTheme.bodySmall,
-                              children: [
-                                TextSpan(
-                                  text: 'Terms & Conditions',
-                                  style: TextStyle(
-                                    color: context.colors.primary,
-                                    fontWeight: FontWeight.w600,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Stack(
+          children: [
+            // Background Image
+            Image.asset(
+              'assets/images/login-image.png',
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
+
+            // Gradient Overlay
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.black.withValues(alpha: 0.4),
+                    AppColors.black.withValues(alpha: 0.6),
+                    AppColors.black.withValues(alpha: 0.9),
+                    AppColors.black,
+                  ],
+                  stops: const [0.0, 0.3, 0.7, 1.0],
+                ),
+              ),
+            ),
+
+            // Main content
+            SafeArea(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: screenHeight - topPadding,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 22),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Top spacing
+                          const SizedBox(height: 80),
+
+                          // Title section - left aligned
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Welcome,',
+                                style: context.textTheme.displayMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.white,
+                                  height: 1.2,
+                                  letterSpacing: -1,
+                                ),
+                              ),
+                              Text(
+                                'Sign Up',
+                                style: context.textTheme.displayMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.white,
+                                  height: 1.2,
+                                  letterSpacing: -1,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Create your account to get started',
+                                style: context.textTheme.bodyLarge?.copyWith(
+                                  color: AppColors.white.withValues(alpha: 0.9),
+                                  height: 1.4,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 35),
+
+                          // Email field
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppRadius.medium),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.black.withValues(alpha: 0.2),
+                                  blurRadius: 10,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              cursorColor: AppColors.white,
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: AppColors.white,
+                              ),
+                              validator: Validators.email,
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                labelStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.white.withValues(alpha: 0.7),
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.email_outlined,
+                                  size: 20,
+                                  color: AppColors.white.withValues(alpha: 0.7),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: BorderSide(
+                                    color: AppColors.white.withValues(alpha: 0.3),
+                                    width: 1.0,
                                   ),
                                 ),
-                                const TextSpan(text: ' and '),
-                                TextSpan(
-                                  text: 'Privacy Policy',
-                                  style: TextStyle(
-                                    color: context.colors.primary,
-                                    fontWeight: FontWeight.w600,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: BorderSide(
+                                    color: AppColors.white.withValues(alpha: 0.3),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: BorderSide(
+                                    color: AppColors.white.withValues(alpha: 0.7),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: const BorderSide(
+                                    color: AppColors.error,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: const BorderSide(
+                                    color: AppColors.error,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: AppColors.black.withValues(alpha: 0.6),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Password field
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppRadius.medium),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.black.withValues(alpha: 0.2),
+                                  blurRadius: 10,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
+                              controller: _passwordController,
+                              obscureText: _obscurePassword,
+                              textInputAction: TextInputAction.done,
+                              onFieldSubmitted: (_) => _handleSignUp(),
+                              cursorColor: AppColors.white,
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: AppColors.white,
+                              ),
+                              validator: (value) =>
+                                  Validators.password(value, minLength: 8),
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                labelStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.white.withValues(alpha: 0.7),
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.lock_outline,
+                                  size: 20,
+                                  color: AppColors.white.withValues(alpha: 0.7),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    size: 20,
+                                    color: AppColors.white.withValues(alpha: 0.7),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword = !_obscurePassword;
+                                    });
+                                  },
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: BorderSide(
+                                    color: AppColors.white.withValues(alpha: 0.3),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: BorderSide(
+                                    color: AppColors.white.withValues(alpha: 0.3),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: BorderSide(
+                                    color: AppColors.white.withValues(alpha: 0.7),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: const BorderSide(
+                                    color: AppColors.error,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.medium),
+                                  borderSide: const BorderSide(
+                                    color: AppColors.error,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: AppColors.black.withValues(alpha: 0.6),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Terms & Conditions checkbox
+                          Row(
+                            children: [
+                              SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: Checkbox(
+                                  value: _acceptedTerms,
+                                  onChanged: _isLoading
+                                      ? null
+                                      : (value) {
+                                          setState(
+                                              () => _acceptedTerms = value ?? false);
+                                        },
+                                  fillColor: WidgetStateProperty.resolveWith(
+                                    (states) {
+                                      if (states.contains(WidgetState.selected)) {
+                                        return AppColors.white;
+                                      }
+                                      return Colors.transparent;
+                                    },
+                                  ),
+                                  checkColor: AppColors.black,
+                                  side: BorderSide(
+                                    color: AppColors.white.withValues(alpha: 0.5),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                    text: 'I accept the ',
+                                    style: TextStyle(
+                                      color: AppColors.white.withValues(alpha: 0.9),
+                                      fontSize: 14,
+                                    ),
+                                    children: const [
+                                      TextSpan(
+                                        text: 'Terms & Conditions',
+                                        style: TextStyle(
+                                          color: AppColors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      TextSpan(text: ' and '),
+                                      TextSpan(
+                                        text: 'Privacy Policy',
+                                        style: TextStyle(
+                                          color: AppColors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 30),
+
+                          // Sign Up button
+                          AuthButton.primary(
+                            text: 'Create Account',
+                            onPressed: _handleSignUp,
+                            isLoading: _isLoading,
+                          ),
+
+                          // Social sign-in section (hidden until implemented)
+                          if (_kEnableSocialSignIn) ...[
+                            const SizedBox(height: 25),
+
+                            // OR divider
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Divider(
+                                    color: AppColors.white.withValues(alpha: 0.3),
+                                    thickness: 1,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  child: Text(
+                                    'OR',
+                                    style: TextStyle(
+                                      color: AppColors.white.withValues(alpha: 0.7),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: AppColors.white.withValues(alpha: 0.3),
+                                    thickness: 1,
                                   ),
                                 ),
                               ],
                             ),
+
+                            const SizedBox(height: 25),
+
+                            // Google Sign In button
+                            AuthButton.social(
+                              text: 'Sign up with Google',
+                              svgIcon: 'assets/images/google-icon.svg',
+                              onPressed: _isLoading
+                                  ? null
+                                  : () {
+                                      // TODO: Implement Google Sign Up
+                                      AppSnackBar.showInfo(
+                                        context,
+                                        'Google Sign Up coming soon',
+                                      );
+                                    },
+                            ),
+
+                            // Apple Sign In button (iOS only)
+                            if (Platform.isIOS) ...[
+                              const SizedBox(height: 20),
+                              AuthButton.social(
+                                text: 'Sign up with Apple',
+                                svgIcon: 'assets/images/apple-icon.svg',
+                                onPressed: _isLoading
+                                    ? null
+                                    : () {
+                                        // TODO: Implement Apple Sign Up
+                                        AppSnackBar.showInfo(
+                                          context,
+                                          'Apple Sign Up coming soon',
+                                        );
+                                      },
+                              ),
+                            ],
+                          ],
+
+                          const SizedBox(height: 30),
+
+                          // Already have an account? Sign In
+                          Center(
+                            child: GestureDetector(
+                              onTap: _isLoading
+                                  ? null
+                                  : () {
+                                      context.pushReplacement('/login');
+                                    },
+                              child: RichText(
+                                text: TextSpan(
+                                  text: 'Already have an account? ',
+                                  style: TextStyle(
+                                    color: AppColors.white.withValues(alpha: 0.8),
+                                    fontSize: 15,
+                                  ),
+                                  children: const <TextSpan>[
+                                    TextSpan(
+                                      text: 'Sign In',
+                                      style: TextStyle(
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+
+                          const SizedBox(height: 40),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
-                    AppButton.primary(
-                      text: 'Create Account',
-                      onPressed: _handleSignUp,
-                      isLoading: _isLoading,
-                      isFullWidth: true,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    AppButton.text(
-                      text: 'Already have an account? Sign In',
-                      onPressed: _isLoading
-                          ? null
-                          : () {
-                              context.pushReplacement('/login');
-                            },
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+
+            // Back button - positioned top-left
+            Positioned(
+              top: topPadding,
+              left: 12,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: AppColors.white,
+                  size: 24,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

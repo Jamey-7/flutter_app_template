@@ -195,22 +195,22 @@ class AppColors {
   static const Color primary = Color(0xFF000000);
   static const Color primaryDark = Color(0xFF1E40AF);
   static const Color primaryLight = Color(0xFF3B82F6);
-  
+
   // Secondary colors
   static const Color secondary = Color(0xFF7C3AED);
   static const Color secondaryDark = Color(0xFF6D28D9);
   static const Color secondaryLight = Color(0xFF8B5CF6);
-  
+
   // Status colors
   static const Color success = Color(0xFF10B981);
   static const Color error = Color(0xFFEF4444);
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
-  
+
   // Neutral colors
   static const Color black = Color(0xFF000000);
   static const Color white = Color(0xFFFFFFFF);
-  
+
   // Grey scale
   static const Color grey50 = Color(0xFFF9FAFB);
   static const Color grey100 = Color(0xFFF3F4F6);
@@ -222,17 +222,21 @@ class AppColors {
   static const Color grey700 = Color(0xFF374151);
   static const Color grey800 = Color(0xFF1F2937);
   static const Color grey900 = Color(0xFF111827);
-  
+
   // Text colors
   static const Color textPrimary = grey900;
   static const Color textSecondary = grey600;
   static const Color textDisabled = grey400;
-  
+
   // Background colors
   static const Color background = white;
   static const Color backgroundDark = black;
   static const Color surface = white;
   static const Color surfaceDark = grey900;
+
+  // Gradient colors for auth screens
+  static const Color gradientStart = Color(0xFFFA6464); // Color.fromRGBO(250, 100, 100, 1)
+  static const Color gradientEnd = Color(0xFF19A2E6);
 }
 
 class AppTypography {

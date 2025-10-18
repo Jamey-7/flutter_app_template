@@ -46,6 +46,7 @@ dependencies:
   heroicons: ^0.11.0
   material_symbols_icons: ^4.2874.0
   ming_cute_icons: ^0.0.7
+  flutter_svg: ^2.0.10+1
 
   # Secure Storage
   flutter_secure_storage: ^9.2.2
@@ -112,6 +113,7 @@ flutter:
   # Environment configuration
   assets:
     - .env
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
