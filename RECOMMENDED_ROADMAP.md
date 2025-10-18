@@ -1,16 +1,16 @@
 # Recommended Template Roadmap
 
-## 📍 Current Status: Phases 1-6 Complete ✅ + Phase 7.1 Auth Integration Tests ✅
+## 📍 Current Status: Phases 1-6 Complete ✅ + Phase 7.1 Basic Test Infrastructure ⚠️
 
-**Last Updated:** October 17, 2024 (Phase 7.1 Complete) 🎉  
+**Last Updated:** October 17, 2024 (Phase 7.1 Basic Infrastructure) ⚠️  
 **Flutter Analyze:** ✅ No issues found  
-**Test Status:** ✅ 82 tests passing (74 unit/widget + 8 integration)  
+**Test Status:** ✅ 86 tests passing (74 unit/widget + 12 basic integration)  
 **Code Files:** 49 Dart files (46 manual + 3 generated)  
-**Test Files:** 13 test files (5 new test helpers + integration tests)  
-**Documentation:** 7 platform guides + 2 phase completion docs  
-**Recent Improvements:** ✅ Auth Integration Test Infrastructure 🧪
+**Test Files:** 13 test files (3 test helpers + 2 integration test files)  
+**Documentation:** 7 platform guides + 2 phase docs  
+**Recent Improvements:** ⚠️ Basic Integration Test Infrastructure (comprehensive tests TODO) 🧪
 
-Your template is **production-ready**! Phases 1-6 are complete with modern patterns, comprehensive auth system, full monetization, platform configuration, and detailed deployment guides. Phase 7.1 adds comprehensive integration test infrastructure with mocked authentication - no API keys required!
+Your template is **production-ready**! Phases 1-6 are complete with modern patterns, comprehensive auth system, full monetization, platform configuration, and detailed deployment guides. Phase 7.1 adds basic integration test infrastructure with mock helpers - comprehensive flow tests still need to be implemented.
 
 ---
 
@@ -1086,61 +1086,72 @@ Wrote tests with pragmatic approach for template use case.
 
 **Note:** Unit and widget tests are added incrementally in Phases 3-5. This phase focuses on integration tests.
 
-### ✅ 7.1 Integration Tests (PARTIALLY COMPLETE)
-**Status:** ⚠️ Partially Complete (Auth tests done, Subscription tests TODO)  
+### ⚠️ 7.1 Integration Tests (BASIC INFRASTRUCTURE COMPLETE)
+**Status:** ⚠️ Basic infrastructure complete, comprehensive tests TODO  
 **Time Spent:** ~4 hours  
 **Date Completed:** October 17, 2024
 
-#### Auth Flow Tests ✅ COMPLETE
-- ✅ `test/integration/auth_flow_test.dart` (16 test cases)
-  - Complete auth flow structure (signup → email verify → login → logout)
-  - Password reset flow end-to-end
-  - Session persistence across app restarts
-  - Auth error handling tests
-  - Auth state management tests
+#### What Was Actually Completed ✅
 
-#### Router Tests ✅ COMPLETE
-- ✅ `test/integration/router_test.dart` (17 test cases)
-  - Router guard tests (unauthenticated redirects)
-  - Subscription guard tests (paywall redirects)
-  - Deep link handling tests
-  - Navigation flow tests
-  - Multiple guard condition tests
+**Test Infrastructure (Complete):**
+- ✅ `test/helpers/mock_supabase.dart` (241 lines) - Mock Supabase client with comprehensive helpers
+- ✅ `test/helpers/test_providers.dart` (43 lines) - Provider container helpers
+- ✅ `test/helpers/test_utils.dart` (91 lines) - Common test utilities
+- ✅ `integration_test` dependency added
+- ✅ `mocktail: ^1.0.0` dependency added
 
-#### Subscription Flow Tests ⬜ TODO
-- [ ] `test/integration/subscription_flow_test.dart`
-  - Subscription flow (login → paywall → subscribe → home)
-  - Restore purchases flow
-  - Subscription expiration handling
-  - Mock RevenueCat SDK responses
-  - Subscription state changes
-
-**Test Helpers Created:**
-- ✅ `test/helpers/mock_supabase.dart` - Mock Supabase client and helpers
-- ✅ `test/helpers/test_providers.dart` - Provider container helpers
-- ✅ `test/helpers/test_utils.dart` - Common test utilities
-- [ ] `test/helpers/mock_revenuecat.dart` - Mock RevenueCat SDK (TODO)
-
-**Dependencies Added:**
-- ✅ `integration_test` (Flutter SDK)
-- ✅ `mocktail: ^1.0.0` (mocking library)
+**Basic Integration Tests (Complete):**
+- ✅ `test/integration/auth_flow_test.dart` (8 basic tests, 115 lines)
+  - App loads without crashing (3 user states)
+  - Mock user/session creation works
+  - Password reset helper works
+  - Auth exception creation works
+  
+- ✅ `test/integration/router_test.dart` (7 basic tests, 103 lines)
+  - App loads for different user states
+  - Multiple user states work
+  - Basic initialization test
 
 **Test Results:**
-- ✅ 82 tests passing (74 existing + 8 new integration tests)
-- ⚠️ 25 skeleton tests (demonstrate structure, not fully implemented)
+- ✅ **86 tests passing** (74 existing + 12 new integration tests)
 - ✅ All tests run without RevenueCat API keys
-- ✅ Fast execution (< 5 seconds)
+- ✅ Fast execution (~3 seconds)
+- ✅ No external dependencies required
 
-**Key Features:**
-- ✅ Mocked Supabase authentication (no real API calls)
-- ✅ Provider-based state management testing
-- ✅ Router guard verification
-- ✅ Comprehensive test structure for future expansion
-- ✅ Clear documentation and examples
+#### What Still Needs to Be Done ⬜
 
-**Note:** The 25 "failing" tests are intentionally skeleton tests that demonstrate the test structure and patterns. They include detailed comments showing how to implement full end-to-end tests. This provides a solid foundation for developers to expand upon.
+**Comprehensive Auth Flow Tests (TODO):**
+- [ ] Full signup → email verify → login → logout flow
+- [ ] Password reset end-to-end flow
+- [ ] Session persistence across app restarts
+- [ ] Login with invalid credentials (error handling)
+- [ ] Signup with existing email (error handling)
+- [ ] Auth state change handling
+- [ ] Network error scenarios
 
-**Remaining Work:** Subscription flow tests with mocked RevenueCat (~2-3 hours)
+**Comprehensive Router Tests (TODO):**
+- [ ] Unauthenticated redirect to welcome screen
+- [ ] Free users redirected to paywall for /app
+- [ ] Free users redirected to paywall for /home
+- [ ] Premium users can access /home and /app
+- [ ] Expired subscription redirects to paywall
+- [ ] Deep link handling (password reset, email verify, magic link)
+- [ ] Router guard re-evaluation on state changes
+
+**Subscription Flow Tests (TODO):**
+- [ ] `test/integration/subscription_flow_test.dart`
+- [ ] `test/helpers/mock_revenuecat.dart`
+- [ ] Subscription purchase flow
+- [ ] Restore purchases flow
+- [ ] Subscription expiration handling
+
+**Current State:**
+The basic test infrastructure is solid and working. The mock helpers are comprehensive. However, the actual integration tests are **basic smoke tests** that verify the app loads and mocks work. They don't test actual user flows, navigation, or business logic.
+
+**Estimated Time to Complete Full Integration Tests:** 6-8 hours
+- Auth flow tests: 2-3 hours
+- Router flow tests: 2-3 hours  
+- Subscription flow tests: 2-3 hours
 
 ### 7.2 Code Coverage Analysis
 - [ ] Run flutter test --coverage
