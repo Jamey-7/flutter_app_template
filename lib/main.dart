@@ -10,7 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app.dart';
 import 'core/logger/logger.dart';
 import 'core/provider_observer.dart';
-import 'providers/subscription_provider.dart';
+import 'features/subscriptions/providers/subscription_provider.dart';
 
 void main() async {
   // Ensure Flutter is initialized

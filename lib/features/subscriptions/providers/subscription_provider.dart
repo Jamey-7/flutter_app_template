@@ -6,10 +6,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../core/logger/logger.dart';
-import '../core/network/retry_helper.dart';
+import '../../../core/logger/logger.dart';
+import '../../../core/network/retry_helper.dart';
 import '../models/subscription_info.dart';
-import 'auth_provider.dart';
+import '../../auth/providers/auth_provider.dart';
 
 part 'subscription_provider.g.dart';
 

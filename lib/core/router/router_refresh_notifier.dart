@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/app_state.dart';
-import '../../providers/app_state_provider.dart';
+import '../models/app_state.dart';
+import '../providers/app_state_provider.dart';
 
 /// Notifier that triggers router redirect re-evaluation
 /// when app state changes (auth or subscription)

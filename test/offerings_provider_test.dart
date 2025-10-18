@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:app_template/providers/offerings_provider.dart';
+import 'package:app_template/features/subscriptions/providers/offerings_provider.dart';
 
 void main() {
   group('OfferingsProvider', () {

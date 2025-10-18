@@ -3,11 +3,11 @@
 // These tests verify that the core infrastructure is set up correctly.
 // More comprehensive tests should be added in Phase 6.
 
-import 'package:app_template/models/app_state.dart';
-import 'package:app_template/models/subscription_info.dart';
-import 'package:app_template/providers/app_state_provider.dart';
-import 'package:app_template/providers/auth_provider.dart';
-import 'package:app_template/providers/subscription_provider.dart';
+import 'package:app_template/core/models/app_state.dart';
+import 'package:app_template/features/subscriptions/models/subscription_info.dart';
+import 'package:app_template/core/providers/app_state_provider.dart';
+import 'package:app_template/features/auth/providers/auth_provider.dart';
+import 'package:app_template/features/subscriptions/providers/subscription_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

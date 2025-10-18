@@ -1,8 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
-import '../core/logger/logger.dart';
-import '../core/network/retry_helper.dart';
+import '../../../core/logger/logger.dart';
+import '../../../core/network/retry_helper.dart';
 import 'subscription_provider.dart';
 
 part 'offerings_provider.g.dart';

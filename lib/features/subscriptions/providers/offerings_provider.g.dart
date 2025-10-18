@@ -88,4 +88,4 @@ final class OfferingsProvider
   }
 }
 
-String _$offeringsHash() => r'6e421362ce0317afe4abd2d308bce04678ea0d5c';
+String _$offeringsHash() => r'be85180b28c0e427091621cdcf74b5216ad17a2f';

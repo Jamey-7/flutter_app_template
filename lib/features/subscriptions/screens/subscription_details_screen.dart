@@ -8,7 +8,7 @@ import '../../../core/logger/logger.dart';
 import '../../../core/responsive/breakpoints.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../features/app/widgets/subscription_badge.dart';
-import '../../../providers/subscription_provider.dart';
+import '../providers/subscription_provider.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_loading_indicator.dart';

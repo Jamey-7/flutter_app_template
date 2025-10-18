@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'subscription_info.dart';
+import '../../features/subscriptions/models/subscription_info.dart';
 
 part 'app_state.freezed.dart';
 

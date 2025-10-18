@@ -1,8 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../core/logger/logger.dart';
-import '../core/supabase_client.dart';
+import '../../../core/logger/logger.dart';
+import '../../../core/supabase_client.dart';
 
 part 'auth_provider.g.dart';
 
