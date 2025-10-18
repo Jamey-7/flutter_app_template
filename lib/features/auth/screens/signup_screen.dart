@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 
 import '../providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/responsive/breakpoints.dart';
 import '../../../shared/widgets/auth_button.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/forms/validators.dart';
@@ -129,40 +130,67 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   constraints: BoxConstraints(
                     minHeight: screenHeight - topPadding,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 22),
-                    child: Form(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: context.responsive<double>(
+                          mobile: context.screenWidth,
+                          tablet: 600,
+                          desktop: 500,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.responsiveHorizontalPadding,
+                        ),
+                        child: Form(
                       key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Top spacing
-                          const SizedBox(height: 80),
-
-                          // Title section - left aligned
-                          Column(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                'Welcome,',
-                                style: context.textTheme.displayMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.white,
-                                  height: 1.2,
-                                  letterSpacing: -1,
+                              // Top spacing
+                              SizedBox(
+                                height: context.responsive<double>(
+                                  mobile: 80,
+                                  tablet: 100,
+                                  desktop: 120,
                                 ),
                               ),
-                              Text(
-                                'Sign Up',
-                                style: context.textTheme.displayMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.white,
-                                  height: 1.2,
-                                  letterSpacing: -1,
-                                ),
-                              ),
+
+                              // Title section - left aligned
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Welcome,',
+                                    style: context.textTheme.displayMedium?.copyWith(
+                                      fontSize: context.responsive<double>(
+                                        mobile: 45,
+                                        tablet: 52,
+                                        desktop: 60,
+                                      ),
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.white,
+                                      height: 1.2,
+                                      letterSpacing: -1,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Sign Up',
+                                    style: context.textTheme.displayMedium?.copyWith(
+                                      fontSize: context.responsive<double>(
+                                        mobile: 45,
+                                        tablet: 52,
+                                        desktop: 60,
+                                      ),
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.white,
+                                      height: 1.2,
+                                      letterSpacing: -1,
+                                    ),
+                                  ),
                               const SizedBox(height: 16),
                               Text(
                                 'Create your account to get started',
@@ -421,6 +449,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             text: 'Create Account',
                             onPressed: _handleSignUp,
                             isLoading: _isLoading,
+                            height: context.responsive<double>(
+                              mobile: 55,
+                              tablet: 60,
+                              desktop: 60,
+                            ),
                           ),
 
                           // Social sign-in section (hidden until implemented)
@@ -525,7 +558,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           ),
 
                           const SizedBox(height: 40),
-                        ],
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
