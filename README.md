@@ -28,11 +28,30 @@ This template boots with Supabase authentication, RevenueCat subscriptions, and 
 - 🔄 Networking layer with Dio
 - 🔄 Localization support
 
+## 📋 Minimum Requirements (October 2025)
+
+- **Flutter:** 3.35+ recommended
+- **Dart:** 3.9.2+
+- **iOS Development:**
+  - Xcode 26.1+ recommended
+  - iOS 14+ deployment target
+  - macOS for development
+- **Android Development:**
+  - Android Studio with SDK 35 (Android 15)
+  - minSdk: API 23+ (Android 6.0+)
+  - targetSdk: API 35+ (Android 15) - **Required for Play Store**
+- **Web Development:**
+  - Chrome, Firefox, Safari, or Edge (latest versions)
+- **Desktop Development:**
+  - macOS: macOS 11+ for development
+  - Windows: Windows 10+ with Visual Studio 2022
+  - Linux: Ubuntu 20.04+ or equivalent
+
 ## 🚀 Quick Start
 
 ### 1. Prerequisites
 
-- Flutter SDK 3.9.2+
+- Flutter SDK 3.35+ (check with `flutter --version`)
 - [Supabase account](https://supabase.com) (free tier works)
 - Optional: [RevenueCat](https://revenuecat.com) for subscriptions
 - Optional: [Sentry](https://sentry.io) for error tracking

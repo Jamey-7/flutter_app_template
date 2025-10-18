@@ -6,11 +6,38 @@ This guide covers all Android-specific configuration needed to deploy your Flutt
 
 ## 📋 Prerequisites
 
-- Android Studio installed (latest stable version recommended)
-- Android SDK installed (API 21+ / Android 5.0+)
-- Google Play Console account ($25 one-time fee)
-- Physical Android device or emulator for testing
-- Java Development Kit (JDK) 11 or higher
+- **Android Studio** installed (latest stable version recommended)
+- **Android SDK 35** (Android 15) - **CRITICAL for Play Store submission**
+- **Google Play Console account** ($25 one-time fee)
+- **Physical Android device** or emulator for testing
+- **Java Development Kit (JDK)** 11 or higher
+- **Flutter** 3.35+ recommended
+
+### Version Requirements (October 2025)
+
+- **Android SDK:** API level 35 (Android 15)
+- **Build Tools:** Latest version
+- **minSdk:** API 23 (Android 6.0) recommended
+- **targetSdk:** API 35 (Android 15) - **REQUIRED for Play Store as of August 31, 2025**
+- **compileSdk:** API 35 or higher
+
+### ⚠️ Google Play Store Requirement (2025)
+
+**CRITICAL:** As of **August 31, 2025**, Google Play requires all new apps and app updates to target **API level 35** (Android 15) or higher.
+
+- **Deadline:** August 31, 2025
+- **Requirement:** `targetSdk = 35` minimum
+- **Impact:** Apps targeting older API levels will be rejected
+- **Reference:** [Meet Google Play's target API level requirement](https://developer.android.com/google/play/requirements/target-sdk)
+
+**Android Version Distribution (October 2025):**
+- Android 15+ (API 35+): ~15%
+- Android 14 (API 34): ~25%
+- Android 13 (API 33): ~20%
+- Android 12 (API 31-32): ~20%
+- Android 11 and below: ~20%
+
+**Recommendation:** Set `minSdk = 23` to support 95%+ of devices while maintaining good security features.
 
 ---
 
@@ -28,13 +55,29 @@ android {
     
     defaultConfig {
         applicationId = "com.yourcompany.yourappname"  // Update this
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        
+        // Android API Levels (Updated October 2025)
+        minSdk = 23        // Android 6.0+ (recommended)
+        targetSdk = 35     // Android 15 (REQUIRED for Play Store)
+        
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 }
 ```
+
+**API Level Explanation:**
+
+- **minSdk = 23** (Android 6.0 Marshmallow)
+  - Supports 95%+ of active devices
+  - Includes modern security features (runtime permissions)
+  - Better than API 21 (Flutter default)
+  
+- **targetSdk = 35** (Android 15)
+  - **REQUIRED** for Google Play Store as of August 31, 2025
+  - Enables latest Android features
+  - Ensures compatibility with newest devices
+  - Apps targeting older APIs will be rejected by Play Store
 
 **Important:**
 - Use lowercase letters only

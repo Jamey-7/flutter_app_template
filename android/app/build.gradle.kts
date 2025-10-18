@@ -29,10 +29,18 @@ android {
         // Must use lowercase, dots to separate segments, no spaces or special characters
         // See docs/android_setup.md for detailed instructions
         applicationId = "com.example.app_template"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        
+        // Android API Levels (Updated October 2025)
+        // minSdk: Minimum Android version your app supports
+        //         API 23 = Android 6.0 (recommended for better security features)
+        //         API 21 = Android 5.0 (Flutter default, but older)
+        minSdk = 23
+        
+        // targetSdk: Android version your app is tested against
+        //            CRITICAL: Google Play requires API 35+ as of August 31, 2025
+        //            API 35 = Android 15 (required for Play Store submission)
+        targetSdk = 35
+        
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

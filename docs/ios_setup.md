@@ -6,10 +6,19 @@ This guide covers all iOS-specific configuration needed to deploy your Flutter a
 
 ## 📋 Prerequisites
 
-- macOS with Xcode installed (latest stable version recommended)
-- Apple Developer Account ($99/year)
-- Physical iOS device or simulator for testing
-- CocoaPods installed (`sudo gem install cocoapods`)
+- **macOS** with Xcode 26.1+ installed (latest stable version recommended)
+- **Apple Developer Account** ($99/year)
+- **Physical iOS device** or simulator for testing
+- **CocoaPods** installed (`sudo gem install cocoapods`)
+- **Minimum iOS Version:** iOS 14.0+ (deployment target)
+
+### Version Requirements (October 2025)
+
+- **Xcode:** 26.1 or later
+- **iOS SDK:** iOS 26 (included with Xcode 26.1)
+- **Deployment Target:** iOS 14.0 minimum
+- **Flutter:** 3.35+ recommended
+- **RevenueCat SDK:** Requires iOS 13.0+
 
 ---
 
