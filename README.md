@@ -241,6 +241,16 @@ This template is provided as-is for your projects. Customize freely!
 - Run `flutter clean && flutter pub get`
 - Then `flutter pub run build_runner build --delete-conflicting-outputs`
 
+### Platform Setup Guides
+
+- [iOS Setup](docs/ios_setup.md) - Complete iOS configuration and App Store submission
+- [Android Setup](docs/android_setup.md) - Complete Android configuration and Play Store submission
+- [Web Setup](docs/web_setup.md) - Web deployment and PWA configuration
+- [macOS Setup](docs/macos_setup.md) - macOS configuration and Mac App Store submission
+- [Desktop Setup](docs/desktop_setup.md) - Windows and Linux configuration
+- [RevenueCat Setup](docs/revenuecat_setup.md) - Complete subscription setup guide
+- [Testing Guide](docs/testing_guide.md) - Comprehensive testing checklist
+
 ### Resources
 
 - [Supabase Docs](https://supabase.com/docs)

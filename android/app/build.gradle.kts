@@ -6,6 +6,9 @@ plugins {
 }
 
 android {
+    // TODO: Update namespace to match your app's package name
+    // Example: namespace = "com.yourcompany.yourappname"
+    // This must match your package structure in kotlin/ directory
     namespace = "com.example.app_template"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
@@ -20,7 +23,11 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // TODO: Update applicationId to your unique package name
+        // Example: applicationId = "com.yourcompany.yourappname"
+        // IMPORTANT: This cannot be changed after publishing to Play Store
+        // Must use lowercase, dots to separate segments, no spaces or special characters
+        // See docs/android_setup.md for detailed instructions
         applicationId = "com.example.app_template"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.

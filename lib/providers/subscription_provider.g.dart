@@ -33,7 +33,7 @@ final class SubscriptionProvider
   Subscription create() => Subscription();
 }
 
-String _$subscriptionHash() => r'c74d0e6121b236d3f77b485c734760a33edba180';
+String _$subscriptionHash() => r'ed6c819bc5ef9f4bc5f9876478f69ed9661e6c7a';
 
 abstract class _$Subscription extends $AsyncNotifier<SubscriptionInfo> {
   FutureOr<SubscriptionInfo> build();

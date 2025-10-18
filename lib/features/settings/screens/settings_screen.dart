@@ -376,8 +376,17 @@ class _SubscriptionCard extends StatelessWidget {
                 icon: Icons.shopping_bag,
               ),
             ],
-            if (!subscription.isActive) ...[
-              const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.md),
+            if (subscription.isActive) ...[
+              AppButton.secondary(
+                text: 'Manage Subscription',
+                onPressed: () {
+                  context.push('/subscription-details');
+                },
+                icon: Icons.settings,
+                isFullWidth: true,
+              ),
+            ] else ...[
               AppButton.primary(
                 text: 'Upgrade to Premium',
                 onPressed: () {

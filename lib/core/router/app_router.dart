@@ -14,6 +14,7 @@ import '../../features/settings/screens/change_email_screen.dart';
 import '../../features/settings/screens/change_password_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
 import '../../features/subscriptions/screens/paywall_screen.dart';
+import '../../features/subscriptions/screens/subscription_details_screen.dart';
 import '../../shared/widgets/loading_screen.dart';
 import 'router_refresh_notifier.dart';
 
@@ -186,6 +187,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/paywall',
         name: 'paywall',
         builder: (context, state) => const PaywallScreen(),
+      ),
+      GoRoute(
+        path: '/subscription-details',
+        name: 'subscription-details',
+        builder: (context, state) => const SubscriptionDetailsScreen(),
       ),
       // ========================================
       // PAID APP ROUTES - Subscription Required
