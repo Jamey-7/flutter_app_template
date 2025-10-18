@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -70,11 +72,16 @@ void main() async {
 
     Logger.log('All services initialized successfully', tag: 'Main');
 
-    // Run app with Riverpod and error handling
+    // Set up global error handlers
+    _setupErrorHandlers();
+
+    // Run app with Riverpod and global error boundary
     runApp(
-      ProviderScope(
-        observers: [AppProviderObserver()],
-        child: const App(),
+      SentryWidget(
+        child: ProviderScope(
+          observers: [AppProviderObserver()],
+          child: const App(),
+        ),
       ),
     );
   } catch (e, stackTrace) {
@@ -160,4 +167,54 @@ void _validateEnvironment() {
   }
 
   Logger.log('Environment validation passed', tag: 'Main');
+}
+
+/// Set up global error handlers for uncaught exceptions
+void _setupErrorHandlers() {
+  // Catch Flutter framework errors (e.g., build errors, widget errors)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    Logger.error(
+      'Flutter framework error',
+      details.exception,
+      details.stack,
+      tag: 'GlobalErrorHandler',
+    );
+
+    // Send to Sentry
+    Sentry.captureException(
+      details.exception,
+      stackTrace: details.stack,
+      hint: Hint.withMap({
+        'context': details.context?.toString(),
+        'library': details.library,
+      }),
+    );
+
+    // In debug mode, also print to console
+    if (kDebugMode) {
+      FlutterError.presentError(details);
+    }
+  };
+
+  // Catch async errors not caught by Flutter framework
+  PlatformDispatcher.instance.onError = (error, stack) {
+    Logger.error(
+      'Uncaught async error',
+      error,
+      stack,
+      tag: 'GlobalErrorHandler',
+    );
+
+    // Send to Sentry
+    Sentry.captureException(
+      error,
+      stackTrace: stack,
+      hint: Hint.withMap({'type': 'async_error'}),
+    );
+
+    // Return true to prevent the error from being rethrown
+    return true;
+  };
+
+  Logger.log('Global error handlers configured', tag: 'Main');
 }

@@ -7,6 +7,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/logger/logger.dart';
+import '../core/network/retry_helper.dart';
 import '../models/subscription_info.dart';
 import 'auth_provider.dart';
 
@@ -79,7 +80,13 @@ class Subscription extends _$Subscription {
 
       Logger.log('Fetching subscription info', tag: 'SubscriptionNotifier');
 
-      final customerInfo = await Purchases.getCustomerInfo();
+      // Fetch customer info with automatic retry on failure
+      final customerInfo = await retryWithBackoff(
+        () => Purchases.getCustomerInfo(),
+        maxRetries: 3,
+        operationName: 'RevenueCat customer info fetch',
+      );
+
       final active = customerInfo.entitlements.active;
 
       if (active.isEmpty) {
@@ -102,11 +109,11 @@ class Subscription extends _$Subscription {
         productIdentifier: entitlement.productIdentifier,
       );
     } on PlatformException catch (e, stackTrace) {
-      Logger.error('RevenueCat platform error', e, stackTrace, tag: 'SubscriptionNotifier');
+      Logger.error('RevenueCat platform error after retries', e, stackTrace, tag: 'SubscriptionNotifier');
       return SubscriptionInfo.free();
     } catch (e, stackTrace) {
       Logger.error(
-        'Failed to fetch subscription info, defaulting to free',
+        'Failed to fetch subscription info after retries, defaulting to free',
         e,
         stackTrace,
         tag: 'SubscriptionNotifier',
