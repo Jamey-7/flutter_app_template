@@ -109,7 +109,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   constraints: BoxConstraints(
                     minHeight: screenHeight - topPadding,
                   ),
-                  child: Center(
+                  child: Align(
+                    alignment: context.isMobile
+                      ? Alignment.topCenter
+                      : Alignment.center,
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         maxWidth: context.responsive<double>(
