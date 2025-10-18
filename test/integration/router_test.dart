@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_template/app.dart';
 import 'package:app_template/features/welcome/screens/welcome_screen.dart';
-import 'package:app_template/features/home/screens/home_screen.dart';
 import 'package:app_template/features/subscriptions/screens/paywall_screen.dart';
 import 'package:app_template/features/settings/screens/settings_screen.dart';
 import '../helpers/test_providers.dart';
@@ -49,7 +48,7 @@ void main() {
       // or be redirected to paywall if accessing protected routes
     });
 
-    testWidgets('Authenticated premium user app loads to home', (tester) async {
+    testWidgets('Authenticated premium user app loads to app', (tester) async {
       final container = createAuthenticatedPremiumContainer();
 
       await tester.pumpWidget(
@@ -63,8 +62,8 @@ void main() {
 
       // Verify app loads
       expect(find.byType(MaterialApp), findsOneWidget);
-      
-      // Premium users should be able to access home screen
+
+      // Premium users should be able to access app screen
     });
   });
 
@@ -136,19 +135,8 @@ void main() {
       expect(find.byType(WelcomeScreen), findsOneWidget);
     });
 
-    testWidgets('Home screen renders for authenticated users', (tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: const HomeScreen(),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Verify home screen loads
-      expect(find.byType(HomeScreen), findsOneWidget);
-    });
+    // Home screen removed - premium users now go directly to /app
+    // Test removed as /home route no longer exists
 
     testWidgets('Paywall screen renders correctly', (tester) async {
       await tester.pumpWidget(

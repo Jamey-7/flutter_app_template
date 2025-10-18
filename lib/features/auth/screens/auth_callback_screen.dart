@@ -63,16 +63,16 @@ class _AuthCallbackScreenState extends ConsumerState<AuthCallbackScreen> {
           Navigator.of(context).pushReplacementNamed('/reset-password');
         }
       } else if (type == 'email_verification' || type == 'signup' || type == 'email') {
-        // Email verification - navigate to home
+        // Email verification - navigate to app
         Logger.log('Email verification callback', tag: 'AuthCallback');
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(context).pushReplacementNamed('/app');
         }
       } else if (type == 'magiclink') {
-        // Magic link login - navigate to home
+        // Magic link login - navigate to app
         Logger.log('Magic link callback', tag: 'AuthCallback');
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(context).pushReplacementNamed('/app');
         }
       } else {
         throw Exception('Unknown callback type: $type');

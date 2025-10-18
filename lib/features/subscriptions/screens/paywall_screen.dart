@@ -395,9 +395,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             message: 'Your subscription is now active. Enjoy all premium features!',
           );
 
-          // Navigate to home
+          // Navigate to app
           if (mounted) {
-            context.go('/home');
+            context.go('/app');
           }
         }
       } else {
@@ -460,8 +460,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       if (mounted) {
         if (hasActiveEntitlement) {
           AppSnackBar.showSuccess(context, 'Purchases restored successfully!');
-          // Navigate to home if subscription is active
-          context.go('/home');
+          // Navigate to app if subscription is active
+          context.go('/app');
         } else {
           AppSnackBar.showInfo(context, 'No active subscriptions found');
         }

@@ -8,7 +8,6 @@ import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
-import '../../features/home/screens/home_screen.dart';
 import '../../features/welcome/screens/welcome_screen.dart';
 import '../../features/settings/screens/change_email_screen.dart';
 import '../../features/settings/screens/change_password_screen.dart';
@@ -43,7 +42,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnResetPasswordPage = state.matchedLocation == '/reset-password';
       final isOnAppRoute = state.matchedLocation.startsWith('/app');
       final isOnPaywallPage = state.matchedLocation == '/paywall';
-      final isOnHomePage = state.matchedLocation == '/home';
       final isOnSettingsRoute = state.matchedLocation.startsWith('/settings');
       final isOnLoadingPage = state.matchedLocation == '/loading';
       final isOnAuthCallback = state.matchedLocation == '/auth-callback';
@@ -61,25 +59,22 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       if (!appState.isLoading && isOnLoadingPage) {
         return isAuthenticated
-            ? (hasActiveSubscription ? '/home' : '/welcome')
+            ? (hasActiveSubscription ? '/app' : '/welcome')
             : '/welcome';
       }
 
       // Authenticated users with active subscription skip welcome/login
       if (isAuthenticated && hasActiveSubscription) {
         if (isOnWelcomePage || isOnLoginPage || isOnSignupPage) {
-          return '/home';
+          return '/app';
         }
       }
 
       // Authenticated users WITHOUT subscription can access welcome, paywall, settings
       if (isAuthenticated && !hasActiveSubscription) {
-        // Block access to /app routes and /home - redirect to welcome
+        // Block access to /app routes - redirect to paywall
         if (isOnAppRoute) {
           return '/paywall';
-        }
-        if (isOnHomePage) {
-          return '/welcome';
         }
         // Allow: /welcome, /paywall, /settings
       }
@@ -87,8 +82,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Unauthenticated users can only access public routes
       if (!isAuthenticated) {
         // Allow: /welcome, /login, /signup, /forgot-password, /auth-callback
-        // Block: /home, /paywall, /settings, /app
-        if (isOnHomePage || isOnPaywallPage || isOnSettingsRoute || isOnAppRoute) {
+        // Block: /paywall, /settings, /app
+        if (isOnPaywallPage || isOnSettingsRoute || isOnAppRoute) {
           return '/welcome';
         }
       }
@@ -161,11 +156,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       // ========================================
       // Protected Routes (Require Authentication)
       // ========================================
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => const HomeScreen(),
-      ),
       GoRoute(
         path: '/settings',
         name: 'settings',
