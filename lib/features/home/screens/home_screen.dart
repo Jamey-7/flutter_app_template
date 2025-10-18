@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../providers/app_state_provider.dart';
 import '../../../providers/auth_provider.dart';
@@ -25,7 +26,7 @@ class HomeScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () {
-              Navigator.of(context).pushNamed('/settings');
+              context.push('/settings');
             },
             tooltip: 'Settings',
           ),
@@ -184,7 +185,7 @@ class HomeScreen extends ConsumerWidget {
                         AppButton.primary(
                           text: 'Go to App',
                           onPressed: () {
-                            Navigator.of(context).pushNamed('/app');
+                            context.push('/app');
                           },
                           icon: Icons.arrow_forward,
                           isFullWidth: true,
