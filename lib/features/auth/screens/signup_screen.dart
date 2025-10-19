@@ -206,7 +206,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             ],
                           ),
 
-                          const SizedBox(height: 35),
+                          const SizedBox(height: 24),
 
                           // Email field
                           Container(
@@ -396,7 +396,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 20),
 
                           // Terms & Privacy disclaimer
                           Padding(
@@ -431,7 +431,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                           // Social sign-in section (hidden until implemented)
                           if (_kEnableSocialSignIn) ...[
-                            const SizedBox(height: 25),
+                            const SizedBox(height: 20),
 
                             // OR divider
                             Row(

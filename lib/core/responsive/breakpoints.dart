@@ -53,7 +53,7 @@ extension ResponsiveExtensions on BuildContext {
     if (isDesktop) return AppSpacing.xxl;
     if (isTablet) return AppSpacing.xl;
     if (isMobile) return AppSpacing.md;
-    return AppSpacing.sm;
+    return AppSpacing.md; // Same padding for small mobile
   }
 
   double get maxContentWidth {

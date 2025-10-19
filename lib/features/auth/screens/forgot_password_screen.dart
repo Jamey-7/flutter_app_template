@@ -215,7 +215,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ],
           ),
 
-          const SizedBox(height: 35),
+          const SizedBox(height: 24),
 
           // Email field
           Container(

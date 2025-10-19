@@ -194,7 +194,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ],
                           ),
 
-                          const SizedBox(height: 35),
+                          const SizedBox(height: 24),
 
                           // Email field
                           Container(
