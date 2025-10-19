@@ -26,7 +26,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
-  bool _acceptedTerms = false;
 
   @override
   void dispose() {
@@ -37,14 +36,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   Future<void> _handleSignUp() async {
     if (!_formKey.currentState!.validate()) return;
-
-    if (!_acceptedTerms) {
-      AppSnackBar.showError(
-        context,
-        'Please accept the Terms & Conditions',
-      );
-      return;
-    }
 
     FocusScope.of(context).unfocus();
     setState(() => _isLoading = true);
@@ -134,21 +125,27 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     alignment: context.isMobile
                       ? Alignment.topCenter
                       : Alignment.center,
-                    child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: context.responsive<double>(
-                            mobile: context.screenWidth,
-                            tablet: 600,
-                            desktop: 500,
+                    child: Transform.translate(
+                      offset: context.responsive<Offset>(
+                        mobile: Offset.zero,
+                        tablet: const Offset(0, -20),
+                        desktop: const Offset(0, -20),
+                      ),
+                      child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: context.responsive<double>(
+                              mobile: context.screenWidth,
+                              tablet: 600,
+                              desktop: 500,
+                            ),
                           ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.responsiveHorizontalPadding,
-                          ),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.responsiveHorizontalPadding,
+                            ),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -156,6 +153,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                               // Top spacing
                               SizedBox(
                                 height: context.responsive<double>(
+                                  smallMobile: 60,
                                   mobile: 80,
                                   tablet: 0,
                                   desktop: 0,
@@ -167,9 +165,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Welcome,',
+                                    'Let\'s Get You,',
                                     style: context.textTheme.displayMedium?.copyWith(
                                       fontSize: context.responsive<double>(
+                                        smallMobile: 38,
                                         mobile: 45,
                                         tablet: 52,
                                         desktop: 60,
@@ -181,9 +180,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                     ),
                                   ),
                                   Text(
-                                    'Sign Up',
+                                    'Signed Up',
                                     style: context.textTheme.displayMedium?.copyWith(
                                       fontSize: context.responsive<double>(
+                                        smallMobile: 38,
                                         mobile: 45,
                                         tablet: 52,
                                         desktop: 60,
@@ -382,69 +382,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 20),
-
-                          // Terms & Conditions checkbox
-                          Row(
-                            children: [
-                              SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: Checkbox(
-                                  value: _acceptedTerms,
-                                  onChanged: _isLoading
-                                      ? null
-                                      : (value) {
-                                          setState(
-                                              () => _acceptedTerms = value ?? false);
-                                        },
-                                  fillColor: WidgetStateProperty.resolveWith(
-                                    (states) {
-                                      if (states.contains(WidgetState.selected)) {
-                                        return AppColors.white;
-                                      }
-                                      return Colors.transparent;
-                                    },
-                                  ),
-                                  checkColor: AppColors.black,
-                                  side: BorderSide(
-                                    color: AppColors.white.withValues(alpha: 0.5),
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text.rich(
-                                  TextSpan(
-                                    text: 'I accept the ',
-                                    style: TextStyle(
-                                      color: AppColors.white.withValues(alpha: 0.9),
-                                      fontSize: 14,
-                                    ),
-                                    children: const [
-                                      TextSpan(
-                                        text: 'Terms & Conditions',
-                                        style: TextStyle(
-                                          color: AppColors.white,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      TextSpan(text: ' and '),
-                                      TextSpan(
-                                        text: 'Privacy Policy',
-                                        style: TextStyle(
-                                          color: AppColors.white,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-
                           const SizedBox(height: 30),
 
                           // Sign Up button
@@ -456,6 +393,39 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                               mobile: 55,
                               tablet: 60,
                               desktop: 60,
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Terms & Privacy disclaimer
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: Text.rich(
+                              TextSpan(
+                                text: 'By signing up you agree to our ',
+                                style: TextStyle(
+                                  color: AppColors.white.withValues(alpha: 0.7),
+                                  fontSize: 13,
+                                ),
+                                children: const [
+                                  TextSpan(
+                                    text: 'Terms & Conditions',
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(text: ' and '),
+                                  TextSpan(
+                                    text: 'Privacy Policy',
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
 
@@ -570,6 +540,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             ],
                           ),
                         ),
+                      ),
                       ),
                     ),
                   ),

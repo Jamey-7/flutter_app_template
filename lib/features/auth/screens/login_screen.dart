@@ -113,21 +113,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     alignment: context.isMobile
                       ? Alignment.topCenter
                       : Alignment.center,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: context.responsive<double>(
-                          mobile: context.screenWidth,
-                          tablet: 600,
-                          desktop: 500,
-                        ),
+                    child: Transform.translate(
+                      offset: context.responsive<Offset>(
+                        mobile: Offset.zero,
+                        tablet: const Offset(0, -20),
+                        desktop: const Offset(0, -20),
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.responsiveHorizontalPadding,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: context.responsive<double>(
+                            mobile: context.screenWidth,
+                            tablet: 600,
+                            desktop: 500,
+                          ),
                         ),
-                        child: Form(
-                      key: _formKey,
-                          child: Column(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.responsiveHorizontalPadding,
+                          ),
+                          child: Form(
+                        key: _formKey,
+                            child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
@@ -135,6 +141,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               // Top spacing
                               SizedBox(
                                 height: context.responsive<double>(
+                                  smallMobile: 60,
                                   mobile: 80,
                                   tablet: 0,
                                   desktop: 0,
@@ -149,6 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     'Hello,',
                                     style: context.textTheme.displayMedium?.copyWith(
                                       fontSize: context.responsive<double>(
+                                        smallMobile: 38,
                                         mobile: 45,
                                         tablet: 52,
                                         desktop: 60,
@@ -163,6 +171,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     'Sign In',
                                     style: context.textTheme.displayMedium?.copyWith(
                                       fontSize: context.responsive<double>(
+                                        smallMobile: 38,
                                         mobile: 45,
                                         tablet: 52,
                                         desktop: 60,
@@ -506,6 +515,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ],
                           ),
                         ),
+                      ),
                       ),
                     ),
                   ),

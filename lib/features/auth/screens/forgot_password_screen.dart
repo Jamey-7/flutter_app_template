@@ -103,19 +103,26 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     alignment: context.isMobile
                       ? Alignment.topCenter
                       : Alignment.center,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: context.responsive<double>(
-                          mobile: context.screenWidth,
-                          tablet: 600,
-                          desktop: 500,
-                        ),
+                    child: Transform.translate(
+                      offset: context.responsive<Offset>(
+                        mobile: Offset.zero,
+                        tablet: const Offset(0, -20),
+                        desktop: const Offset(0, -20),
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.responsiveHorizontalPadding,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: context.responsive<double>(
+                            mobile: context.screenWidth,
+                            tablet: 600,
+                            desktop: 500,
+                          ),
                         ),
-                    child: _emailSent ? _buildSuccessView() : _buildFormView(),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.responsiveHorizontalPadding,
+                          ),
+                      child: _emailSent ? _buildSuccessView() : _buildFormView(),
+                        ),
                       ),
                     ),
                   ),
@@ -155,6 +162,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           // Top spacing
           SizedBox(
             height: context.responsive<double>(
+              smallMobile: 60,
               mobile: 80,
               tablet: 0,
               desktop: 0,
@@ -169,6 +177,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 'Forgot',
                 style: context.textTheme.displayMedium?.copyWith(
                   fontSize: context.responsive<double>(
+                    smallMobile: 38,
                     mobile: 45,
                     tablet: 52,
                     desktop: 60,
@@ -183,6 +192,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 'Password?',
                 style: context.textTheme.displayMedium?.copyWith(
                   fontSize: context.responsive<double>(
+                    smallMobile: 38,
                     mobile: 45,
                     tablet: 52,
                     desktop: 60,
