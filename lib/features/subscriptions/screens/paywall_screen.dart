@@ -56,7 +56,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   Text(
                     'Loading plans...',
                     style: context.textTheme.bodyMedium?.copyWith(
-                      color: Colors.white,
+                      color: AppColors.white,
                     ),
                   ),
                 ],
@@ -88,14 +88,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     children: [
                       const Icon(
                         Icons.error_outline,
-                        color: Colors.white,
+                        color: AppColors.white,
                         size: 48,
                       ),
                       const SizedBox(height: AppSpacing.md),
                       Text(
                         'Failed to load subscription plans',
                         style: context.textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -112,11 +112,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             // Close button
             Positioned(
               top: MediaQuery.of(context).padding.top,
-              right: 12,
+              right: AppSpacing.sm,
               child: IconButton(
                 icon: const Icon(
                   Icons.settings_outlined,
-                  color: Colors.white,
+                  color: AppColors.white,
                   size: 28,
                 ),
                 onPressed: () => context.push('/settings'),
@@ -155,14 +155,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   children: [
                     const Icon(
                       Icons.shopping_bag_outlined,
-                      color: Colors.white,
+                      color: AppColors.white,
                       size: 48,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
                       'No Plans Available',
                       style: context.textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -170,7 +170,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     Text(
                       'Subscription plans are not configured yet. Please try again later.',
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: AppColors.white.withValues(alpha: 0.8),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -187,11 +187,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           // Close button
           Positioned(
             top: MediaQuery.of(context).padding.top,
-            right: 12,
+            right: AppSpacing.sm,
             child: IconButton(
               icon: const Icon(
                 Icons.settings_outlined,
-                color: Colors.white,
+                color: AppColors.white,
                 size: 28,
               ),
               onPressed: () => context.push('/settings'),
@@ -229,14 +229,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   children: [
                     const Icon(
                       Icons.shopping_bag_outlined,
-                      color: Colors.white,
+                      color: AppColors.white,
                       size: 48,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
                       'No Plans Available',
                       style: context.textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -244,7 +244,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     Text(
                       'No subscription packages found.',
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: AppColors.white.withValues(alpha: 0.8),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -261,11 +261,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           // Close button
           Positioned(
             top: MediaQuery.of(context).padding.top,
-            right: 12,
+            right: AppSpacing.sm,
             child: IconButton(
               icon: const Icon(
                 Icons.settings_outlined,
-                color: Colors.white,
+                color: AppColors.white,
                 size: 28,
               ),
               onPressed: () => context.push('/settings'),
@@ -304,13 +304,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: screenHeight - topPadding),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Spacing to prevent overlap with close button
-                    const SizedBox(height: 60.0),
+                    const SizedBox(height: AppSpacing.xxxl),
 
                     // Bottom Content
                     Column(
@@ -318,31 +318,27 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       children: [
                         // Header
                         _buildHeader(),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: AppSpacing.xl),
 
                         // Product Cards
                         ...packages.map((package) => _buildProductCard(package)),
 
-                        const SizedBox(height: 8.0),
+                        const SizedBox(height: AppSpacing.sm),
 
                         // Subscribe Button
                         _buildSubscribeButton(),
 
-                        const SizedBox(height: 0.0),
-
                         // Restore Purchases Button
                         _buildRestoreButton(),
-
-                        const SizedBox(height: 0.0),
 
                         // Terms & Conditions
                         _buildTermsFooter(),
 
-                        const SizedBox(height: 30),
+                        const SizedBox(height: AppSpacing.xl),
                       ],
                     ),
 
-                    const SizedBox(height: 20.0),
+                    const SizedBox(height: AppSpacing.lg),
                   ],
                 ),
               ),
@@ -353,11 +349,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         // Close button positioned over the image
         Positioned(
           top: topPadding,
-          left: 12,
+          left: AppSpacing.sm,
           child: IconButton(
             icon: const Icon(
               Icons.close_rounded,
-              color: Colors.white,
+              color: AppColors.white,
               size: 28,
             ),
             onPressed: () => Navigator.of(context).pop(),
@@ -367,11 +363,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         // Settings button in top right
         Positioned(
           top: topPadding,
-          right: 12,
+          right: AppSpacing.sm,
           child: IconButton(
             icon: const Icon(
               Icons.settings_outlined,
-              color: Colors.white,
+              color: AppColors.white,
               size: 28,
             ),
             onPressed: () => context.push('/settings'),
@@ -388,67 +384,65 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       children: [
         Text(
           'Unlock',
-          style: const TextStyle(
+          style: context.textTheme.displayMedium?.copyWith(
+            color: AppColors.white,
             fontSize: 48,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
             height: 1.2,
             letterSpacing: -1,
           ),
         ),
         Text(
           'Access',
-          style: const TextStyle(
+          style: context.textTheme.displayMedium?.copyWith(
+            color: AppColors.white,
             fontSize: 48,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
             height: 1.2,
             letterSpacing: -1,
           ),
         ),
         Text(
           'Now',
-          style: const TextStyle(
+          style: context.textTheme.displayMedium?.copyWith(
+            color: AppColors.white,
             fontSize: 48,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
             height: 1.2,
             letterSpacing: -1,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.lg),
         Row(
           children: [
             Icon(
               Icons.auto_awesome,
-              color: Colors.white.withValues(alpha: 0.9),
+              color: AppColors.white.withValues(alpha: 0.9),
               size: 24,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.sm),
             Text(
               'All Features Included',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 16,
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: AppColors.white.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.sm),
         Row(
           children: [
             Icon(
               Icons.devices,
-              color: Colors.white.withValues(alpha: 0.9),
+              color: AppColors.white.withValues(alpha: 0.9),
               size: 24,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.sm),
             Text(
               'All Platforms Supported',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 16,
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: AppColors.white.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -471,36 +465,36 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         });
       },
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 10.0),
+        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             Card(
               color: Colors.transparent,
-              elevation: 0,
-              margin: const EdgeInsets.only(top: 5.0, bottom: 0.0),
+              elevation: AppElevation.none,
+              margin: const EdgeInsets.only(top: AppSpacing.xs, bottom: 0.0),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.circular(AppRadius.xxlarge),
               ),
               child: Container(
                 padding: isSelected ? const EdgeInsets.all(1.5) : EdgeInsets.zero,
                 decoration: BoxDecoration(
                   gradient: isSelected ? AppGradients.brandAccent : null,
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(AppRadius.xxlarge),
                 ),
                 child: Container(
                   decoration: BoxDecoration(
                     color: AppColors.authButtonBackground,
-                    borderRadius: BorderRadius.circular(18.0),
+                    borderRadius: BorderRadius.circular(AppRadius.xxlarge - 2),
                     border: isSelected
                         ? null
                         : Border.all(
-                            color: Colors.white.withValues(alpha: 0.2),
+                            color: AppColors.authBorderLight,
                             width: 1.5,
                           ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 18),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.md + 2),
                     child: ListTile(
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,19 +502,16 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         children: [
                           Text(
                             isYearly ? 'Yearly' : 'Monthly',
-                            style: const TextStyle(
-                              fontSize: 16.0,
+                            style: context.textTheme.titleMedium?.copyWith(
+                              color: AppColors.white,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 0.2,
-                              color: Colors.white,
                             ),
                           ),
                           Text(
                             isYearly ? '\$0.38 / week' : '\$1.25 / week',
-                            style: const TextStyle(
-                              fontSize: 12.0,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: AppColors.white,
                               fontWeight: FontWeight.w500,
-                              color: Colors.white,
                             ),
                           ),
                         ],
@@ -536,34 +527,33 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                 isYearly
                                     ? '${product.priceString} / Year'
                                     : '${product.priceString} / Month',
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: context.textTheme.bodyMedium?.copyWith(
+                                  color: AppColors.white,
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 14,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(width: 10.0),
+                          const SizedBox(width: AppSpacing.sm),
                           Container(
                             width: 24,
                             height: 24,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: isSelected
-                                  ? const Color(0xFF19A2E6)
+                                  ? AppColors.gradientEnd
                                   : Colors.transparent,
                               border: Border.all(
                                 color: isSelected
-                                    ? const Color(0xFF19A2E6)
-                                    : Colors.white.withValues(alpha: 0.7),
+                                    ? AppColors.gradientEnd
+                                    : AppColors.white.withValues(alpha: 0.7),
                                 width: 2,
                               ),
                             ),
                             child: isSelected
                                 ? const Icon(
                                     Icons.check,
-                                    color: Colors.white,
+                                    color: AppColors.white,
                                     size: 16,
                                   )
                                 : Container(),
@@ -583,10 +573,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   padding: isSelected ? const EdgeInsets.all(1.5) : EdgeInsets.zero,
                   decoration: BoxDecoration(
                     gradient: isSelected ? AppGradients.brandAccent : null,
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(AppRadius.xxlarge),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
+                        color: AppColors.authShadow,
                         blurRadius: 4,
                         spreadRadius: 0,
                         offset: const Offset(0, 2),
@@ -594,23 +584,22 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     ],
                   ),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs + 1, horizontal: AppSpacing.sm + 2),
                     decoration: BoxDecoration(
                       color: AppColors.authButtonBackground,
-                      borderRadius: BorderRadius.circular(20.0),
+                      borderRadius: BorderRadius.circular(AppRadius.xxlarge),
                       border: !isSelected
                           ? Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: AppColors.authBorderLight,
                               width: 2,
                             )
                           : null,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Best Value',
-                      style: TextStyle(
-                        color: Colors.white,
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: AppColors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 12.5,
                       ),
                     ),
                   ),
@@ -643,15 +632,15 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       child: Container(
         padding: const EdgeInsets.all(1.5),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50.0),
+          borderRadius: BorderRadius.circular(AppRadius.circular),
           gradient: AppGradients.brandAccent,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: AppColors.authShadow,
               blurRadius: 10,
               spreadRadius: 0,
               offset: const Offset(0, 3),
@@ -663,12 +652,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               ? () => _handlePurchase(selectedPackage)
               : null,
           style: ElevatedButton.styleFrom(
-            elevation: 0,
+            elevation: AppElevation.none,
             backgroundColor: AppColors.authButtonBackground,
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            textStyle: const TextStyle(fontSize: 18.0),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
+              borderRadius: BorderRadius.circular(AppRadius.circular),
             ),
           ),
           child: _isPurchasing
@@ -677,13 +665,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   width: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
                   ),
                 )
-              : const Text(
+              : Text(
                   'Subscribe',
-                  style: TextStyle(
-                    color: Colors.white,
+                  style: context.textTheme.labelLarge?.copyWith(
+                    color: AppColors.white,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
@@ -698,17 +686,16 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     return TextButton(
       onPressed: _isRestoring ? null : _handleRestorePurchases,
       style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.md),
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(AppRadius.circular),
         ),
       ),
       child: Text(
         _isRestoring ? 'Restoring...' : 'Restore Purchase',
-        style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.8),
-          fontSize: 15.0,
+        style: context.textTheme.labelLarge?.copyWith(
+          color: AppColors.white.withValues(alpha: 0.8),
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -717,13 +704,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
   Widget _buildTermsFooter() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       child: Text(
         'Cancel anytime in App Store. Subscriptions renew automatically. By subscribing you accept our Privacy Policy & Terms.',
-        style: const TextStyle(
-          fontSize: 12.0,
+        style: context.textTheme.bodySmall?.copyWith(
+          color: AppColors.white,
           height: 1.5,
-          color: Colors.white,
         ),
         textAlign: TextAlign.center,
       ),
