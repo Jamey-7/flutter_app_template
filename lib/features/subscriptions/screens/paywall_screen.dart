@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../../core/logger/logger.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/responsive/breakpoints.dart';
 import '../providers/offerings_provider.dart';
 import '../providers/subscription_provider.dart';
 import '../../../shared/widgets/app_button.dart';
@@ -310,7 +311,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Spacing to prevent overlap with close button
-                    const SizedBox(height: AppSpacing.xxxl),
+                    SizedBox(
+                      height: context.responsive<double>(
+                        smallMobile: 60,
+                        mobile: 80,
+                        tablet: 40,
+                        desktop: 40,
+                      ),
+                    ),
 
                     // Bottom Content
                     Column(
@@ -386,7 +394,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           'Unlock',
           style: context.textTheme.displayMedium?.copyWith(
             color: AppColors.white,
-            fontSize: 48,
+            fontSize: context.responsive<double>(
+              smallMobile: 38,
+              mobile: 45,
+              tablet: 52,
+              desktop: 60,
+            ),
             fontWeight: FontWeight.w800,
             height: 1.2,
             letterSpacing: -1,
@@ -396,7 +409,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           'Access',
           style: context.textTheme.displayMedium?.copyWith(
             color: AppColors.white,
-            fontSize: 48,
+            fontSize: context.responsive<double>(
+              smallMobile: 38,
+              mobile: 45,
+              tablet: 52,
+              desktop: 60,
+            ),
             fontWeight: FontWeight.w800,
             height: 1.2,
             letterSpacing: -1,
@@ -406,7 +424,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           'Now',
           style: context.textTheme.displayMedium?.copyWith(
             color: AppColors.white,
-            fontSize: 48,
+            fontSize: context.responsive<double>(
+              smallMobile: 38,
+              mobile: 45,
+              tablet: 52,
+              desktop: 60,
+            ),
             fontWeight: FontWeight.w800,
             height: 1.2,
             letterSpacing: -1,
@@ -425,6 +448,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               'All Features Included',
               style: context.textTheme.bodyLarge?.copyWith(
                 color: AppColors.white.withValues(alpha: 0.9),
+                fontSize: context.responsive<double>(
+                  smallMobile: 14,
+                  mobile: 16,
+                  tablet: 18,
+                  desktop: 18,
+                ),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -443,6 +472,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               'All Platforms Supported',
               style: context.textTheme.bodyLarge?.copyWith(
                 color: AppColors.white.withValues(alpha: 0.9),
+                fontSize: context.responsive<double>(
+                  smallMobile: 14,
+                  mobile: 16,
+                  tablet: 18,
+                  desktop: 18,
+                ),
                 fontWeight: FontWeight.w500,
               ),
             ),
