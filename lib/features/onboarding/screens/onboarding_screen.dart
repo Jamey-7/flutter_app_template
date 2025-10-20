@@ -39,11 +39,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
   }
 
-  void _skipToSignup() {
-    // Push to signup so user can go back to onboarding if needed
-    context.push('/signup');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,13 +54,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             },
             tooltip: 'Toggle theme',
           ),
-          // Skip button (only show on first page)
-          if (_currentPage == 0)
-            TextButton(
-              onPressed: _skipToSignup,
-              child: const Text('Skip'),
-            ),
-          const SizedBox(width: AppSpacing.sm),
         ],
       ),
       body: SafeArea(
@@ -136,238 +124,95 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Widget _buildPage1(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: EdgeInsets.all(context.responsivePadding),
       child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 500),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: AppSpacing.xxl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Hero icon
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              decoration: BoxDecoration(
+                color: context.colors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.flutter_dash,
+                size: 100,
+                color: context.colors.primary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xxl),
 
-              // Hero icon
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.xl),
-                decoration: BoxDecoration(
-                  color: context.colors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.flutter_dash,
-                  size: 100,
-                  color: context.colors.primary,
-                ),
+            // Title
+            Text(
+              'Welcome to\nApp Template',
+              style: context.textTheme.displaySmall?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: AppSpacing.xxl),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.md),
 
-              // Title
-              Text(
-                'Welcome to\nApp Template',
-                style: context.textTheme.displaySmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
+            // Subtitle
+            Text(
+              'Your powerful subscription-based app\nbuilt with Flutter',
+              style: context.textTheme.titleMedium?.copyWith(
+                color: AppColors.textSecondary,
               ),
-              const SizedBox(height: AppSpacing.md),
-
-              // Subtitle
-              Text(
-                'Your powerful subscription-based app\nbuilt with Flutter',
-                style: context.textTheme.titleMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.xxl),
-
-              // Value proposition
-              _buildFeatureHighlight(
-                icon: Icons.star,
-                title: 'Premium Features',
-                description: 'Access exclusive tools and content designed for your success',
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              _buildFeatureHighlight(
-                icon: Icons.security,
-                title: 'Secure & Private',
-                description: 'Your data is protected with enterprise-grade security',
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              _buildFeatureHighlight(
-                icon: Icons.support_agent,
-                title: 'Priority Support',
-                description: 'Get help when you need it from our dedicated team',
-              ),
-            ],
-          ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildPage2(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: EdgeInsets.all(context.responsivePadding),
       child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 500),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: AppSpacing.xxl),
-
-              // Hero icon
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.xl),
-                decoration: BoxDecoration(
-                  color: AppColors.secondary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.workspace_premium,
-                  size: 100,
-                  color: AppColors.secondary,
-                ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Hero icon
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              decoration: BoxDecoration(
+                color: AppColors.secondary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
               ),
-              const SizedBox(height: AppSpacing.xxl),
-
-              // Title
-              Text(
-                'Everything You Need',
-                style: context.textTheme.displaySmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
+              child: Icon(
+                Icons.workspace_premium,
+                size: 100,
+                color: AppColors.secondary,
               ),
-              const SizedBox(height: AppSpacing.md),
+            ),
+            const SizedBox(height: AppSpacing.xxl),
 
-              // Subtitle
-              Text(
-                'Start your journey with these amazing features',
-                style: context.textTheme.titleMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
+            // Title
+            Text(
+              'Everything You Need',
+              style: context.textTheme.displaySmall?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: AppSpacing.xxl),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.md),
 
-              // Feature list
-              _buildChecklistItem('Full access to all premium features'),
-              const SizedBox(height: AppSpacing.md),
-              _buildChecklistItem('Regular updates and improvements'),
-              const SizedBox(height: AppSpacing.md),
-              _buildChecklistItem('Ad-free experience'),
-              const SizedBox(height: AppSpacing.md),
-              _buildChecklistItem('Sync across all your devices'),
-              const SizedBox(height: AppSpacing.md),
-              _buildChecklistItem('Cancel anytime, no commitments'),
-              const SizedBox(height: AppSpacing.xxl),
-
-              // Call to action
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                decoration: BoxDecoration(
-                  color: context.colors.primary.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(AppRadius.large),
-                  border: Border.all(
-                    color: context.colors.primary.withValues(alpha: 0.2),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.rocket_launch,
-                      size: 48,
-                      color: context.colors.primary,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      'Ready to get started?',
-                      style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      'Create your account and unlock premium features today',
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+            // Subtitle
+            Text(
+              'Start your journey with these amazing features',
+              style: context.textTheme.titleMedium?.copyWith(
+                color: AppColors.textSecondary,
               ),
-            ],
-          ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildFeatureHighlight({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: BoxDecoration(
-            color: context.colors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(AppRadius.medium),
-          ),
-          child: Icon(
-            icon,
-            color: context.colors.primary,
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                description,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildChecklistItem(String text) {
-    return Row(
-      children: [
-        Icon(
-          Icons.check_circle,
-          color: AppColors.success,
-          size: 24,
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Text(
-            text,
-            style: context.textTheme.bodyLarge,
-          ),
-        ),
-      ],
-    );
-  }
 }
