@@ -34,13 +34,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      // Navigate to signup after last page
-      context.go('/signup');
+      // Navigate to signup after last page (push so user can go back)
+      context.push('/signup');
     }
   }
 
   void _skipToSignup() {
-    context.go('/signup');
+    // Push to signup so user can go back to onboarding if needed
+    context.push('/signup');
   }
 
   @override
