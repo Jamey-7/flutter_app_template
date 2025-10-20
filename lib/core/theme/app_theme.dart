@@ -240,7 +240,7 @@ class AppColors {
   static const Color surfaceDark = grey900;
 
   // Gradient colors - Brand accent (used in buttons, borders, decorative elements)
-  static const Color gradientStart = Color(0xFF10B981); // Green
+  static const Color gradientStart = Color(0xFFFA6464); // Red
   static const Color gradientEnd = Color(0xFF19A2E6); // Blue
 
   // Overlay colors (used for image overlays)
