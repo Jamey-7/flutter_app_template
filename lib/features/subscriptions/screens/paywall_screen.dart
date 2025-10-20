@@ -35,11 +35,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Subscription Required'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => context.go('/welcome'),
-          tooltip: 'Close',
-        ),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => context.push('/settings'),
+            tooltip: 'Settings',
+          ),
+        ],
       ),
       body: SafeArea(
         child: offeringsAsync.when(

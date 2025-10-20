@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 import '../providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/responsive/breakpoints.dart';
+import '../../../core/services/onboarding_service.dart';
 import '../../../shared/widgets/auth_button.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/forms/validators.dart';
@@ -47,9 +48,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         password: _passwordController.text,
       );
 
-      // Navigate to welcome screen - router will handle redirect based on subscription
+      // Mark onboarding as complete on successful sign in
+      await OnboardingService.markOnboardingComplete();
+
+      // Navigate - router will handle redirect based on auth/subscription
       if (mounted) {
-        context.go('/welcome');
+        context.go('/app');
       }
     } on AuthFailure catch (e) {
       if (mounted) {

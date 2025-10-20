@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import '../providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/responsive/breakpoints.dart';
+import '../../../core/services/onboarding_service.dart';
 import '../../../shared/widgets/auth_button.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/forms/validators.dart';
@@ -48,13 +49,16 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         password: _passwordController.text,
       );
 
+      // Mark onboarding as complete on successful sign up
+      await OnboardingService.markOnboardingComplete();
+
       if (mounted) {
         // If email confirmation is disabled, user gets session immediately
         // If email confirmation is enabled, session will be null
         if (response.session != null) {
-          // User logged in immediately - go to welcome
+          // User logged in immediately - router will redirect to paywall or app
           AppSnackBar.showSuccess(context, 'Account created successfully!');
-          context.go('/welcome');
+          context.go('/app');
         } else {
           // Email verification required - go to pending screen
           context.pushReplacement(

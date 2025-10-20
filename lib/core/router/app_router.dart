@@ -8,7 +8,7 @@ import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
-import '../../features/welcome/screens/welcome_screen.dart';
+import '../../features/onboarding/screens/onboarding_screen.dart';
 import '../../features/settings/screens/change_email_screen.dart';
 import '../../features/settings/screens/change_password_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
@@ -16,6 +16,7 @@ import '../../features/subscriptions/screens/paywall_screen.dart';
 import '../../features/subscriptions/screens/subscription_details_screen.dart';
 import '../../shared/widgets/loading_screen.dart';
 import '../logger/logger.dart';
+import '../services/onboarding_service.dart';
 import 'router_refresh_notifier.dart';
 
 /// Router provider with route guards
@@ -23,10 +24,10 @@ final routerProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ref.watch(routerRefreshProvider);
 
   final router = GoRouter(
-    initialLocation: '/welcome',
+    initialLocation: '/onboarding',
     debugLogDiagnostics: true,
     refreshListenable: refreshNotifier,
-    redirect: (context, state) {
+    redirect: (context, state) async {
       final appState = refreshNotifier.appState;
       
       if (appState.isLoading) {
@@ -39,13 +40,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           'Exiting loading screen due to app state error',
           tag: 'Router',
         );
-        return '/welcome';
+        final hasSeenOnboarding = await OnboardingService.hasCompletedOnboarding();
+        return hasSeenOnboarding ? '/login' : '/onboarding';
       }
 
       final isAuthenticated = appState.isAuthenticated;
       final hasActiveSubscription = appState.hasActiveSubscription;
 
-      final isOnWelcomePage = state.matchedLocation == '/welcome';
+      final isOnOnboardingPage = state.matchedLocation == '/onboarding';
       final isOnLoginPage = state.matchedLocation == '/login';
       final isOnSignupPage = state.matchedLocation == '/signup';
       final isOnForgotPasswordPage = state.matchedLocation == '/forgot-password';
@@ -61,6 +63,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Allow auth-related pages without authentication check
       if (isOnAuthCallback ||
           isOnSignupPage ||
+          isOnLoginPage ||
           isOnForgotPasswordPage ||
           isOnResetPasswordPage ||
           isOnEmailVerificationPending) {
@@ -68,33 +71,46 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       if (!appState.isLoading && isOnLoadingPage) {
-        return isAuthenticated
-            ? (hasActiveSubscription ? '/app' : '/welcome')
-            : '/welcome';
+        if (isAuthenticated) {
+          return hasActiveSubscription ? '/app' : '/paywall';
+        } else {
+          final hasSeenOnboarding = await OnboardingService.hasCompletedOnboarding();
+          return hasSeenOnboarding ? '/login' : '/onboarding';
+        }
       }
 
-      // Authenticated users with active subscription skip welcome/login
+      // Authenticated users with active subscription skip onboarding
       if (isAuthenticated && hasActiveSubscription) {
-        if (isOnWelcomePage || isOnLoginPage || isOnSignupPage) {
+        if (isOnOnboardingPage || isOnLoginPage || isOnSignupPage) {
           return '/app';
         }
       }
 
-      // Authenticated users WITHOUT subscription can access welcome, paywall, settings
+      // Authenticated users WITHOUT subscription can access paywall, settings
       if (isAuthenticated && !hasActiveSubscription) {
+        // Skip onboarding for authenticated users
+        if (isOnOnboardingPage) {
+          return '/paywall';
+        }
         // Block access to /app routes - redirect to paywall
         if (isOnAppRoute) {
           return '/paywall';
         }
-        // Allow: /welcome, /paywall, /settings
+        // Allow: /paywall, /settings
       }
 
-      // Unauthenticated users can only access public routes
+      // Unauthenticated users - check onboarding status
       if (!isAuthenticated) {
-        // Allow: /welcome, /login, /signup, /forgot-password, /auth-callback
+        final hasSeenOnboarding = await OnboardingService.hasCompletedOnboarding();
+
+        // If haven't seen onboarding and not on onboarding page, redirect there
+        if (!hasSeenOnboarding && !isOnOnboardingPage) {
+          return '/onboarding';
+        }
+
         // Block: /paywall, /settings, /app
         if (isOnPaywallPage || isOnSettingsRoute || isOnAppRoute) {
-          return '/welcome';
+          return hasSeenOnboarding ? '/login' : '/onboarding';
         }
       }
 
@@ -125,12 +141,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LoadingScreen(),
       ),
       // ========================================
-      // Welcome/Landing Screen (Default Entry)
+      // Onboarding Screen (Default Entry)
       // ========================================
       GoRoute(
-        path: '/welcome',
-        name: 'welcome',
-        builder: (context, state) => const WelcomeScreen(),
+        path: '/onboarding',
+        name: 'onboarding',
+        builder: (context, state) => const OnboardingScreen(),
       ),
       // ========================================
       // Authentication Routes (Public)

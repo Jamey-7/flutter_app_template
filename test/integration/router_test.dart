@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_template/app.dart';
-import 'package:app_template/features/welcome/screens/welcome_screen.dart';
+import 'package:app_template/features/onboarding/screens/onboarding_screen.dart';
 import 'package:app_template/features/subscriptions/screens/paywall_screen.dart';
 import 'package:app_template/features/settings/screens/settings_screen.dart';
 import '../helpers/test_providers.dart';
 
 void main() {
   group('Router Integration Tests - App Loading', () {
-    testWidgets('Unauthenticated app loads to welcome screen', (tester) async {
+    testWidgets('Unauthenticated app loads to onboarding screen', (tester) async {
       final container = createUnauthenticatedContainer();
 
       await tester.pumpWidget(
@@ -23,13 +23,13 @@ void main() {
 
       // Verify app loads without crashing
       expect(find.byType(MaterialApp), findsOneWidget);
-      
-      // Should show welcome screen (unauthenticated view)
+
+      // Should show onboarding screen (unauthenticated users)
       // Note: Actual routing behavior depends on router implementation
       // This verifies the app structure loads correctly
     });
 
-    testWidgets('Authenticated free user app loads', (tester) async {
+    testWidgets('Authenticated free user app loads to paywall', (tester) async {
       final container = createAuthenticatedFreeContainer();
 
       await tester.pumpWidget(
@@ -43,9 +43,8 @@ void main() {
 
       // Verify app loads
       expect(find.byType(MaterialApp), findsOneWidget);
-      
-      // Free users should see welcome screen (authenticated view)
-      // or be redirected to paywall if accessing protected routes
+
+      // Free users should see paywall (authenticated view without subscription)
     });
 
     testWidgets('Authenticated premium user app loads to app', (tester) async {
@@ -120,19 +119,19 @@ void main() {
   });
 
   group('Screen Rendering Tests', () {
-    testWidgets('Welcome screen renders for unauthenticated users', (tester) async {
+    testWidgets('Onboarding screen renders for unauthenticated users', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
-            home: const WelcomeScreen(),
+            home: const OnboardingScreen(),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Verify welcome screen elements
-      // Note: Specific text depends on welcome screen implementation
-      expect(find.byType(WelcomeScreen), findsOneWidget);
+      // Verify onboarding screen elements
+      // Note: Specific text depends on onboarding screen implementation
+      expect(find.byType(OnboardingScreen), findsOneWidget);
     });
 
     // Home screen removed - premium users now go directly to /app
