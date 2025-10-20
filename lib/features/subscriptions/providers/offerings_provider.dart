@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
@@ -26,10 +28,19 @@ Future<Offerings?> offerings(Ref ref) async {
   try {
     Logger.log('Fetching RevenueCat offerings', tag: 'OfferingsProvider');
 
-    // Fetch offerings with automatic retry on failure
+    // Fetch offerings with automatic retry on failure and 15 second timeout
     final offerings = await retryWithBackoff(
-      () => SubscriptionService.getOfferings(),
-      maxRetries: 3,
+      () => SubscriptionService.getOfferings().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          Logger.warning(
+            'RevenueCat getOfferings timed out after 15 seconds',
+            tag: 'OfferingsProvider',
+          );
+          throw TimeoutException('RevenueCat offerings request timed out');
+        },
+      ),
+      maxRetries: 2,
       operationName: 'RevenueCat offerings fetch',
     );
 
@@ -45,6 +56,14 @@ Future<Offerings?> offerings(Ref ref) async {
     );
 
     return offerings;
+  } on TimeoutException catch (e, stackTrace) {
+    Logger.error(
+      'RevenueCat offerings request timed out',
+      e,
+      stackTrace,
+      tag: 'OfferingsProvider',
+    );
+    rethrow;
   } catch (e, stackTrace) {
     Logger.error(
       'Failed to fetch offerings after retries',

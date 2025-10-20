@@ -73,8 +73,9 @@ Edit `.env` with your keys:
 ```env
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your_anon_key_here
-REVENUECAT_API_KEY=your_revenuecat_key  # Optional
-SENTRY_DSN=your_sentry_dsn              # Optional
+REVENUECAT_IOS_API_KEY=appl_your_ios_key      # Optional
+REVENUECAT_ANDROID_API_KEY=goog_your_android_key  # Optional
+SENTRY_DSN=your_sentry_dsn                    # Optional
 ```
 
 **Get Supabase keys:**

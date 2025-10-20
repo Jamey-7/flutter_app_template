@@ -43,29 +43,25 @@ Complete guide for setting up RevenueCat subscriptions across all supported plat
 
 ## 2️⃣ Get API Keys
 
-### Public SDK Key
+### Platform-Specific Public SDK Keys
 
-1. In RevenueCat dashboard, go to **Settings** → **API Keys**
-2. Copy the **Public SDK Key**
-   - iOS/macOS: Starts with `appl_`
-   - Android: Starts with `goog_`
-3. Add to your `.env` file:
-   ```
-   REVENUECAT_API_KEY=appl_xxxxxxxxxx
+**You need SEPARATE API keys for iOS and Android platforms.**
+
+1. In RevenueCat dashboard, go to **Project Settings** → **API Keys**
+2. Under **App specific keys**, you'll see separate keys for each app:
+   - **iOS/macOS app**: Key starts with `appl_`
+   - **Android app**: Key starts with `goog_`
+3. Copy both keys and add to your `.env` file:
+   ```env
+   REVENUECAT_IOS_API_KEY=appl_xxxxxxxxxx
+   REVENUECAT_ANDROID_API_KEY=goog_xxxxxxxxxx
    ```
 
 **Important:**
-- Use the **public** SDK key (safe to include in app)
+- Use the **public** SDK keys (safe to include in app)
 - Never use the secret API key in your app
-- Different keys for iOS and Android (or use cross-platform key)
-
-### Cross-Platform Key (Recommended)
-
-RevenueCat can generate a single key that works on all platforms:
-
-1. Go to **Settings** → **API Keys**
-2. Enable "Cross-platform key"
-3. Use this single key for all platforms
+- iOS and macOS use the **same** `appl_` key
+- Each platform needs its own key for proper product/subscription handling
 
 ---
 

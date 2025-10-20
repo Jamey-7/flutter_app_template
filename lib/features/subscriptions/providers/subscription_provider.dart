@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
@@ -94,10 +95,19 @@ class Subscription extends _$Subscription {
 
       Logger.log('Fetching subscription info', tag: 'SubscriptionNotifier');
 
-      // Fetch customer info with automatic retry on failure
+      // Fetch customer info with automatic retry on failure and 15 second timeout
       final customerInfo = await retryWithBackoff(
-        () => Purchases.getCustomerInfo(),
-        maxRetries: 3,
+        () => Purchases.getCustomerInfo().timeout(
+          const Duration(seconds: 15),
+          onTimeout: () {
+            Logger.warning(
+              'RevenueCat getCustomerInfo timed out after 15 seconds',
+              tag: 'SubscriptionNotifier',
+            );
+            throw TimeoutException('RevenueCat request timed out');
+          },
+        ),
+        maxRetries: 2,
         operationName: 'RevenueCat customer info fetch',
       );
 
@@ -125,6 +135,14 @@ class Subscription extends _$Subscription {
     } on PlatformException catch (e, stackTrace) {
       Logger.error('RevenueCat platform error after retries', e, stackTrace, tag: 'SubscriptionNotifier');
       return SubscriptionInfo.free();
+    } on TimeoutException catch (e, stackTrace) {
+      Logger.error(
+        'RevenueCat request timed out, defaulting to free tier',
+        e,
+        stackTrace,
+        tag: 'SubscriptionNotifier',
+      );
+      return SubscriptionInfo.free();
     } catch (e, stackTrace) {
       Logger.error(
         'Failed to fetch subscription info after retries, defaulting to free',
@@ -141,13 +159,48 @@ class Subscription extends _$Subscription {
 class SubscriptionService {
   static bool _isInitialized = false;
 
-  /// Initialize RevenueCat with API key
-  static Future<void> initialize(String apiKey) async {
+  /// Initialize RevenueCat with platform-specific API keys
+  static Future<void> initialize({
+    String? iosApiKey,
+    String? androidApiKey,
+  }) async {
     try {
       Logger.log('Initializing RevenueCat', tag: 'SubscriptionService');
+      
       if (!_isRevenueCatSupported()) {
         Logger.warning(
           'Skipping RevenueCat initialization: unsupported platform',
+          tag: 'SubscriptionService',
+        );
+        return;
+      }
+
+      // Detect platform and use appropriate key
+      String? apiKey;
+      if (Platform.isIOS || Platform.isMacOS) {
+        apiKey = iosApiKey;
+        if (apiKey == null || apiKey.isEmpty) {
+          Logger.warning(
+            'RevenueCat iOS API key not configured',
+            tag: 'SubscriptionService',
+          );
+          return;
+        }
+      } else if (Platform.isAndroid) {
+        apiKey = androidApiKey;
+        if (apiKey == null || apiKey.isEmpty) {
+          Logger.warning(
+            'RevenueCat Android API key not configured',
+            tag: 'SubscriptionService',
+          );
+          return;
+        }
+      }
+
+      // Final safety check (should never happen due to platform checks above)
+      if (apiKey == null || apiKey.isEmpty) {
+        Logger.warning(
+          'RevenueCat API key not available for this platform',
           tag: 'SubscriptionService',
         );
         return;

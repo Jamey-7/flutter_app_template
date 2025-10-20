@@ -55,17 +55,25 @@ void main() async {
     );
     Logger.log('Supabase initialized', tag: 'Main');
 
-    // Initialize RevenueCat
-    final revenueCatApiKey =
-        dotenv.env['REVENUECAT_API_KEY'] ?? const String.fromEnvironment('REVENUECAT_API_KEY');
-    if (revenueCatApiKey.isNotEmpty && 
-        revenueCatApiKey != 'your_revenuecat_api_key') {
+    // Initialize RevenueCat with platform-specific keys
+    final revenueCatIosKey =
+        dotenv.env['REVENUECAT_IOS_API_KEY'] ?? 
+        const String.fromEnvironment('REVENUECAT_IOS_API_KEY');
+    final revenueCatAndroidKey =
+        dotenv.env['REVENUECAT_ANDROID_API_KEY'] ?? 
+        const String.fromEnvironment('REVENUECAT_ANDROID_API_KEY');
+    
+    if ((revenueCatIosKey.isNotEmpty && revenueCatIosKey != 'your_revenuecat_ios_api_key') ||
+        (revenueCatAndroidKey.isNotEmpty && revenueCatAndroidKey != 'your_revenuecat_android_api_key')) {
       Logger.log('Initializing RevenueCat...', tag: 'Main');
-      await SubscriptionService.initialize(revenueCatApiKey);
+      await SubscriptionService.initialize(
+        iosApiKey: revenueCatIosKey,
+        androidApiKey: revenueCatAndroidKey,
+      );
       Logger.log('RevenueCat initialized', tag: 'Main');
     } else {
       Logger.warning(
-        'RevenueCat API key not configured, subscription features will use free tier',
+        'RevenueCat API keys not configured, subscription features will use free tier',
         tag: 'Main',
       );
     }
