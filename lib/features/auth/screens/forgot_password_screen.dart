@@ -7,6 +7,9 @@ import '../../../core/responsive/breakpoints.dart';
 import '../../../shared/widgets/auth_button.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/forms/validators.dart';
+import '../widgets/auth_scaffold.dart';
+import '../widgets/auth_text_field.dart';
+import '../widgets/auth_title.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -56,98 +59,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Stack(
-          children: [
-            // Background Image
-            Image.asset(
-              'assets/images/login-image.png',
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.cover,
-            ),
-
-            // Gradient Overlay
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.black.withValues(alpha: 0.4),
-                    AppColors.black.withValues(alpha: 0.6),
-                    AppColors.black.withValues(alpha: 0.9),
-                    AppColors.black,
-                  ],
-                  stops: const [0.0, 0.3, 0.7, 1.0],
-                ),
-              ),
-            ),
-
-            // Main content
-            SafeArea(
-              child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: screenHeight - topPadding,
-                  ),
-                  child: Align(
-                    alignment: context.isMobile
-                      ? Alignment.topCenter
-                      : Alignment.center,
-                    child: Transform.translate(
-                      offset: context.responsive<Offset>(
-                        mobile: Offset.zero,
-                        tablet: const Offset(0, -20),
-                        desktop: const Offset(0, -20),
-                      ),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: context.responsive<double>(
-                            mobile: context.screenWidth,
-                            tablet: 600,
-                            desktop: 500,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.responsiveHorizontalPadding,
-                          ),
-                      child: _emailSent ? _buildSuccessView() : _buildFormView(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // Back button - positioned top-left
-            Positioned(
-              top: topPadding,
-              left: 12,
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: AppColors.white,
-                  size: 24,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+    return AuthScaffold(
+      child: _emailSent ? _buildSuccessView() : _buildFormView(),
     );
   }
 
@@ -169,131 +82,21 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
           ),
 
-          // Title section - left aligned
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Forgot',
-                style: context.textTheme.displayMedium?.copyWith(
-                  fontSize: context.responsive<double>(
-                    smallMobile: 38,
-                    mobile: 45,
-                    tablet: 52,
-                    desktop: 60,
-                  ),
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.white,
-                  height: 1.2,
-                  letterSpacing: -1,
-                ),
-              ),
-              Text(
-                'Password?',
-                style: context.textTheme.displayMedium?.copyWith(
-                  fontSize: context.responsive<double>(
-                    smallMobile: 38,
-                    mobile: 45,
-                    tablet: 52,
-                    desktop: 60,
-                  ),
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.white,
-                  height: 1.2,
-                  letterSpacing: -1,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Enter your email to reset your password',
-                style: context.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.white.withValues(alpha: 0.9),
-                  height: 1.4,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ],
+          // Title section
+          const AuthTitle(
+            line1: 'Forgot',
+            line2: 'Password?',
+            subtitle: 'Enter your email to reset your password',
           ),
 
           const SizedBox(height: 24),
 
           // Email field
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppRadius.medium),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.2),
-                  blurRadius: 10,
-                  spreadRadius: 0,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: TextFormField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) => _handleSubmit(),
-              cursorColor: AppColors.white,
-              style: context.textTheme.bodyLarge?.copyWith(
-                color: AppColors.white,
-              ),
-              validator: Validators.email,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                labelStyle: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.white.withValues(alpha: 0.7),
-                ),
-                prefixIcon: Icon(
-                  Icons.email_outlined,
-                  size: 20,
-                  color: AppColors.white.withValues(alpha: 0.7),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.medium),
-                  borderSide: BorderSide(
-                    color: AppColors.white.withValues(alpha: 0.3),
-                    width: 1.0,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.medium),
-                  borderSide: BorderSide(
-                    color: AppColors.white.withValues(alpha: 0.3),
-                    width: 1.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.medium),
-                  borderSide: BorderSide(
-                    color: AppColors.white.withValues(alpha: 0.7),
-                    width: 1.5,
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.medium),
-                  borderSide: const BorderSide(
-                    color: AppColors.error,
-                    width: 1.0,
-                  ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.medium),
-                  borderSide: const BorderSide(
-                    color: AppColors.error,
-                    width: 1.5,
-                  ),
-                ),
-                filled: true,
-                fillColor: AppColors.black.withValues(alpha: 0.6),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 12,
-                ),
-              ),
-            ),
+          AuthTextField.email(
+            controller: _emailController,
+            validator: Validators.email,
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: _handleSubmit,
           ),
 
           const SizedBox(height: 30),

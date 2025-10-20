@@ -234,9 +234,61 @@ class AppColors {
   static const Color surface = white;
   static const Color surfaceDark = grey900;
 
-  // Gradient colors for auth screens
-  static const Color gradientStart = Color(0xFFFA6464); // Color.fromRGBO(250, 100, 100, 1)
-  static const Color gradientEnd = Color(0xFF19A2E6);
+  // Gradient colors - Brand accent (used in buttons, borders, decorative elements)
+  static const Color gradientStart = Color(0xFFFA6464); // Red
+  static const Color gradientEnd = Color(0xFF19A2E6); // Blue
+
+  // Overlay colors (used for image overlays)
+  static const Color overlayLight = Color(0x33000000); // Black 20%
+  static const Color overlayMedium = Color(0x66000000); // Black 40%
+  static const Color overlayDark = Color(0x99000000); // Black 60%
+  static const Color overlayDarker = Color(0xE6000000); // Black 90%
+}
+
+/// Predefined gradients for consistent use across the app
+class AppGradients {
+  /// Brand accent gradient (red to blue) - Use for buttons, borders, CTAs
+  static const LinearGradient brandAccent = LinearGradient(
+    colors: [AppColors.gradientStart, AppColors.gradientEnd],
+  );
+
+  /// Dark overlay gradient - Use for images with light text on top
+  static const LinearGradient darkOverlay = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      AppColors.overlayMedium,
+      AppColors.overlayDark,
+      AppColors.overlayDarker,
+      AppColors.black,
+    ],
+    stops: [0.0, 0.3, 0.7, 1.0],
+  );
+
+  /// Light overlay gradient - Use for images with dark text on top (light mode)
+  static const LinearGradient lightOverlay = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0x33FFFFFF), // White 20%
+      Color(0x66FFFFFF), // White 40%
+      Color(0xCCFFFFFF), // White 80%
+      AppColors.white,
+    ],
+    stops: [0.0, 0.3, 0.7, 1.0],
+  );
+
+  /// Shimmer gradient - Use for loading skeleton screens
+  static const LinearGradient shimmer = LinearGradient(
+    begin: Alignment(-1.0, 0.0),
+    end: Alignment(1.0, 0.0),
+    colors: [
+      Color(0xFFE0E0E0),
+      Color(0xFFF5F5F5),
+      Color(0xFFE0E0E0),
+    ],
+    stops: [0.0, 0.5, 1.0],
+  );
 }
 
 class AppTypography {
@@ -362,4 +414,10 @@ extension ThemeExtensions on BuildContext {
   ThemeData get theme => Theme.of(this);
   ColorScheme get colors => Theme.of(this).colorScheme;
   TextTheme get textTheme => Theme.of(this).textTheme;
+}
+
+extension GradientExtensions on BuildContext {
+  /// Quick access to app gradients
+  /// Usage: context.gradients.brandAccent, context.gradients.darkOverlay, etc.
+  Type get gradients => AppGradients;
 }
