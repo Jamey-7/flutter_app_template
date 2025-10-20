@@ -6,6 +6,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../subscriptions/providers/subscription_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/responsive/breakpoints.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 
@@ -50,10 +51,23 @@ class WelcomeScreen extends ConsumerWidget {
 }
 
 /// Unauthenticated view - shows app branding and login/signup options
-class _UnauthenticatedView extends StatelessWidget {
+class _UnauthenticatedView extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.brightness_6),
+            onPressed: () {
+              ref.read(themeModeProvider.notifier).toggleTheme();
+            },
+            tooltip: 'Toggle theme',
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -154,6 +168,13 @@ class _AuthenticatedView extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Welcome'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.brightness_6),
+            onPressed: () {
+              ref.read(themeModeProvider.notifier).toggleTheme();
+            },
+            tooltip: 'Toggle theme',
+          ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () {

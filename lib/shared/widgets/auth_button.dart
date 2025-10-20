@@ -62,7 +62,7 @@ class AuthButton extends StatelessWidget {
         gradient: AppGradients.brandAccent, // Using theme gradient
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.2),
+            color: AppColors.authShadow,
             blurRadius: 10,
             spreadRadius: 0,
             offset: const Offset(0, 3),
@@ -73,14 +73,14 @@ class AuthButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: const Color(0xFF0C0C0C),
+          backgroundColor: AppColors.authButtonBackground,
           foregroundColor: AppColors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.circular),
           ),
         ).copyWith(
-          backgroundColor: WidgetStateProperty.all(const Color(0xFF0C0C0C)),
+          backgroundColor: WidgetStateProperty.all(AppColors.authButtonBackground),
           overlayColor: WidgetStateProperty.all(Colors.transparent),
         ),
         child: isLoading
@@ -94,9 +94,8 @@ class AuthButton extends StatelessWidget {
               )
             : Text(
                 text,
-                style: const TextStyle(
+                style: context.textTheme.labelLarge?.copyWith(
                   color: AppColors.white,
-                  fontWeight: FontWeight.w600,
                   fontSize: 17,
                   letterSpacing: 0.5,
                 ),
@@ -113,7 +112,7 @@ class AuthButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.circular),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.2),
+            color: AppColors.authShadow,
             blurRadius: 10,
             spreadRadius: 0,
             offset: const Offset(0, 3),

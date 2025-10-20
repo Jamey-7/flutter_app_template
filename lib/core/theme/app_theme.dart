@@ -193,8 +193,6 @@ class AppTheme {
 class AppColors {
   // Primary colors
   static const Color primary = Color(0xFF000000);
-  static const Color primaryDark = Color(0xFF1E40AF);
-  static const Color primaryLight = Color(0xFF3B82F6);
 
   // Secondary colors
   static const Color secondary = Color(0xFF7C3AED);
@@ -210,6 +208,13 @@ class AppColors {
   // Neutral colors
   static const Color black = Color(0xFF000000);
   static const Color white = Color(0xFFFFFFFF);
+
+  // Auth-specific colors (used in auth screens with dark backgrounds)
+  static const Color authButtonBackground = Color(0xFF0C0C0C); // Near-black button background
+  static const Color authInputFill = Color(0x99000000); // 60% black (text field background)
+  static const Color authShadow = Color(0x33000000); // 20% black (shadow overlay)
+  static const Color authBorderLight = Color(0x4DFFFFFF); // 30% white (normal border)
+  static const Color authBorderFocused = Color(0xB3FFFFFF); // 70% white (focused border)
 
   // Grey scale
   static const Color grey50 = Color(0xFFF9FAFB);

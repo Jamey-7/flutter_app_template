@@ -62,7 +62,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         borderRadius: BorderRadius.circular(AppRadius.medium),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.2),
+            color: AppColors.authShadow,
             blurRadius: 10,
             spreadRadius: 0,
             offset: const Offset(0, 3),
@@ -81,16 +81,13 @@ class _AuthTextFieldState extends State<AuthTextField> {
             ? (_) => widget.onFieldSubmitted!()
             : null,
         cursorColor: AppColors.white,
-        style: TextStyle(
-          fontSize: 16,
+        style: context.textTheme.bodyLarge?.copyWith(
           color: AppColors.white,
-          fontWeight: FontWeight.w400,
         ),
         validator: widget.validator,
         decoration: InputDecoration(
           labelText: widget.label,
-          labelStyle: TextStyle(
-            fontSize: 16,
+          labelStyle: context.textTheme.bodyLarge?.copyWith(
             color: AppColors.white.withValues(alpha: 0.7),
           ),
           prefixIcon: Icon(
@@ -116,22 +113,22 @@ class _AuthTextFieldState extends State<AuthTextField> {
               : null,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
-            borderSide: BorderSide(
-              color: AppColors.white.withValues(alpha: 0.3),
+            borderSide: const BorderSide(
+              color: AppColors.authBorderLight,
               width: 1.0,
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
-            borderSide: BorderSide(
-              color: AppColors.white.withValues(alpha: 0.3),
+            borderSide: const BorderSide(
+              color: AppColors.authBorderLight,
               width: 1.0,
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
-            borderSide: BorderSide(
-              color: AppColors.white.withValues(alpha: 0.7),
+            borderSide: const BorderSide(
+              color: AppColors.authBorderFocused,
               width: 1.5,
             ),
           ),
@@ -150,7 +147,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
             ),
           ),
           filled: true,
-          fillColor: AppColors.black.withValues(alpha: 0.6),
+          fillColor: AppColors.authInputFill,
           contentPadding: const EdgeInsets.symmetric(
             vertical: 16,
             horizontal: 12,
