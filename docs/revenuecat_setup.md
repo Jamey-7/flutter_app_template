@@ -4,6 +4,61 @@ Complete guide for setting up RevenueCat subscriptions across all supported plat
 
 ---
 
+## 🧪 Development Testing Mode (Start Here!)
+
+Before setting up RevenueCat, you can **test your paywall UI immediately** using built-in test mode:
+
+### Quick Start
+
+1. In your `.env` file, enable test mode:
+   ```env
+   SUBSCRIPTION_TEST_MODE=true
+   ```
+
+2. Hot restart your app:
+   ```bash
+   flutter run
+   ```
+
+3. Navigate to the paywall screen - you'll see:
+   - ✅ Mock subscription products ($2.99/month, $9.99/year)
+   - ✅ "TEST MODE" badge in the app bar
+   - ✅ Instant paywall loading (no network calls)
+   - ✅ Functional "Subscribe" buttons for UI testing
+
+### What Test Mode Does
+
+- **Bypasses RevenueCat entirely** - No API keys needed
+- **Shows mock products** - $2.99/month and $9.99/year subscriptions
+- **Simulates purchases** - "Buy" buttons work and show success dialogs
+- **Perfect for development** - Design your paywall without backend setup
+
+### When to Use Test Mode
+
+✅ **Use test mode when:**
+- Designing and testing your paywall UI
+- Working on app features without RevenueCat setup
+- Creating app templates for reuse
+- Developing on multiple machines without sharing keys
+
+❌ **Disable test mode for:**
+- Production builds (will error if enabled!)
+- Testing real payment flows
+- Testing subscription renewals/cancellations
+- Integration with actual App Store/Play Store
+
+### Disable Test Mode
+
+When ready for production RevenueCat setup:
+
+```env
+SUBSCRIPTION_TEST_MODE=false
+```
+
+**⚠️ Important:** Release builds will **throw an error** if test mode is accidentally enabled, preventing you from shipping mock subscriptions to production users.
+
+---
+
 ## 📋 Overview
 
 **RevenueCat** is a subscription infrastructure that simplifies in-app purchases and subscriptions across platforms.

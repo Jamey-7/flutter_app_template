@@ -3,12 +3,14 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/logger/logger.dart';
 import '../../../core/network/retry_helper.dart';
+import '../models/mock_offerings.dart';
 import '../models/subscription_info.dart';
 import '../../auth/providers/auth_provider.dart';
 
@@ -85,6 +87,15 @@ class Subscription extends _$Subscription {
 
   Future<SubscriptionInfo> _fetchSubscription() async {
     try {
+      // Check if test mode is enabled - return free tier immediately
+      if (SubscriptionService.isTestMode()) {
+        Logger.log(
+          '🧪 Test mode: Returning free tier (no active test subscription)',
+          tag: 'SubscriptionNotifier',
+        );
+        return SubscriptionInfo.free();
+      }
+
       if (!SubscriptionService._isInitialized) {
         Logger.log(
           'RevenueCat not initialized, using free tier',
@@ -159,14 +170,32 @@ class Subscription extends _$Subscription {
 class SubscriptionService {
   static bool _isInitialized = false;
 
+  /// Check if subscription test mode is enabled
+  static bool isTestMode() {
+    if (kIsWeb) return false; // Web doesn't use .env
+
+    final testMode = dotenv.env['SUBSCRIPTION_TEST_MODE']?.toLowerCase();
+    return testMode == 'true' || testMode == '1';
+  }
+
   /// Initialize RevenueCat with platform-specific API keys
   static Future<void> initialize({
     String? iosApiKey,
     String? androidApiKey,
   }) async {
     try {
+      // Check if test mode is enabled
+      if (isTestMode()) {
+        Logger.warning(
+          '🧪 SUBSCRIPTION TEST MODE ENABLED - Using mock offerings',
+          tag: 'SubscriptionService',
+        );
+        _isInitialized = true; // Mark as initialized for test mode
+        return;
+      }
+
       Logger.log('Initializing RevenueCat', tag: 'SubscriptionService');
-      
+
       if (!_isRevenueCatSupported()) {
         Logger.warning(
           'Skipping RevenueCat initialization: unsupported platform',
@@ -223,6 +252,15 @@ class SubscriptionService {
   /// Get available offerings
   static Future<Offerings?> getOfferings() async {
     try {
+      // Check if test mode is enabled - return mock offerings immediately
+      if (isTestMode()) {
+        Logger.log(
+          '🧪 Test mode: Returning mock offerings (Monthly: \$2.99, Yearly: \$9.99)',
+          tag: 'SubscriptionService',
+        );
+        return MockOfferings.createMockOfferings();
+      }
+
       Logger.log('Fetching offerings', tag: 'SubscriptionService');
       final offerings = await Purchases.getOfferings();
       Logger.log(
@@ -239,6 +277,23 @@ class SubscriptionService {
   /// Purchase a package
   static Future<CustomerInfo> purchasePackage(Package package) async {
     try {
+      // Check if test mode is enabled - simulate successful purchase
+      if (isTestMode()) {
+        Logger.log(
+          '🧪 Test mode: Simulating purchase for ${package.identifier}',
+          tag: 'SubscriptionService',
+        );
+        // Simulate 1 second delay for realistic UX
+        await Future.delayed(const Duration(seconds: 1));
+        Logger.log('🧪 Test mode: Purchase successful', tag: 'SubscriptionService');
+
+        // Return mock customer info with active subscription
+        return MockOfferings.createMockCustomerInfo(
+          hasActiveSubscription: true,
+          productIdentifier: package.storeProduct.identifier,
+        );
+      }
+
       Logger.log('Purchasing package: ${package.identifier}', tag: 'SubscriptionService');
       final purchaseResult = await Purchases.purchase(
         PurchaseParams.package(package),
@@ -254,6 +309,21 @@ class SubscriptionService {
   /// Restore purchases
   static Future<CustomerInfo> restorePurchases() async {
     try {
+      // Check if test mode is enabled - return no purchases
+      if (isTestMode()) {
+        Logger.log(
+          '🧪 Test mode: No purchases to restore (test mode)',
+          tag: 'SubscriptionService',
+        );
+        // Simulate 500ms delay
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // Return mock customer info with no active subscription
+        return MockOfferings.createMockCustomerInfo(
+          hasActiveSubscription: false,
+        );
+      }
+
       Logger.log('Restoring purchases', tag: 'SubscriptionService');
       final customerInfo = await Purchases.restorePurchases();
       Logger.log('Purchases restored', tag: 'SubscriptionService');

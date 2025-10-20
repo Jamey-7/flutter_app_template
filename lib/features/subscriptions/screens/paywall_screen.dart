@@ -37,6 +37,43 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         title: const Text('Subscription Required'),
         automaticallyImplyLeading: false,
         actions: [
+          // Show test mode indicator if enabled
+          if (SubscriptionService.isTestMode())
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade100,
+                    border: Border.all(color: Colors.orange.shade700),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.science,
+                        size: 16,
+                        color: Colors.orange.shade700,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'TEST MODE',
+                        style: TextStyle(
+                          color: Colors.orange.shade700,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => context.push('/settings'),
@@ -392,10 +429,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
         if (mounted) {
           // Show success dialog
+          final isTestMode = SubscriptionService.isTestMode();
           await AppDialog.showSuccess(
             context,
-            title: 'Welcome to Premium!',
-            message: 'Your subscription is now active. Enjoy all premium features!',
+            title: isTestMode ? 'Test Purchase Successful!' : 'Welcome to Premium!',
+            message: isTestMode
+                ? 'This is a test purchase (no real transaction). Your subscription is now active for testing purposes!'
+                : 'Your subscription is now active. Enjoy all premium features!',
           );
 
           // Navigate to app

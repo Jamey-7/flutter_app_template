@@ -27,6 +27,9 @@ void main() async {
     // Validate required environment variables
     _validateEnvironment();
 
+    // Check subscription test mode and add safety checks
+    _checkSubscriptionTestMode();
+
     // Initialize Sentry
     final sentryDsn = dotenv.env['SENTRY_DSN'];
     if (sentryDsn != null && sentryDsn.isNotEmpty && sentryDsn != 'your_sentry_dsn') {
@@ -175,6 +178,47 @@ void _validateEnvironment() {
   }
 
   Logger.log('Environment validation passed', tag: 'Main');
+}
+
+/// Check subscription test mode and enforce production safety
+void _checkSubscriptionTestMode() {
+  if (kIsWeb) return; // Web doesn't use .env
+
+  final testMode = dotenv.env['SUBSCRIPTION_TEST_MODE']?.toLowerCase();
+  final isTestModeEnabled = testMode == 'true' || testMode == '1';
+
+  if (isTestModeEnabled) {
+    // CRITICAL: Prevent shipping with test mode enabled
+    if (kReleaseMode) {
+      throw Exception(
+        '🚨 PRODUCTION BUILD ERROR 🚨\n\n'
+        'SUBSCRIPTION_TEST_MODE is enabled in a release build!\n\n'
+        'This would ship mock subscriptions to production users.\n'
+        'Set SUBSCRIPTION_TEST_MODE=false in your .env file before building for release.\n\n'
+        'Test mode should ONLY be used during development.',
+      );
+    }
+
+    // Warn in debug/profile mode
+    Logger.warning(
+      '⚠️  SUBSCRIPTION TEST MODE ENABLED ⚠️',
+      tag: 'Main',
+    );
+    Logger.warning(
+      'Using mock subscription products (\$2.99/month, \$9.99/year)',
+      tag: 'Main',
+    );
+    Logger.warning(
+      'RevenueCat is bypassed - no real purchases will be made',
+      tag: 'Main',
+    );
+    Logger.warning(
+      'Set SUBSCRIPTION_TEST_MODE=false to use real RevenueCat',
+      tag: 'Main',
+    );
+  } else {
+    Logger.log('Subscription test mode: DISABLED (production mode)', tag: 'Main');
+  }
 }
 
 /// Set up global error handlers for uncaught exceptions

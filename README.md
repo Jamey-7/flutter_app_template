@@ -168,6 +168,33 @@ flutter analyze
 flutter format .
 ```
 
+### Testing Subscriptions
+
+The app includes a **Test Mode** for developing and testing your paywall UI without setting up RevenueCat products:
+
+#### Enable Test Mode
+
+In your `.env` file:
+```env
+SUBSCRIPTION_TEST_MODE=true
+```
+
+This will:
+- ✅ Bypass RevenueCat completely
+- ✅ Show mock subscription products ($2.99/month, $9.99/year)
+- ✅ Allow instant "purchase" for testing the UI
+- ✅ Display "TEST MODE" badge on paywall screen
+
+#### Disable Test Mode (Production)
+
+```env
+SUBSCRIPTION_TEST_MODE=false
+```
+
+**⚠️ Important:** Release builds will **error** if test mode is accidentally enabled, preventing you from shipping mock subscriptions to production.
+
+**See [docs/revenuecat_setup.md](docs/revenuecat_setup.md) for production RevenueCat setup.**
+
 ## 📚 Documentation
 
 - **[QUICKSTART.md](QUICKSTART.md)** - Get running in 5 minutes

@@ -26,6 +26,21 @@ part 'offerings_provider.g.dart';
 @riverpod
 Future<Offerings?> offerings(Ref ref) async {
   try {
+    // Check if test mode is enabled - return mock offerings immediately
+    if (SubscriptionService.isTestMode()) {
+      Logger.log(
+        '🧪 Test mode: Returning mock offerings',
+        tag: 'OfferingsProvider',
+      );
+      final mockOfferings = await SubscriptionService.getOfferings();
+      final packageCount = mockOfferings?.current?.availablePackages.length ?? 0;
+      Logger.log(
+        '🧪 Mock offerings ready: $packageCount packages available',
+        tag: 'OfferingsProvider',
+      );
+      return mockOfferings;
+    }
+
     Logger.log('Fetching RevenueCat offerings', tag: 'OfferingsProvider');
 
     // Fetch offerings with automatic retry on failure and 15 second timeout
