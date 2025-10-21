@@ -15,9 +15,9 @@ class RateService {
   ///
   /// Configuration:
   /// - minDays: 0 (can show during onboarding)
-  /// - minLaunches: 1 (after first launch)
-  /// - remindDays: 3 (ask again 3 days after "Not Right Now")
-  /// - remindLaunches: 5 (ask again after 5 more launches)
+  /// - minLaunches: 0 (can show on first launch)
+  /// - remindDays: 2 (ask again 2 days after "Not Right Now")
+  /// - remindLaunches: 3 (ask again after 3 more launches)
   ///
   /// Note: You need to replace the identifiers with your actual app IDs:
   /// - googlePlayIdentifier: Your app's package name (e.g., 'com.example.app')
@@ -65,8 +65,13 @@ class RateService {
       return;
     }
 
+    // Check if widget is still mounted after async operation
+    if (!context.mounted) {
+      debugPrint('Widget disposed before showing rating dialog');
+      return;
+    }
+
     // Show the native rating dialog
-    // ignore: use_build_context_synchronously
     await rateMyApp.showRateDialog(
       context,
       title: 'Rate Our App',
@@ -159,6 +164,13 @@ class RateService {
     if (isEnjoying) {
       // User is happy - show native rating dialog
       debugPrint('User is enjoying the app - showing rating dialog');
+
+      // Check if widget is still mounted after async operation
+      if (!context.mounted) {
+        debugPrint('Widget disposed before showing rating dialog');
+        return;
+      }
+
       await showRatingDialog(context);
       // Note: rating is automatically tracked by rate_my_app package
     } else {
@@ -167,8 +179,13 @@ class RateService {
       debugPrint('User not enjoying app - marking as declined (will never ask again)');
       await handleDecline();
 
+      // Check if widget is still mounted after async operation
+      if (!context.mounted) {
+        debugPrint('Widget disposed before showing feedback dialog');
+        return;
+      }
+
       // Now show feedback dialog (but rating prompt will never show again)
-      // ignore: use_build_context_synchronously
       final result = await FeedbackDialog.show(context);
 
       if (result != null && result['submitted'] == true) {

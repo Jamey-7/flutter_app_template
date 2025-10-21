@@ -41,6 +41,8 @@ class AppHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _AppHomeScreenState extends ConsumerState<AppHomeScreen> {
+  bool _isShowingRatingPrompt = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,9 +55,19 @@ class _AppHomeScreenState extends ConsumerState<AppHomeScreen> {
   /// Check if conditions are met to show rating prompt
   /// If conditions are met, shows the "Are you enjoying the app?" dialog
   Future<void> _checkAndShowRatingPrompt() async {
+    // Prevent multiple simultaneous rating prompts
+    if (_isShowingRatingPrompt) {
+      return;
+    }
+
     if (await RateService.shouldShow()) {
       if (mounted) {
-        await RateService.showRatingPromptWithFeedback(context);
+        _isShowingRatingPrompt = true;
+        try {
+          await RateService.showRatingPromptWithFeedback(context);
+        } finally {
+          _isShowingRatingPrompt = false;
+        }
       }
     }
   }
