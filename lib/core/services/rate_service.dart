@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 
+import '../../shared/widgets/rating_prompt_dialog.dart';
+import '../../shared/widgets/feedback_dialog.dart';
+
 /// Service for handling app rating requests using rate_my_app package
 ///
 /// This service manages when and how to show app rating dialogs,
@@ -27,9 +30,9 @@ class RateService {
     _rateMyApp = RateMyApp(
       preferencesPrefix: 'rateMyApp_',
       minDays: 0,
-      minLaunches: 1,
-      remindDays: 3,
-      remindLaunches: 5,
+      minLaunches: 0,
+      remindDays: 2,
+      remindLaunches: 3,
       // TODO: Replace with your actual app identifiers
       googlePlayIdentifier: 'com.yourcompany.appname',
       appStoreIdentifier: '1234567890',
@@ -130,5 +133,56 @@ class RateService {
     final rateMyApp = await _getRateMyApp();
     await rateMyApp.reset();
     debugPrint('Rating preferences reset');
+  }
+
+  /// Show the complete rating prompt flow with feedback collection
+  ///
+  /// This is the main method to call for the in-app remind functionality.
+  /// It shows a two-stage dialog system:
+  ///
+  /// 1. First shows "Are you enjoying the app?" prompt
+  /// 2. If "Yes": Shows native rating dialog
+  /// 3. If "Not Really": IMMEDIATELY marks as declined (never show again),
+  ///    then shows feedback dialog
+  ///
+  /// CRITICAL: Unhappy users are filtered out BEFORE feedback dialog,
+  /// protecting your app store rating from negative reviews.
+  static Future<void> showRatingPromptWithFeedback(BuildContext context) async {
+    // First, ask if user is enjoying the app
+    final isEnjoying = await RatingPromptDialog.show(context);
+
+    if (isEnjoying == null) {
+      // User dismissed dialog - do nothing
+      return;
+    }
+
+    if (isEnjoying) {
+      // User is happy - show native rating dialog
+      debugPrint('User is enjoying the app - showing rating dialog');
+      await showRatingDialog(context);
+      // Note: rating is automatically tracked by rate_my_app package
+    } else {
+      // User is NOT happy - immediately mark as declined (never show again)
+      // This happens BEFORE showing feedback dialog to protect app rating
+      debugPrint('User not enjoying app - marking as declined (will never ask again)');
+      await handleDecline();
+
+      // Now show feedback dialog (but rating prompt will never show again)
+      // ignore: use_build_context_synchronously
+      final result = await FeedbackDialog.show(context);
+
+      if (result != null && result['submitted'] == true) {
+        final feedback = result['feedback'] as String;
+        if (feedback.isNotEmpty) {
+          debugPrint('Feedback received: $feedback');
+          // TODO: Save feedback to database
+          // For now, just log it to console
+        } else {
+          debugPrint('User clicked Send but provided no feedback');
+        }
+      } else {
+        debugPrint('User clicked Later on feedback dialog');
+      }
+    }
   }
 }

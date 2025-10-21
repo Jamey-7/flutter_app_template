@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../subscriptions/providers/subscription_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/responsive/breakpoints.dart';
+import '../../../core/services/rate_service.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../widgets/subscription_badge.dart';
 
@@ -32,11 +33,35 @@ import '../widgets/subscription_badge.dart';
 //
 // ========================================
 
-class AppHomeScreen extends ConsumerWidget {
+class AppHomeScreen extends ConsumerStatefulWidget {
   const AppHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppHomeScreen> createState() => _AppHomeScreenState();
+}
+
+class _AppHomeScreenState extends ConsumerState<AppHomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Check and show rating prompt after screen builds
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndShowRatingPrompt();
+    });
+  }
+
+  /// Check if conditions are met to show rating prompt
+  /// If conditions are met, shows the "Are you enjoying the app?" dialog
+  Future<void> _checkAndShowRatingPrompt() async {
+    if (await RateService.shouldShow()) {
+      if (mounted) {
+        await RateService.showRatingPromptWithFeedback(context);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final subscriptionAsync = ref.watch(subscriptionProvider);
 
     return Scaffold(
