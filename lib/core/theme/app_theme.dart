@@ -216,6 +216,7 @@ class AppColors {
   static const Color black = Color(0xFF000000);
   static const Color white = Color(0xFFFFFFFF);
   static const Color darkSurfaceNeutral = Color(0xFF1A1A1A); // Neutral dark surface for cards/dialogs
+  static const Color darkBackground = Color(0xFF121212); // Darker background for screens (darker than darkSurfaceNeutral)
 
   // Auth-specific colors (used in auth screens with dark backgrounds)
   static const Color authButtonBackground = Color(0xFF0C0C0C); // Near-black button background

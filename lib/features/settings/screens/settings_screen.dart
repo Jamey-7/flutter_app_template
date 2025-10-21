@@ -18,9 +18,9 @@ class SettingsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+      backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -394,7 +394,7 @@ class _PremiumUnlockCard extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.all(1.5),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              color: isDark ? AppColors.darkBackground : Colors.white,
               borderRadius: BorderRadius.circular(14.5),
             ),
             child: Material(
