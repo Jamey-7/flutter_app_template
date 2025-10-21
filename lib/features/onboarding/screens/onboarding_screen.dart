@@ -9,6 +9,7 @@ import '../../../core/services/rate_service.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../settings/widgets/language_selector_dialog.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/onboarding_button.dart';
 
 /// Onboarding screen with 3 pages
 /// Shows app introduction, key features, and rating request before signup
@@ -99,11 +100,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   if (_currentPage < 2)
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 400),
-                      child: AppButton.primary(
+                      child: OnboardingButton(
                         text: 'Next',
                         onPressed: _nextPage,
                         icon: Icons.arrow_forward_ios,
-                        isFullWidth: true,
                       ),
                     ),
 
@@ -123,11 +123,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           const SizedBox(width: AppSpacing.md),
                           // Rate App button
                           Expanded(
-                            child: AppButton.primary(
+                            child: OnboardingButton(
                               text: 'Rate App',
                               onPressed: _handleRateApp,
                               icon: Icons.star,
-                              isFullWidth: true,
                             ),
                           ),
                         ],
