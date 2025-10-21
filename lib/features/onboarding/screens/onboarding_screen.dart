@@ -59,8 +59,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               backgroundColor: Colors.transparent,
               elevation: 0,
             ),
-            body: SafeArea(
-        child: Column(
+            body: Column(
           children: [
             // Page content
             Expanded(
@@ -81,7 +80,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
             // Bottom section with indicators and button
             Padding(
-              padding: EdgeInsets.all(context.responsivePadding),
+              padding: EdgeInsets.only(
+                left: context.responsivePadding,
+                right: context.responsivePadding,
+                bottom: (MediaQuery.of(context).padding.bottom > 0
+                    ? MediaQuery.of(context).padding.bottom
+                    : AppSpacing.md) +
+                    (context.isTablet || context.isDesktop ? context.responsivePadding : 0),
+              ),
               child: Column(
                 children: [
                   // Page indicators
@@ -138,7 +144,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
           ],
         ),
-            ),
           );
         },
       ),

@@ -87,7 +87,7 @@ class AppThemeData {
       mode: ThemeMode.dark,
       primary: Color(0xFFFFFFFF), // White
       secondary: Color(0xFF7C3AED), // Purple
-      background: Color(0xFF121212), // Dark background
+      background: Color(0xFF0F0F0F), // Dark background
       surface: Color(0xFF000000), // Pure black
       surfaceNeutral: Color(0xFF1A1A1A), // Dark surface neutral
       error: Color(0xFFEF4444),
