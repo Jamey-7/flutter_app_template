@@ -79,10 +79,7 @@ class SettingsScreen extends ConsumerWidget {
                 trailing: ref.watch(themeTypeProvider).displayName,
                 context: context,
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => const ThemeSelectorDialog(),
-                  );
+                  ThemeSelectorDialog.show(context);
                 },
               ),
               _buildDivider(context),

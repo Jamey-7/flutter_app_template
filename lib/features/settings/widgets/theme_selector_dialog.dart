@@ -8,30 +8,62 @@ import '../../../core/providers/theme_provider.dart';
 class ThemeSelectorDialog extends ConsumerWidget {
   const ThemeSelectorDialog({super.key});
 
+  static Future<void> show(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const ThemeSelectorDialog(),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTheme = ref.watch(themeTypeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
 
-    return Dialog(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Choose Theme',
-              style: Theme.of(context).textTheme.titleLarge,
+            // Header with handle
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Select your preferred theme',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall?.color,
-                  ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+              child: Text(
+                'Choose Theme',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: Text(
+                'Select your preferred theme',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+              ),
+            ),
+            // Theme options
             ...AppThemeType.values.map((themeType) {
               final themeData = themeType.data;
               final isSelected = currentTheme == themeType;
@@ -41,20 +73,13 @@ class ThemeSelectorDialog extends ConsumerWidget {
                 themeData: themeData,
                 isSelected: isSelected,
                 isDark: isDark,
+                theme: theme,
                 onTap: () {
                   ref.read(themeTypeProvider.notifier).setTheme(themeType);
-                  Navigator.of(context).pop();
                 },
               );
             }),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
-              ),
-            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -67,6 +92,7 @@ class _ThemeOption extends StatelessWidget {
   final AppThemeData themeData;
   final bool isSelected;
   final bool isDark;
+  final ThemeData theme;
   final VoidCallback onTap;
 
   const _ThemeOption({
@@ -74,103 +100,96 @@ class _ThemeOption extends StatelessWidget {
     required this.themeData,
     required this.isSelected,
     required this.isDark,
+    required this.theme,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: isSelected
-                    ? themeData.primary
-                    : (isDark ? Colors.white24 : AppColors.grey300),
-                width: isSelected ? 2 : 1,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                // Color preview
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    gradient: LinearGradient(
-                      colors: [
-                        themeData.gradientStart,
-                        themeData.gradientEnd,
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Theme info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            themeType.displayName,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: themeData.mode == ThemeMode.dark
-                                  ? Colors.black26
-                                  : AppColors.grey200,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              themeData.mode == ThemeMode.dark ? 'Dark' : 'Light',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                                color: isDark ? Colors.white70 : AppColors.grey700,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        themeType.description,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: isDark ? Colors.white60 : AppColors.grey600,
-                        ),
-                      ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Row(
+            children: [
+              // Color preview
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      themeData.gradientStart,
+                      themeData.gradientEnd,
                     ],
                   ),
                 ),
-                // Selected indicator
-                if (isSelected)
-                  Icon(
-                    Icons.check_circle,
-                    color: themeData.primary,
-                    size: 24,
-                  ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 16),
+              // Theme info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          themeType.displayName,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            themeData.mode == ThemeMode.dark ? 'Dark' : 'Light',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      themeType.description,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Selected indicator
+              if (isSelected)
+                Icon(
+                  Icons.check_circle,
+                  color: theme.colorScheme.primary,
+                  size: 24,
+                )
+              else
+                Icon(
+                  Icons.circle_outlined,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                  size: 24,
+                ),
+            ],
           ),
         ),
       ),
