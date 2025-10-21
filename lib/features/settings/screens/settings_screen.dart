@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:heroicons/heroicons.dart';
 
 import '../../auth/providers/auth_provider.dart';
 import '../../subscriptions/providers/subscription_provider.dart';
@@ -83,8 +84,8 @@ class SettingsScreen extends ConsumerWidget {
                 },
               ),
               _buildDivider(context),
-              _buildSettingsTile(
-                icon: Icons.language_outlined,
+              _buildSettingsTileWithHeroIcon(
+                heroIcon: HeroIcons.language,
                 title: 'Language',
                 trailing: ref.watch(languageProvider).nativeName,
                 context: context,
@@ -234,6 +235,64 @@ class SettingsScreen extends ConsumerWidget {
                 icon,
                 size: 22,
                 color: effectiveIconColor,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: effectiveColor,
+                  ),
+                ),
+              ),
+              if (trailing != null)
+                Text(
+                  trailing,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+              const SizedBox(width: 6),
+              Icon(
+                Icons.chevron_right,
+                size: 18,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsTileWithHeroIcon({
+    required HeroIcons heroIcon,
+    required String title,
+    String? trailing,
+    required BuildContext context,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    final theme = Theme.of(context);
+    final effectiveColor = isDestructive ? theme.colorScheme.error : theme.colorScheme.onSurface;
+    final effectiveIconColor = isDestructive ? theme.colorScheme.error : theme.colorScheme.onSurface.withValues(alpha: 0.7);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          child: Row(
+            children: [
+              HeroIcon(
+                heroIcon,
+                size: 22,
+                color: effectiveIconColor,
+                style: HeroIconStyle.outline,
               ),
               const SizedBox(width: 14),
               Expanded(

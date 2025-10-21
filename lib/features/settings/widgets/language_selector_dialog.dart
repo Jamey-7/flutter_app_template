@@ -21,8 +21,10 @@ class LanguageSelectorDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLanguage = ref.watch(languageProvider);
     final theme = Theme.of(context);
+    final maxHeight = MediaQuery.of(context).size.height * 0.94;
 
     return Container(
+      constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xxlarge)),
@@ -32,7 +34,7 @@ class LanguageSelectorDialog extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with handle
+            // Drag handle (FIXED - always visible)
             Center(
               child: Container(
                 margin: EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
@@ -49,38 +51,49 @@ class LanguageSelectorDialog extends ConsumerWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.sm),
-              child: Text(
-                'Choose Language',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
-              child: Text(
-                'Select your preferred language',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ),
-            // Language options
-            ...AppLanguage.values.map((language) {
-              final isSelected = currentLanguage == language;
+            // Scrollable content (header + languages)
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  // Header
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.sm),
+                    child: Text(
+                      'Choose Language',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  // Description
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
+                    child: Text(
+                      'Select your preferred language',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ),
+                  // Language options
+                  ...AppLanguage.values.map((language) {
+                    final isSelected = currentLanguage == language;
 
-              return _LanguageOption(
-                language: language,
-                isSelected: isSelected,
-                theme: theme,
-                onTap: () {
-                  ref.read(languageProvider.notifier).setLanguage(language);
-                },
-              );
-            }),
-            SizedBox(height: AppSpacing.lg),
+                    return _LanguageOption(
+                      language: language,
+                      isSelected: isSelected,
+                      theme: theme,
+                      onTap: () {
+                        ref.read(languageProvider.notifier).setLanguage(language);
+                      },
+                    );
+                  }),
+                  SizedBox(height: AppSpacing.lg),
+                ],
+              ),
+            ),
           ],
         ),
       ),
