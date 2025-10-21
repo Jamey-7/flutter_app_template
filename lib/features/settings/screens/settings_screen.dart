@@ -6,9 +6,11 @@ import '../../auth/providers/auth_provider.dart';
 import '../../subscriptions/providers/subscription_provider.dart';
 import '../../../core/theme/app_themes.dart';
 import '../../../core/providers/theme_provider.dart';
+import '../../../core/providers/language_provider.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../widgets/theme_selector_dialog.dart';
+import '../widgets/language_selector_dialog.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -78,6 +80,16 @@ class SettingsScreen extends ConsumerWidget {
                 context: context,
                 onTap: () {
                   ThemeSelectorDialog.show(context);
+                },
+              ),
+              _buildDivider(context),
+              _buildSettingsTile(
+                icon: Icons.language_outlined,
+                title: 'Language',
+                trailing: ref.watch(languageProvider).nativeName,
+                context: context,
+                onTap: () {
+                  LanguageSelectorDialog.show(context);
                 },
               ),
               _buildDivider(context),
