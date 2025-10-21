@@ -117,7 +117,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       width: isActive ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: isActive ? context.colors.primary : AppColors.grey300,
+        color: isActive ? context.colors.primary : context.colors.outline,
         borderRadius: BorderRadius.circular(AppRadius.small),
       ),
     );
@@ -159,7 +159,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Text(
               'Your powerful subscription-based app\nbuilt with Flutter',
               style: context.textTheme.titleMedium?.copyWith(
-                color: AppColors.textSecondary,
+                color: context.colors.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -180,13 +180,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Container(
               padding: const EdgeInsets.all(AppSpacing.xl),
               decoration: BoxDecoration(
-                color: AppColors.secondary.withValues(alpha: 0.1),
+                color: context.colors.secondary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.workspace_premium,
                 size: 100,
-                color: AppColors.secondary,
+                color: context.colors.secondary,
               ),
             ),
             const SizedBox(height: AppSpacing.xxl),
@@ -205,7 +205,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Text(
               'Start your journey with these amazing features',
               style: context.textTheme.titleMedium?.copyWith(
-                color: AppColors.textSecondary,
+                color: context.colors.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),

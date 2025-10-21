@@ -134,12 +134,12 @@ class SettingsScreen extends ConsumerWidget {
                         'Danger Zone',
                         style: context.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.error,
+                          color: context.colors.error,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
                       AppCard.outlined(
-                        color: AppColors.error.withValues(alpha: 0.05),
+                        color: context.colors.error.withValues(alpha: 0.05),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -147,21 +147,21 @@ class SettingsScreen extends ConsumerWidget {
                               'Delete Account',
                               style: context.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.error,
+                                color: context.colors.error,
                               ),
                             ),
                             const SizedBox(height: AppSpacing.sm),
                             Text(
                               'Permanently delete your account and all associated data. This action cannot be undone.',
                               style: context.textTheme.bodySmall?.copyWith(
-                                color: AppColors.textSecondary,
+                                color: context.colors.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
                             const SizedBox(height: AppSpacing.md),
                             ElevatedButton.icon(
                               onPressed: () => _showDeleteAccountDialog(context, ref),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.error,
+                                backgroundColor: context.colors.error,
                                 foregroundColor: Colors.white,
                                 minimumSize: const Size(double.infinity, 48),
                               ),
@@ -251,7 +251,7 @@ class _InfoRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: AppColors.textSecondary),
+        Icon(icon, size: 20, color: context.colors.onSurface.withValues(alpha: 0.6)),
         const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Column(
@@ -260,7 +260,7 @@ class _InfoRow extends StatelessWidget {
               Text(
                 label,
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.onSurface.withValues(alpha: 0.6),
                 ),
               ),
               const SizedBox(height: 4),
@@ -317,13 +317,13 @@ class _SettingsTile extends StatelessWidget {
                   Text(
                     subtitle,
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
+                      color: context.colors.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+            Icon(Icons.chevron_right, color: context.colors.onSurface.withValues(alpha: 0.6)),
           ],
         ),
       ),
@@ -352,8 +352,8 @@ class _SubscriptionCard extends StatelessWidget {
                       ? Icons.check_circle
                       : Icons.info_outline,
                   color: subscription.isActive
-                      ? AppColors.success
-                      : AppColors.warning,
+                      ? const Color(0xFF10B981) // Success green
+                      : const Color(0xFFF59E0B), // Warning amber
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
@@ -420,7 +420,7 @@ class _SubscriptionCard extends StatelessWidget {
               Text(
                 'Loading subscription...',
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ],
@@ -433,7 +433,7 @@ class _SubscriptionCard extends StatelessWidget {
             Text(
               'Failed to load subscription',
               style: context.textTheme.bodyMedium?.copyWith(
-                color: AppColors.error,
+                color: context.colors.error,
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -487,7 +487,7 @@ class _ThemeToggleCard extends StatelessWidget {
                 Text(
                   'Switch between light and dark theme',
                   style: context.textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: context.colors.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],

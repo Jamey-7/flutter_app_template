@@ -102,11 +102,16 @@ class AppTheme {
         onSecondary: AppColors.white,
         error: AppColors.error,
         onError: AppColors.white,
-        surface: AppColors.grey900,
+        surface: AppColors.black,
         onSurface: AppColors.white,
-        surfaceContainerHighest: AppColors.grey800,
+        surfaceContainerHighest: AppColors.grey900,
       ),
       scaffoldBackgroundColor: AppColors.black,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.black,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+      ),
       textTheme: AppTypography.textTheme.apply(
         bodyColor: AppColors.white,
         displayColor: AppColors.white,
@@ -167,14 +172,16 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         elevation: AppElevation.small,
-        color: AppColors.grey900,
+        color: AppColors.darkSurfaceNeutral,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.large),
         ),
         clipBehavior: Clip.antiAlias,
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.grey900,
+        backgroundColor: AppColors.darkSurfaceNeutral,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.large),
         ),
@@ -208,6 +215,7 @@ class AppColors {
   // Neutral colors
   static const Color black = Color(0xFF000000);
   static const Color white = Color(0xFFFFFFFF);
+  static const Color darkSurfaceNeutral = Color(0xFF1A1A1A); // Neutral dark surface for cards/dialogs
 
   // Auth-specific colors (used in auth screens with dark backgrounds)
   static const Color authButtonBackground = Color(0xFF0C0C0C); // Near-black button background
