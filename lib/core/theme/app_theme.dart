@@ -39,7 +39,7 @@ class AppTheme {
           minimumSize: const Size(88, 48),
           // backgroundColor and foregroundColor will use colorScheme.primary and onPrimary by default
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.medium),
+            borderRadius: BorderRadius.circular(AppRadius.xlarge),
           ),
         ),
       ),
@@ -47,7 +47,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(88, 48),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.medium),
+            borderRadius: BorderRadius.circular(AppRadius.xlarge),
           ),
         ),
       ),
@@ -55,7 +55,7 @@ class AppTheme {
         style: TextButton.styleFrom(
           minimumSize: const Size(88, 48),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.medium),
+            borderRadius: BorderRadius.circular(AppRadius.xlarge),
           ),
         ),
       ),
