@@ -18,10 +18,12 @@ class SettingsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF1C1C1E) : AppColors.grey100,
+      backgroundColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF1C1C1E) : AppColors.grey100,
+        backgroundColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 22),
           onPressed: () => context.pop(),
@@ -44,121 +46,22 @@ class SettingsScreen extends ConsumerWidget {
           return ListView(
             padding: EdgeInsets.zero,
             children: [
-              const SizedBox(height: 4),
-              // Profile Card
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  children: [
-                    // Avatar
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF3A3A3C)
-                            : AppColors.grey200,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        size: 28,
-                        color: isDark ? Colors.white70 : AppColors.grey600,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Name and Email
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _getDisplayName(user.email),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: isDark ? Colors.white : Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            user.email ?? 'No email',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: isDark ? Colors.white60 : AppColors.grey600,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.edit_outlined,
-                                size: 13,
-                                color: isDark ? Colors.white60 : AppColors.grey600,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Edit profile',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: isDark ? Colors.white60 : AppColors.grey600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Settings Icon
-                    IconButton(
-                      icon: Icon(
-                        Icons.settings_outlined,
-                        size: 22,
-                        color: isDark ? Colors.white70 : AppColors.grey700,
-                      ),
-                      onPressed: () {},
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 16),
+
+              // Email Section
+              _buildSectionHeader('Email', isDark),
+              _buildSettingsTile(
+                icon: Icons.email_outlined,
+                title: user.email ?? 'No email',
+                isDark: isDark,
+                onTap: () {},
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
               // Subscription Section
               _buildSectionHeader('Subscription', isDark),
               _SubscriptionTile(ref: ref, isDark: isDark),
-
-              const SizedBox(height: 20),
-
-              // Account Section
-              _buildSectionHeader('Account', isDark),
-              _buildSettingsTile(
-                icon: Icons.person_outline,
-                title: 'Personal Information',
-                isDark: isDark,
-                onTap: () {},
-              ),
-              _buildDivider(isDark),
-              _buildSettingsTile(
-                icon: Icons.email_outlined,
-                title: 'Change Email',
-                isDark: isDark,
-                onTap: () => context.push('/settings/change-email'),
-              ),
-              _buildDivider(isDark),
-              _buildSettingsTile(
-                icon: Icons.lock_outline,
-                title: 'Change Password',
-                isDark: isDark,
-                onTap: () => context.push('/settings/change-password'),
-              ),
 
               const SizedBox(height: 20),
 
@@ -190,45 +93,79 @@ class SettingsScreen extends ConsumerWidget {
 
               const SizedBox(height: 20),
 
-              // Support Section
-              _buildSectionHeader('Support and Legal', isDark),
+              // Account Section
+              _buildSectionHeader('Account', isDark),
               _buildSettingsTile(
-                icon: Icons.support_agent_outlined,
-                title: 'One-tap support',
+                icon: Icons.email_outlined,
+                title: 'Change Email',
+                isDark: isDark,
+                onTap: () => context.push('/settings/change-email'),
+              ),
+              _buildDivider(isDark),
+              _buildSettingsTile(
+                icon: Icons.lock_outline,
+                title: 'Change Password',
+                isDark: isDark,
+                onTap: () => context.push('/settings/change-password'),
+              ),
+              _buildDivider(isDark),
+              _buildSettingsTile(
+                icon: Icons.delete_outline,
+                title: 'Delete Account',
+                isDark: isDark,
+                onTap: () => _showDeleteAccountDialog(context, ref),
+                isDestructive: true,
+              ),
+
+              const SizedBox(height: 20),
+
+              // Legal Section
+              _buildSectionHeader('Legal', isDark),
+              _buildSettingsTile(
+                icon: Icons.privacy_tip_outlined,
+                title: 'Privacy Policy',
                 isDark: isDark,
                 onTap: () {},
               ),
               _buildDivider(isDark),
               _buildSettingsTile(
                 icon: Icons.description_outlined,
-                title: 'Terms and Privacy',
+                title: 'Terms & Conditions',
+                isDark: isDark,
+                onTap: () {},
+              ),
+              _buildDivider(isDark),
+              _buildSettingsTile(
+                icon: Icons.info_outline,
+                title: 'Disclaimer',
                 isDark: isDark,
                 onTap: () {},
               ),
 
               const SizedBox(height: 24),
 
-              // Action Buttons
+              // Sign Out Button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    _buildActionButton(
-                      text: 'Sign Out',
-                      icon: Icons.logout,
-                      isDark: isDark,
-                      isDanger: false,
-                      onPressed: () => _handleSignOut(context, ref),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _handleSignOut(context, ref),
+                    icon: const Icon(Icons.logout, size: 16),
+                    label: const Text('Sign Out'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: isDark ? Colors.white : Colors.black,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                    const SizedBox(height: 10),
-                    _buildActionButton(
-                      text: 'Delete Account',
-                      icon: Icons.delete_outline,
-                      isDark: isDark,
-                      isDanger: true,
-                      onPressed: () => _showDeleteAccountDialog(context, ref),
-                    ),
-                  ],
+                  ),
                 ),
               ),
 
@@ -263,7 +200,11 @@ class SettingsScreen extends ConsumerWidget {
     String? trailing,
     required bool isDark,
     required VoidCallback onTap,
+    bool isDestructive = false,
   }) {
+    final effectiveColor = isDestructive ? AppColors.error : (isDark ? Colors.white : Colors.black);
+    final effectiveIconColor = isDestructive ? AppColors.error : (isDark ? Colors.white70 : AppColors.grey700);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -275,7 +216,7 @@ class SettingsScreen extends ConsumerWidget {
               Icon(
                 icon,
                 size: 22,
-                color: isDark ? Colors.white70 : AppColors.grey700,
+                color: effectiveIconColor,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -284,7 +225,7 @@ class SettingsScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: effectiveColor,
                   ),
                 ),
               ),
@@ -371,54 +312,6 @@ class SettingsScreen extends ConsumerWidget {
         color: isDark ? Colors.white12 : AppColors.grey200,
       ),
     );
-  }
-
-  Widget _buildActionButton({
-    required String text,
-    required IconData icon,
-    required bool isDark,
-    required bool isDanger,
-    required VoidCallback onPressed,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 16),
-        label: Text(text),
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          side: BorderSide(
-            color: isDanger
-                ? AppColors.error.withValues(alpha: 0.5)
-                : isDark
-                    ? Colors.white24
-                    : AppColors.grey300,
-            width: 1,
-          ),
-          foregroundColor: isDanger
-              ? AppColors.error
-              : isDark
-                  ? Colors.white
-                  : Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-
-  String _getDisplayName(String? email) {
-    if (email == null) return 'User';
-    final name = email.split('@').first;
-    // Capitalize first letter
-    if (name.isEmpty) return 'User';
-    return name[0].toUpperCase() + name.substring(1);
   }
 
   Future<void> _handleSignOut(BuildContext context, WidgetRef ref) async {
