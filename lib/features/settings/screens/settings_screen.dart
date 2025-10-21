@@ -6,9 +6,6 @@ import '../../auth/providers/auth_provider.dart';
 import '../../subscriptions/providers/subscription_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/theme_provider.dart';
-import '../../../core/responsive/breakpoints.dart';
-import '../../../shared/widgets/app_button.dart';
-import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 
@@ -18,179 +15,398 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(currentUserProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF1C1C1E) : AppColors.grey100,
       appBar: AppBar(
-        title: const Text('Settings'),
+        backgroundColor: isDark ? const Color(0xFF1C1C1E) : AppColors.grey100,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+        title: const Text(
+          'Settings',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
       ),
-      body: SafeArea(
-        child: userAsync.when(
-          data: (user) {
-            if (user == null) {
-              return const Center(child: Text('Not signed in'));
-            }
+      body: userAsync.when(
+        data: (user) {
+          if (user == null) {
+            return const Center(child: Text('Not signed in'));
+          }
 
-            return SingleChildScrollView(
-              padding: EdgeInsets.all(context.responsivePadding),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 600),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Appearance Section
-                      Text(
-                        'Appearance',
-                        style: context.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+          return ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              // Profile Card
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    // Avatar
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF3A3A3C)
+                            : AppColors.grey200,
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(height: AppSpacing.md),
-                      _ThemeToggleCard(ref: ref),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // Account Information Section
-                      Text(
-                        'Account Information',
-                        style: context.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Icon(
+                        Icons.person,
+                        size: 32,
+                        color: isDark ? Colors.white70 : AppColors.grey600,
                       ),
-                      const SizedBox(height: AppSpacing.md),
-                      AppCard.elevated(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _InfoRow(
-                              label: 'Email',
-                              value: user.email ?? 'N/A',
-                              icon: Icons.email_outlined,
+                    ),
+                    const SizedBox(width: 16),
+                    // Name and Email
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _getDisplayName(user.email),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white : Colors.black,
                             ),
-                            const Divider(height: AppSpacing.lg),
-                            _InfoRow(
-                              label: 'User ID',
-                              value: user.id,
-                              icon: Icons.fingerprint,
-                              isMonospace: true,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            user.email ?? 'No email',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark ? Colors.white60 : AppColors.grey600,
                             ),
-                            const Divider(height: AppSpacing.lg),
-                            _InfoRow(
-                              label: 'Created',
-                              value: user.createdAt,
-                              icon: Icons.calendar_today,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // Account Management Section
-                      Text(
-                        'Account Management',
-                        style: context.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      AppCard.elevated(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _SettingsTile(
-                              icon: Icons.email_outlined,
-                              title: 'Change Email',
-                              subtitle: 'Update your email address',
-                              onTap: () {
-                                context.push('/settings/change-email');
-                              },
-                            ),
-                            const Divider(height: 1),
-                            _SettingsTile(
-                              icon: Icons.lock_outline,
-                              title: 'Change Password',
-                              subtitle: 'Update your password',
-                              onTap: () {
-                                context.push('/settings/change-password');
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // Subscription Section
-                      Text(
-                        'Subscription',
-                        style: context.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      _SubscriptionCard(ref: ref),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // Danger Zone Section
-                      Text(
-                        'Danger Zone',
-                        style: context.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: context.colors.error,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      AppCard.outlined(
-                        color: context.colors.error.withValues(alpha: 0.05),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              'Delete Account',
-                              style: context.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: context.colors.error,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.edit_outlined,
+                                size: 14,
+                                color: isDark ? Colors.white60 : AppColors.grey600,
                               ),
-                            ),
-                            const SizedBox(height: AppSpacing.sm),
-                            Text(
-                              'Permanently delete your account and all associated data. This action cannot be undone.',
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: context.colors.onSurface.withValues(alpha: 0.6),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Edit profile',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: isDark ? Colors.white60 : AppColors.grey600,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            ElevatedButton.icon(
-                              onPressed: () => _showDeleteAccountDialog(context, ref),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: context.colors.error,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(double.infinity, 48),
-                              ),
-                              icon: const Icon(Icons.delete_forever),
-                              label: const Text('Delete Account'),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // Sign Out Button
-                      AppButton.secondary(
-                        text: 'Sign Out',
-                        onPressed: () => _handleSignOut(context, ref),
-                        icon: Icons.logout,
-                        isFullWidth: true,
+                    ),
+                    // Settings Icon
+                    IconButton(
+                      icon: Icon(
+                        Icons.settings_outlined,
+                        color: isDark ? Colors.white70 : AppColors.grey700,
                       ),
-                    ],
-                  ),
+                      onPressed: () {},
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => Center(child: Text('Error: $error')),
+
+              const SizedBox(height: 8),
+
+              // Subscription Section
+              _buildSectionHeader('Subscription', isDark),
+              _SubscriptionTile(ref: ref, isDark: isDark),
+
+              const SizedBox(height: 24),
+
+              // Account Section
+              _buildSectionHeader('Account', isDark),
+              _buildSettingsTile(
+                icon: Icons.person_outline,
+                title: 'Personal Information',
+                isDark: isDark,
+                onTap: () {},
+              ),
+              _buildDivider(isDark),
+              _buildSettingsTile(
+                icon: Icons.email_outlined,
+                title: 'Change Email',
+                isDark: isDark,
+                onTap: () => context.push('/settings/change-email'),
+              ),
+              _buildDivider(isDark),
+              _buildSettingsTile(
+                icon: Icons.lock_outline,
+                title: 'Change Password',
+                isDark: isDark,
+                onTap: () => context.push('/settings/change-password'),
+              ),
+
+              const SizedBox(height: 24),
+
+              // General Section
+              _buildSectionHeader('General', isDark),
+              _buildToggleTile(
+                icon: Icons.dark_mode_outlined,
+                title: 'Dark Mode',
+                value: ref.watch(themeModeProvider) == ThemeMode.dark,
+                isDark: isDark,
+                onChanged: (value) {
+                  ref.read(themeModeProvider.notifier).toggleTheme();
+                },
+              ),
+              _buildDivider(isDark),
+              _buildSettingsTile(
+                icon: Icons.notifications_outlined,
+                title: 'Notifications',
+                isDark: isDark,
+                onTap: () {},
+              ),
+              _buildDivider(isDark),
+              _buildSettingsTile(
+                icon: Icons.help_outline,
+                title: 'Help Center',
+                isDark: isDark,
+                onTap: () {},
+              ),
+
+              const SizedBox(height: 24),
+
+              // Support Section
+              _buildSectionHeader('Support and Legal', isDark),
+              _buildSettingsTile(
+                icon: Icons.support_agent_outlined,
+                title: 'One-tap support',
+                isDark: isDark,
+                onTap: () {},
+              ),
+              _buildDivider(isDark),
+              _buildSettingsTile(
+                icon: Icons.description_outlined,
+                title: 'Terms and Privacy',
+                isDark: isDark,
+                onTap: () {},
+              ),
+
+              const SizedBox(height: 32),
+
+              // Action Buttons
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    _buildActionButton(
+                      text: 'Sign Out',
+                      icon: Icons.logout,
+                      isDark: isDark,
+                      isDanger: false,
+                      onPressed: () => _handleSignOut(context, ref),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildActionButton(
+                      text: 'Delete Account',
+                      icon: Icons.delete_outline,
+                      isDark: isDark,
+                      isDanger: true,
+                      onPressed: () => _showDeleteAccountDialog(context, ref),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+            ],
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(child: Text('Error: $error')),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+          color: isDark ? Colors.white54 : AppColors.grey600,
+          letterSpacing: 0.5,
         ),
       ),
     );
+  }
+
+  Widget _buildSettingsTile({
+    required IconData icon,
+    required String title,
+    String? trailing,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 24,
+                color: isDark ? Colors.white70 : AppColors.grey700,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+              if (trailing != null)
+                Text(
+                  trailing,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white60 : AppColors.grey600,
+                  ),
+                ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: isDark ? Colors.white38 : AppColors.grey400,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildToggleTile({
+    required IconData icon,
+    required String title,
+    required bool value,
+    required bool isDark,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 24,
+            color: isDark ? Colors.white70 : AppColors.grey700,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return isDark ? Colors.white : Colors.black;
+              }
+              return isDark ? Colors.white60 : AppColors.grey400;
+            }),
+            trackColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return isDark
+                    ? Colors.white.withValues(alpha: 0.3)
+                    : Colors.black.withValues(alpha: 0.3);
+              }
+              return isDark ? Colors.white24 : AppColors.grey300;
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider(bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 56),
+      child: Divider(
+        height: 1,
+        thickness: 0.5,
+        color: isDark ? Colors.white12 : AppColors.grey200,
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required String text,
+    required IconData icon,
+    required bool isDark,
+    required bool isDanger,
+    required VoidCallback onPressed,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 18),
+        label: Text(text),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          side: BorderSide(
+            color: isDanger
+                ? AppColors.error.withValues(alpha: 0.5)
+                : isDark
+                    ? Colors.white24
+                    : AppColors.grey300,
+          ),
+          foregroundColor: isDanger
+              ? AppColors.error
+              : isDark
+                  ? Colors.white
+                  : Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getDisplayName(String? email) {
+    if (email == null) return 'User';
+    final name = email.split('@').first;
+    // Capitalize first letter
+    if (name.isEmpty) return 'User';
+    return name[0].toUpperCase() + name.substring(1);
   }
 
   Future<void> _handleSignOut(BuildContext context, WidgetRef ref) async {
@@ -233,273 +449,128 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final bool isMonospace;
-
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    required this.icon,
-    this.isMonospace = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 20, color: context.colors.onSurface.withValues(alpha: 0.6)),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.colors.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontFamily: isMonospace ? 'monospace' : null,
-                  fontSize: isMonospace ? 12 : null,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _SettingsTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-        child: Row(
-          children: [
-            Icon(icon, color: context.colors.primary),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: context.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: context.colors.onSurface.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right, color: context.colors.onSurface.withValues(alpha: 0.6)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SubscriptionCard extends StatelessWidget {
+// Subscription Tile Widget
+class _SubscriptionTile extends StatelessWidget {
   final WidgetRef ref;
+  final bool isDark;
 
-  const _SubscriptionCard({required this.ref});
+  const _SubscriptionTile({
+    required this.ref,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
     final subscriptionAsync = ref.watch(subscriptionProvider);
 
     return subscriptionAsync.when(
-      data: (subscription) => AppCard.elevated(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      data: (subscription) {
+        final isActive = subscription.isActive;
+
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              if (isActive) {
+                context.push('/subscription-details');
+              } else {
+                context.go('/paywall');
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Row(
+                children: [
+                  Icon(
+                    isActive ? Icons.workspace_premium : Icons.card_membership,
+                    size: 24,
+                    color: isDark ? Colors.white70 : AppColors.grey700,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          subscription.tier.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Colors.black,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          isActive ? 'Active' : 'Free Plan',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: isDark ? Colors.white60 : AppColors.grey600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    size: 20,
+                    color: isDark ? Colors.white38 : AppColors.grey400,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      loading: () => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        child: Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: isDark ? Colors.white38 : AppColors.grey400,
+            ),
+          ),
+        ),
+      ),
+      error: (error, _) => Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            ref.invalidate(subscriptionProvider);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
               children: [
                 Icon(
-                  subscription.isActive
-                      ? Icons.check_circle
-                      : Icons.info_outline,
-                  color: subscription.isActive
-                      ? const Color(0xFF10B981) // Success green
-                      : const Color(0xFFF59E0B), // Warning amber
+                  Icons.error_outline,
+                  size: 24,
+                  color: isDark ? Colors.white70 : AppColors.grey700,
                 ),
-                const SizedBox(width: AppSpacing.sm),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
-                    subscription.isActive ? 'Active Subscription' : 'Free Tier',
-                    style: context.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                    'Failed to load subscription',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _InfoRow(
-              label: 'Tier',
-              value: subscription.tier.toUpperCase(),
-              icon: Icons.card_membership,
-            ),
-            if (subscription.expirationDate != null) ...[
-              const Divider(height: AppSpacing.lg),
-              _InfoRow(
-                label: 'Expires',
-                value: _formatDate(subscription.expirationDate!),
-                icon: Icons.calendar_today,
-              ),
-            ],
-            if (subscription.productIdentifier != null) ...[
-              const Divider(height: AppSpacing.lg),
-              _InfoRow(
-                label: 'Product',
-                value: subscription.productIdentifier!,
-                icon: Icons.shopping_bag,
-              ),
-            ],
-            const SizedBox(height: AppSpacing.md),
-            if (subscription.isActive) ...[
-              AppButton.secondary(
-                text: 'Manage Subscription',
-                onPressed: () {
-                  context.push('/subscription-details');
-                },
-                icon: Icons.settings,
-                isFullWidth: true,
-              ),
-            ] else ...[
-              AppButton.primary(
-                text: 'Upgrade to Premium',
-                onPressed: () {
-                  context.go('/paywall');
-                },
-                icon: Icons.upgrade,
-                isFullWidth: true,
-              ),
-            ],
-          ],
-        ),
-      ),
-      loading: () => AppCard.elevated(
-        child: Center(
-          child: Column(
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                'Loading subscription...',
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.colors.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      error: (error, _) => AppCard.elevated(
-        child: Column(
-          children: [
-            Text(
-              'Failed to load subscription',
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: context.colors.error,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            AppButton.secondary(
-              text: 'Retry',
-              onPressed: () {
-                ref.invalidate(subscriptionProvider);
-              },
-              size: AppButtonSize.small,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-  }
-}
-
-class _ThemeToggleCard extends StatelessWidget {
-  final WidgetRef ref;
-
-  const _ThemeToggleCard({required this.ref});
-
-  @override
-  Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeModeProvider);
-    final isDarkMode = themeMode == ThemeMode.dark;
-
-    return AppCard.elevated(
-      child: Row(
-        children: [
-          Icon(
-            isDarkMode ? Icons.dark_mode : Icons.light_mode,
-            color: context.colors.primary,
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
                 Text(
-                  'Dark Mode',
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Switch between light and dark theme',
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: context.colors.onSurface.withValues(alpha: 0.6),
+                  'Retry',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isDark ? Colors.white60 : AppColors.grey600,
                   ),
                 ),
               ],
             ),
           ),
-          Switch(
-            value: isDarkMode,
-            onChanged: (_) {
-              ref.read(themeModeProvider.notifier).toggleTheme();
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
