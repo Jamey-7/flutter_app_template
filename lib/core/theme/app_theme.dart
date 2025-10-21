@@ -6,32 +6,24 @@ class AppTheme {
   static ThemeData fromThemeData(AppThemeData themeData) {
     final isLight = themeData.mode == ThemeMode.light;
 
+    // Create base ColorScheme and customize with theme data
+    final baseScheme = isLight ? ColorScheme.light() : ColorScheme.dark();
+    final colorScheme = baseScheme.copyWith(
+      primary: themeData.primary,
+      onPrimary: themeData.surface,
+      secondary: themeData.secondary,
+      onSecondary: themeData.surface,
+      error: themeData.error,
+      onError: Colors.white,
+      surface: themeData.surface,
+      onSurface: themeData.textPrimary,
+      surfaceContainerHighest: themeData.surfaceNeutral,
+    );
+
     return ThemeData(
       useMaterial3: true,
       brightness: isLight ? Brightness.light : Brightness.dark,
-      colorScheme: isLight
-          ? ColorScheme.light(
-              primary: themeData.primary,
-              onPrimary: themeData.surface,
-              secondary: themeData.secondary,
-              onSecondary: themeData.surface,
-              error: themeData.error,
-              onError: Colors.white,
-              surface: themeData.surface,
-              onSurface: themeData.textPrimary,
-              surfaceContainerHighest: themeData.surfaceNeutral,
-            )
-          : ColorScheme.dark(
-              primary: themeData.primary,
-              onPrimary: themeData.surface,
-              secondary: themeData.secondary,
-              onSecondary: themeData.surface,
-              error: themeData.error,
-              onError: Colors.white,
-              surface: themeData.surface,
-              onSurface: themeData.textPrimary,
-              surfaceContainerHighest: themeData.surfaceNeutral,
-            ),
+      colorScheme: colorScheme,
       scaffoldBackgroundColor: themeData.background,
       appBarTheme: AppBarTheme(
         backgroundColor: themeData.background,
@@ -69,7 +61,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isLight ? themeData.surfaceNeutral : themeData.surfaceNeutral,
+        fillColor: themeData.surfaceNeutral,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.md,
@@ -122,35 +114,32 @@ class AppTheme {
   }
 }
 
+/// Static color constants for use in widgets
+///
+/// **IMPORTANT:** Most widgets should use theme colors via `Theme.of(context).colorScheme`
+/// instead of these static values. These are kept for:
+/// - Auth screens (fixed dark aesthetic)
+/// - Legacy compatibility
+/// - Reference values (grey scale)
 class AppColors {
-  // Primary colors
-  static const Color primary = Color(0xFF000000);
+  // Neutral colors (for auth screens and legacy code)
+  static const Color black = Color(0xFF000000);
+  static const Color white = Color(0xFFFFFFFF);
 
-  // Secondary colors
-  static const Color secondary = Color(0xFF7C3AED);
-  static const Color secondaryDark = Color(0xFF6D28D9);
-  static const Color secondaryLight = Color(0xFF8B5CF6);
-
-  // Status colors
-  static const Color success = Color(0xFF10B981);
+  // Status colors (constant across all themes for semantic meaning)
   static const Color error = Color(0xFFEF4444);
+  static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
 
-  // Neutral colors
-  static const Color black = Color(0xFF000000);
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color darkSurfaceNeutral = Color(0xFF1A1A1A); // Neutral dark surface for cards/dialogs
-  static const Color darkBackground = Color(0xFF121212); // Darker background for screens (darker than darkSurfaceNeutral)
-
-  // Auth-specific colors (used in auth screens with dark backgrounds)
+  // Auth-specific colors (used in auth screens with fixed dark aesthetic)
   static const Color authButtonBackground = Color(0xFF0C0C0C); // Near-black button background
   static const Color authInputFill = Color(0x99000000); // 60% black (text field background)
   static const Color authShadow = Color(0x33000000); // 20% black (shadow overlay)
   static const Color authBorderLight = Color(0x4DFFFFFF); // 30% white (normal border)
   static const Color authBorderFocused = Color(0xB3FFFFFF); // 70% white (focused border)
 
-  // Grey scale
+  // Grey scale (Tailwind CSS scale - useful for hardcoded reference values)
   static const Color grey50 = Color(0xFFF9FAFB);
   static const Color grey100 = Color(0xFFF3F4F6);
   static const Color grey200 = Color(0xFFE5E7EB);
@@ -162,22 +151,11 @@ class AppColors {
   static const Color grey800 = Color(0xFF1F2937);
   static const Color grey900 = Color(0xFF111827);
 
-  // Text colors
+  // Text colors (semantic aliases for grey scale)
   static const Color textPrimary = grey900;
   static const Color textSecondary = grey600;
-  static const Color textDisabled = grey400;
 
-  // Background colors
-  static const Color background = white;
-  static const Color backgroundDark = black;
-  static const Color surface = white;
-  static const Color surfaceDark = grey900;
-
-  // Gradient colors - Brand accent (used in buttons, borders, decorative elements)
-  static const Color gradientStart = Color(0xFFFA6464); // Red
-  static const Color gradientEnd = Color(0xFF19A2E6); // Blue
-
-  // Overlay colors (used for image overlays)
+  // Overlay colors (used for image overlays in gradients)
   static const Color overlayLight = Color(0x33000000); // Black 20%
   static const Color overlayMedium = Color(0x66000000); // Black 40%
   static const Color overlayDark = Color(0x99000000); // Black 60%
@@ -185,10 +163,15 @@ class AppColors {
 }
 
 /// Predefined gradients for consistent use across the app
+/// Note: For theme-specific gradients, use AppThemeData.gradientStart/End
 class AppGradients {
-  /// Brand accent gradient (red to blue) - Use for buttons, borders, CTAs
+  /// Brand accent gradient (red to blue) - Used in auth screens
+  /// For theme-specific gradients, use theme.gradientStart/End instead
   static const LinearGradient brandAccent = LinearGradient(
-    colors: [AppColors.gradientStart, AppColors.gradientEnd],
+    colors: [
+      Color(0xFFFA6464), // Red
+      Color(0xFF19A2E6), // Blue
+    ],
   );
 
   /// Dark overlay gradient - Use for images with light text on top
@@ -199,7 +182,7 @@ class AppGradients {
       AppColors.overlayMedium,
       AppColors.overlayDark,
       AppColors.overlayDarker,
-      AppColors.black,
+      Color(0xFF000000), // Black
     ],
     stops: [0.0, 0.3, 0.7, 1.0],
   );
@@ -212,7 +195,7 @@ class AppGradients {
       Color(0x33FFFFFF), // White 20%
       Color(0x66FFFFFF), // White 40%
       Color(0xCCFFFFFF), // White 80%
-      AppColors.white,
+      Color(0xFFFFFFFF), // White
     ],
     stops: [0.0, 0.3, 0.7, 1.0],
   );
@@ -354,10 +337,4 @@ extension ThemeExtensions on BuildContext {
   ThemeData get theme => Theme.of(this);
   ColorScheme get colors => Theme.of(this).colorScheme;
   TextTheme get textTheme => Theme.of(this).textTheme;
-}
-
-extension GradientExtensions on BuildContext {
-  /// Quick access to app gradients
-  /// Usage: context.gradients.brandAccent, context.gradients.darkOverlay, etc.
-  Type get gradients => AppGradients;
 }

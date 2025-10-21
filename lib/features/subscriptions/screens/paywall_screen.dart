@@ -602,11 +602,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: isSelected
-                                  ? AppColors.gradientEnd
+                                  ? const Color(0xFF19A2E6) // Blue from brand gradient
                                   : Colors.transparent,
                               border: Border.all(
                                 color: isSelected
-                                    ? AppColors.gradientEnd
+                                    ? const Color(0xFF19A2E6) // Blue from brand gradient
                                     : AppColors.white.withValues(alpha: 0.7),
                                 width: 2,
                               ),

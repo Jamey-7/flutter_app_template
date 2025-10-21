@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../auth/providers/auth_provider.dart';
 import '../../subscriptions/providers/subscription_provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_themes.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../shared/widgets/app_dialog.dart';
@@ -17,13 +16,12 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(currentUserProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = Theme.of(context).scaffoldBackgroundColor;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: bgColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -52,7 +50,7 @@ class SettingsScreen extends ConsumerWidget {
               const SizedBox(height: 16),
 
               // Premium Unlock Card (only for free users)
-              _PremiumUnlockCard(ref: ref, isDark: isDark),
+              const _PremiumUnlockCard(),
 
               // Email Section
               _buildSectionHeader('Email', context),
@@ -67,7 +65,7 @@ class SettingsScreen extends ConsumerWidget {
 
               // Subscription Section
               _buildSectionHeader('Subscription', context),
-              _SubscriptionTile(ref: ref, isDark: isDark),
+              const _SubscriptionTile(),
 
               const SizedBox(height: 20),
 
@@ -161,8 +159,8 @@ class SettingsScreen extends ConsumerWidget {
                     label: const Text('Sign Out'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      backgroundColor: isDark ? Colors.white : Colors.black,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -309,18 +307,15 @@ class SettingsScreen extends ConsumerWidget {
 }
 
 // Premium Unlock Card Widget
-class _PremiumUnlockCard extends StatelessWidget {
-  final WidgetRef ref;
-  final bool isDark;
-
-  const _PremiumUnlockCard({
-    required this.ref,
-    required this.isDark,
-  });
+class _PremiumUnlockCard extends ConsumerWidget {
+  const _PremiumUnlockCard();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final subscriptionAsync = ref.watch(subscriptionProvider);
+    final theme = Theme.of(context);
+    final themeType = ref.watch(themeTypeProvider);
+    final themeData = themeType.data;
 
     return subscriptionAsync.when(
       data: (subscription) {
@@ -337,15 +332,15 @@ class _PremiumUnlockCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.gradientStart,
-                AppColors.gradientEnd,
+                themeData.gradientStart,
+                themeData.gradientEnd,
               ],
             ),
           ),
           child: Container(
             margin: const EdgeInsets.all(1.5),
             decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: theme.scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(14.5),
             ),
             child: Material(
@@ -362,14 +357,12 @@ class _PremiumUnlockCard extends StatelessWidget {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.1)
-                                : AppColors.grey100,
+                            color: theme.colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             Icons.workspace_premium,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: theme.colorScheme.primary,
                             size: 26,
                           ),
                         ),
@@ -384,7 +377,7 @@ class _PremiumUnlockCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? Colors.white : Colors.black,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                               ),
                               const SizedBox(height: 3),
@@ -392,9 +385,7 @@ class _PremiumUnlockCard extends StatelessWidget {
                                 'Get unlimited access to all features',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: isDark
-                                      ? Colors.white60
-                                      : AppColors.grey600,
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                 ),
                               ),
                             ],
@@ -403,9 +394,7 @@ class _PremiumUnlockCard extends StatelessWidget {
                         // Arrow
                         Icon(
                           Icons.arrow_forward_ios,
-                          color: isDark
-                              ? Colors.white38
-                              : AppColors.grey400,
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                           size: 16,
                         ),
                       ],
@@ -423,18 +412,13 @@ class _PremiumUnlockCard extends StatelessWidget {
 }
 
 // Subscription Tile Widget
-class _SubscriptionTile extends StatelessWidget {
-  final WidgetRef ref;
-  final bool isDark;
-
-  const _SubscriptionTile({
-    required this.ref,
-    required this.isDark,
-  });
+class _SubscriptionTile extends ConsumerWidget {
+  const _SubscriptionTile();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final subscriptionAsync = ref.watch(subscriptionProvider);
+    final theme = Theme.of(context);
 
     return subscriptionAsync.when(
       data: (subscription) {
@@ -457,7 +441,7 @@ class _SubscriptionTile extends StatelessWidget {
                   Icon(
                     Icons.workspace_premium,
                     size: 22,
-                    color: isDark ? Colors.white70 : AppColors.grey700,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -469,7 +453,7 @@ class _SubscriptionTile extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: theme.colorScheme.onSurface,
                             letterSpacing: 0.4,
                           ),
                         ),
@@ -478,7 +462,7 @@ class _SubscriptionTile extends StatelessWidget {
                           isActive ? 'Active' : 'Free Plan',
                           style: TextStyle(
                             fontSize: 12,
-                            color: isDark ? Colors.white60 : AppColors.grey600,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -487,7 +471,7 @@ class _SubscriptionTile extends StatelessWidget {
                   Icon(
                     Icons.chevron_right,
                     size: 18,
-                    color: isDark ? Colors.white38 : AppColors.grey400,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                   ),
                 ],
               ),
@@ -503,7 +487,7 @@ class _SubscriptionTile extends StatelessWidget {
             height: 20,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: isDark ? Colors.white38 : AppColors.grey400,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
             ),
           ),
         ),
@@ -521,7 +505,7 @@ class _SubscriptionTile extends StatelessWidget {
                 Icon(
                   Icons.error_outline,
                   size: 22,
-                  color: isDark ? Colors.white70 : AppColors.grey700,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -529,7 +513,7 @@ class _SubscriptionTile extends StatelessWidget {
                     'Failed to load subscription',
                     style: TextStyle(
                       fontSize: 15,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -537,7 +521,7 @@ class _SubscriptionTile extends StatelessWidget {
                   'Retry',
                   style: TextStyle(
                     fontSize: 13,
-                    color: isDark ? Colors.white60 : AppColors.grey600,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
