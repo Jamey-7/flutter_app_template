@@ -106,9 +106,9 @@ class AppTheme {
         onSurface: AppColors.white,
         surfaceContainerHighest: AppColors.grey900,
       ),
-      scaffoldBackgroundColor: AppColors.black,
+      scaffoldBackgroundColor: AppColors.darkBackground,
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.black,
+        backgroundColor: AppColors.darkBackground,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
