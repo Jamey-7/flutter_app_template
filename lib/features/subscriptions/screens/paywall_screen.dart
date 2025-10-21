@@ -7,6 +7,8 @@ import 'package:ming_cute_icons/ming_cute_icons.dart';
 
 import '../../../core/logger/logger.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_themes.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../../core/responsive/breakpoints.dart';
 import '../providers/offerings_provider.dart';
 import '../providers/subscription_provider.dart';
@@ -31,9 +33,15 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   Widget build(BuildContext context) {
     final offeringsAsync = ref.watch(offeringsProvider);
 
+    // Get current theme, but force Default Dark if user selected a light theme
+    final themeType = ref.watch(themeTypeProvider);
+    final effectiveTheme = themeType.data.mode == ThemeMode.light
+        ? AppThemeData.defaultTheme()  // Force Default Dark for paywall
+        : themeType.data;               // Use selected dark theme
+
     return Scaffold(
       body: offeringsAsync.when(
-        data: (offerings) => _buildOfferingsContent(offerings),
+        data: (offerings) => _buildOfferingsContent(offerings, effectiveTheme),
         loading: () => Stack(
           children: [
             // Background Image
@@ -131,7 +139,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _buildOfferingsContent(Offerings? offerings) {
+  Widget _buildOfferingsContent(Offerings? offerings, AppThemeData effectiveTheme) {
     // Auto-select yearly package on first load
     if (offerings != null && offerings.current != null) {
       final packages = offerings.current!.availablePackages;
@@ -353,13 +361,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         const SizedBox(height: AppSpacing.xl),
 
                         // Product Cards - Yearly first, then Monthly
-                        ...packages.where((pkg) => pkg.packageType == PackageType.annual).map((package) => _buildProductCard(package)),
-                        ...packages.where((pkg) => pkg.packageType == PackageType.monthly).map((package) => _buildProductCard(package)),
+                        ...packages.where((pkg) => pkg.packageType == PackageType.annual).map((package) => _buildProductCard(package, effectiveTheme)),
+                        ...packages.where((pkg) => pkg.packageType == PackageType.monthly).map((package) => _buildProductCard(package, effectiveTheme)),
 
                         const SizedBox(height: AppSpacing.sm),
 
                         // Subscribe Button
-                        _buildSubscribeButton(),
+                        _buildSubscribeButton(effectiveTheme),
 
                         // Restore Purchases Button
                         _buildRestoreButton(),
@@ -513,7 +521,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _buildProductCard(Package package) {
+  Widget _buildProductCard(Package package, AppThemeData effectiveTheme) {
     final product = package.storeProduct;
     final isYearly = package.packageType == PackageType.annual;
     final isSelected = _selectedPackageId == package.identifier;
@@ -540,7 +548,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               child: Container(
                 padding: isSelected ? const EdgeInsets.all(1.5) : EdgeInsets.zero,
                 decoration: BoxDecoration(
-                  gradient: isSelected ? AppGradients.brandAccent : null,
+                  gradient: isSelected
+                      ? LinearGradient(
+                          colors: [effectiveTheme.gradientStart, effectiveTheme.gradientEnd],
+                        )
+                      : null,
                   borderRadius: BorderRadius.circular(AppRadius.xxlarge),
                 ),
                 child: Container(
@@ -602,11 +614,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: isSelected
-                                  ? const Color(0xFF19A2E6) // Blue from brand gradient
+                                  ? effectiveTheme.gradientEnd
                                   : Colors.transparent,
                               border: Border.all(
                                 color: isSelected
-                                    ? const Color(0xFF19A2E6) // Blue from brand gradient
+                                    ? effectiveTheme.gradientEnd
                                     : AppColors.white.withValues(alpha: 0.7),
                                 width: 2,
                               ),
@@ -633,7 +645,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 child: Container(
                   padding: isSelected ? const EdgeInsets.all(1.5) : EdgeInsets.zero,
                   decoration: BoxDecoration(
-                    gradient: isSelected ? AppGradients.brandAccent : null,
+                    gradient: isSelected
+                        ? LinearGradient(
+                            colors: [effectiveTheme.gradientStart, effectiveTheme.gradientEnd],
+                          )
+                        : null,
                     borderRadius: BorderRadius.circular(AppRadius.xxlarge),
                     boxShadow: [
                       BoxShadow(
@@ -672,7 +688,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _buildSubscribeButton() {
+  Widget _buildSubscribeButton(AppThemeData effectiveTheme) {
     final offerings = ref.read(offeringsProvider).value;
     if (offerings == null || offerings.current == null) return const SizedBox.shrink();
 
@@ -698,7 +714,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         padding: const EdgeInsets.all(1.5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.circular),
-          gradient: AppGradients.brandAccent,
+          gradient: LinearGradient(
+            colors: [effectiveTheme.gradientStart, effectiveTheme.gradientEnd],
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.authShadow,

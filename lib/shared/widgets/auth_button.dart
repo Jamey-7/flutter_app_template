@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/app_themes.dart';
+import '../../core/providers/theme_provider.dart';
 
 enum AuthButtonType {
   primary,
   social,
 }
 
-class AuthButton extends StatelessWidget {
+class AuthButton extends ConsumerWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
@@ -44,22 +47,31 @@ class AuthButton extends StatelessWidget {
   }) : type = AuthButtonType.social;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (type == AuthButtonType.primary) {
-      return _buildGradientBorderedButton(context);
+      return _buildGradientBorderedButton(context, ref);
     } else {
       return _buildSocialButton(context);
     }
   }
 
-  Widget _buildGradientBorderedButton(BuildContext context) {
+  Widget _buildGradientBorderedButton(BuildContext context, WidgetRef ref) {
+    // Get current theme, but force Default Dark if user selected a light theme
+    final themeType = ref.watch(themeTypeProvider);
+    final effectiveTheme = themeType.data.mode == ThemeMode.light
+        ? AppThemeData.defaultTheme()  // Force Default Dark for auth screens
+        : themeType.data;               // Use selected dark theme
+
+
     return Container(
       width: double.infinity,
       height: height,
       padding: const EdgeInsets.all(1.5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadius.circular),
-        gradient: AppGradients.brandAccent, // Using theme gradient
+        gradient: LinearGradient(
+          colors: [effectiveTheme.gradientStart, effectiveTheme.gradientEnd],
+        ),
         boxShadow: [
           BoxShadow(
             color: AppColors.authShadow,
