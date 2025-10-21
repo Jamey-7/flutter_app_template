@@ -5,9 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../subscriptions/providers/subscription_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_themes.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
+import '../widgets/theme_selector_dialog.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -53,70 +55,73 @@ class SettingsScreen extends ConsumerWidget {
               _PremiumUnlockCard(ref: ref, isDark: isDark),
 
               // Email Section
-              _buildSectionHeader('Email', isDark),
+              _buildSectionHeader('Email', context),
               _buildSettingsTile(
                 icon: Icons.email_outlined,
                 title: user.email ?? 'No email',
-                isDark: isDark,
+                context: context,
                 onTap: () {},
               ),
 
               const SizedBox(height: 20),
 
               // Subscription Section
-              _buildSectionHeader('Subscription', isDark),
+              _buildSectionHeader('Subscription', context),
               _SubscriptionTile(ref: ref, isDark: isDark),
 
               const SizedBox(height: 20),
 
               // General Section
-              _buildSectionHeader('General', isDark),
-              _buildToggleTile(
-                icon: Icons.dark_mode_outlined,
-                title: 'Dark Mode',
-                value: ref.watch(themeModeProvider) == ThemeMode.dark,
-                isDark: isDark,
-                onChanged: (value) {
-                  ref.read(themeModeProvider.notifier).toggleTheme();
+              _buildSectionHeader('General', context),
+              _buildSettingsTile(
+                icon: Icons.palette_outlined,
+                title: 'Theme',
+                trailing: ref.watch(themeTypeProvider).displayName,
+                context: context,
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const ThemeSelectorDialog(),
+                  );
                 },
               ),
-              _buildDivider(isDark),
+              _buildDivider(context),
               _buildSettingsTile(
                 icon: Icons.notifications_outlined,
                 title: 'Notifications',
-                isDark: isDark,
+                context: context,
                 onTap: () {},
               ),
-              _buildDivider(isDark),
+              _buildDivider(context),
               _buildSettingsTile(
                 icon: Icons.help_outline,
                 title: 'Help Center',
-                isDark: isDark,
+                context: context,
                 onTap: () {},
               ),
 
               const SizedBox(height: 20),
 
               // Account Section
-              _buildSectionHeader('Account', isDark),
+              _buildSectionHeader('Account', context),
               _buildSettingsTile(
                 icon: Icons.email_outlined,
                 title: 'Change Email',
-                isDark: isDark,
+                context: context,
                 onTap: () => context.push('/settings/change-email'),
               ),
-              _buildDivider(isDark),
+              _buildDivider(context),
               _buildSettingsTile(
                 icon: Icons.lock_outline,
                 title: 'Change Password',
-                isDark: isDark,
+                context: context,
                 onTap: () => context.push('/settings/change-password'),
               ),
-              _buildDivider(isDark),
+              _buildDivider(context),
               _buildSettingsTile(
                 icon: Icons.delete_outline,
                 title: 'Delete Account',
-                isDark: isDark,
+                context: context,
                 onTap: () => _showDeleteAccountDialog(context, ref),
                 isDestructive: true,
               ),
@@ -124,25 +129,25 @@ class SettingsScreen extends ConsumerWidget {
               const SizedBox(height: 20),
 
               // Legal Section
-              _buildSectionHeader('Legal', isDark),
+              _buildSectionHeader('Legal', context),
               _buildSettingsTile(
                 icon: Icons.privacy_tip_outlined,
                 title: 'Privacy Policy',
-                isDark: isDark,
+                context: context,
                 onTap: () {},
               ),
-              _buildDivider(isDark),
+              _buildDivider(context),
               _buildSettingsTile(
                 icon: Icons.description_outlined,
                 title: 'Terms & Conditions',
-                isDark: isDark,
+                context: context,
                 onTap: () {},
               ),
-              _buildDivider(isDark),
+              _buildDivider(context),
               _buildSettingsTile(
                 icon: Icons.info_outline,
                 title: 'Disclaimer',
-                isDark: isDark,
+                context: context,
                 onTap: () {},
               ),
 
@@ -183,7 +188,7 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title, bool isDark) {
+  Widget _buildSectionHeader(String title, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
       child: Text(
@@ -191,7 +196,7 @@ class SettingsScreen extends ConsumerWidget {
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: isDark ? Colors.white54 : AppColors.grey600,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           letterSpacing: 0.3,
         ),
       ),
@@ -202,12 +207,13 @@ class SettingsScreen extends ConsumerWidget {
     required IconData icon,
     required String title,
     String? trailing,
-    required bool isDark,
+    required BuildContext context,
     required VoidCallback onTap,
     bool isDestructive = false,
   }) {
-    final effectiveColor = isDestructive ? AppColors.error : (isDark ? Colors.white : Colors.black);
-    final effectiveIconColor = isDestructive ? AppColors.error : (isDark ? Colors.white70 : AppColors.grey700);
+    final theme = Theme.of(context);
+    final effectiveColor = isDestructive ? theme.colorScheme.error : theme.colorScheme.onSurface;
+    final effectiveIconColor = isDestructive ? theme.colorScheme.error : theme.colorScheme.onSurface.withValues(alpha: 0.7);
 
     return Material(
       color: Colors.transparent,
@@ -238,14 +244,14 @@ class SettingsScreen extends ConsumerWidget {
                   trailing,
                   style: TextStyle(
                     fontSize: 15,
-                    color: isDark ? Colors.white60 : AppColors.grey600,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               const SizedBox(width: 6),
               Icon(
                 Icons.chevron_right,
                 size: 18,
-                color: isDark ? Colors.white38 : AppColors.grey400,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
               ),
             ],
           ),
@@ -254,66 +260,13 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildToggleTile({
-    required IconData icon,
-    required String title,
-    required bool value,
-    required bool isDark,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 22,
-            color: isDark ? Colors.white70 : AppColors.grey700,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: isDark ? Colors.white : Colors.black,
-              ),
-            ),
-          ),
-          Transform.scale(
-            scale: 0.85,
-            child: Switch(
-              value: value,
-              onChanged: onChanged,
-              thumbColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return isDark ? Colors.white : Colors.black;
-                }
-                return isDark ? Colors.white60 : AppColors.grey400;
-              }),
-              trackColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return isDark
-                      ? Colors.white.withValues(alpha: 0.3)
-                      : Colors.black.withValues(alpha: 0.3);
-                }
-                return isDark ? Colors.white24 : AppColors.grey300;
-              }),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDivider(bool isDark) {
+  Widget _buildDivider(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 52),
       child: Divider(
         height: 1,
         thickness: 0.5,
-        color: isDark ? Colors.white12 : AppColors.grey200,
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
       ),
     );
   }

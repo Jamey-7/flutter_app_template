@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_themes.dart';
 import '../../../core/responsive/breakpoints.dart';
-import '../../../core/providers/theme_provider.dart';
 import '../../../shared/widgets/app_button.dart';
 
 /// Onboarding screen with 2 pages
@@ -41,22 +41,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          // Theme toggle button
-          IconButton(
-            icon: const Icon(Icons.brightness_6),
-            onPressed: () {
-              ref.read(themeModeProvider.notifier).toggleTheme();
-            },
-            tooltip: 'Toggle theme',
-          ),
-        ],
-      ),
-      body: SafeArea(
+    // Force Default Dark theme for onboarding
+    return Theme(
+      data: AppTheme.fromThemeData(AppThemeData.defaultTheme()),
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            body: SafeArea(
         child: Column(
           children: [
             // Page content
@@ -84,9 +80,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildPageIndicator(0),
+                      _buildPageIndicator(0, context),
                       const SizedBox(width: AppSpacing.sm),
-                      _buildPageIndicator(1),
+                      _buildPageIndicator(1, context),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.xl),
@@ -106,18 +102,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
           ],
         ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildPageIndicator(int pageIndex) {
+  Widget _buildPageIndicator(int pageIndex, BuildContext context) {
     final isActive = _currentPage == pageIndex;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: isActive ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: isActive ? context.colors.primary : context.colors.outline,
+        color: isActive
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.outline,
         borderRadius: BorderRadius.circular(AppRadius.small),
       ),
     );

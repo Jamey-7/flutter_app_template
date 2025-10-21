@@ -1,126 +1,51 @@
 import 'package:flutter/material.dart';
+import 'app_themes.dart';
 
 class AppTheme {
-  static ThemeData light() {
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.light(
-        primary: AppColors.primary,
-        onPrimary: AppColors.white,
-        secondary: AppColors.secondary,
-        onSecondary: AppColors.white,
-        error: AppColors.error,
-        onError: AppColors.white,
-        surface: AppColors.white,
-        onSurface: AppColors.textPrimary,
-        surfaceContainerHighest: AppColors.grey100,
-      ),
-      scaffoldBackgroundColor: AppColors.background,
-      textTheme: AppTypography.textTheme,
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(88, 48),
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.medium),
-          ),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size(88, 48),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.medium),
-          ),
-        ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          minimumSize: const Size(88, 48),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.medium),
-          ),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.grey50,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.grey300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.grey300),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.primary, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.error, width: 2),
-        ),
-      ),
-      cardTheme: CardThemeData(
-        elevation: AppElevation.small,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.large),
-        ),
-        clipBehavior: Clip.antiAlias,
-      ),
-      dialogTheme: DialogThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.large),
-        ),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.medium),
-        ),
-      ),
-    );
-  }
+  /// Build a ThemeData from AppThemeData
+  static ThemeData fromThemeData(AppThemeData themeData) {
+    final isLight = themeData.mode == ThemeMode.light;
 
-  static ThemeData dark() {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.dark(
-        primary: AppColors.white,
-        onPrimary: AppColors.black,
-        secondary: AppColors.secondary,
-        onSecondary: AppColors.white,
-        error: AppColors.error,
-        onError: AppColors.white,
-        surface: AppColors.black,
-        onSurface: AppColors.white,
-        surfaceContainerHighest: AppColors.grey900,
-      ),
-      scaffoldBackgroundColor: AppColors.darkBackground,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.darkBackground,
+      brightness: isLight ? Brightness.light : Brightness.dark,
+      colorScheme: isLight
+          ? ColorScheme.light(
+              primary: themeData.primary,
+              onPrimary: themeData.surface,
+              secondary: themeData.secondary,
+              onSecondary: themeData.surface,
+              error: themeData.error,
+              onError: Colors.white,
+              surface: themeData.surface,
+              onSurface: themeData.textPrimary,
+              surfaceContainerHighest: themeData.surfaceNeutral,
+            )
+          : ColorScheme.dark(
+              primary: themeData.primary,
+              onPrimary: themeData.surface,
+              secondary: themeData.secondary,
+              onSecondary: themeData.surface,
+              error: themeData.error,
+              onError: Colors.white,
+              surface: themeData.surface,
+              onSurface: themeData.textPrimary,
+              surfaceContainerHighest: themeData.surfaceNeutral,
+            ),
+      scaffoldBackgroundColor: themeData.background,
+      appBarTheme: AppBarTheme(
+        backgroundColor: themeData.background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
       textTheme: AppTypography.textTheme.apply(
-        bodyColor: AppColors.white,
-        displayColor: AppColors.white,
+        bodyColor: themeData.textPrimary,
+        displayColor: themeData.textPrimary,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(88, 48),
-          backgroundColor: AppColors.white,
-          foregroundColor: AppColors.black,
+          // backgroundColor and foregroundColor will use colorScheme.primary and onPrimary by default
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
           ),
@@ -144,35 +69,35 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.grey800,
+        fillColor: isLight ? themeData.surfaceNeutral : themeData.surfaceNeutral,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.md,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.grey700),
+          borderSide: BorderSide(color: themeData.textSecondary.withValues(alpha: 0.3)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.grey700),
+          borderSide: BorderSide(color: themeData.textSecondary.withValues(alpha: 0.3)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.primary, width: 2),
+          borderSide: BorderSide(color: themeData.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.error),
+          borderSide: BorderSide(color: themeData.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.medium),
-          borderSide: BorderSide(color: AppColors.error, width: 2),
+          borderSide: BorderSide(color: themeData.error, width: 2),
         ),
       ),
       cardTheme: CardThemeData(
         elevation: AppElevation.small,
-        color: AppColors.darkSurfaceNeutral,
+        color: themeData.surfaceNeutral,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.large),
@@ -180,7 +105,7 @@ class AppTheme {
         clipBehavior: Clip.antiAlias,
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.darkSurfaceNeutral,
+        backgroundColor: themeData.surfaceNeutral,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.large),
@@ -188,7 +113,7 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.grey800,
+        backgroundColor: themeData.surfaceNeutral,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.medium),
         ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../theme/app_themes.dart';
 
 /// Service for persisting theme preferences
 class ThemeService {
   static const String _themeModeKey = 'theme_mode';
+  static const String _themeTypeKey = 'theme_type';
 
   /// Load the saved theme mode from SharedPreferences
   /// Returns ThemeMode.system if no preference is saved
@@ -65,6 +67,53 @@ class ThemeService {
       await prefs.remove(_themeModeKey);
     } catch (e) {
       debugPrint('Failed to clear theme mode: $e');
+    }
+  }
+
+  /// Load the saved theme type from SharedPreferences
+  /// Returns AppThemeType.defaultTheme if no preference is saved
+  static Future<AppThemeType> loadThemeType() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final themeTypeString = prefs.getString(_themeTypeKey);
+
+      if (themeTypeString == null) {
+        return AppThemeType.defaultTheme;
+      }
+
+      // Convert string back to AppThemeType enum
+      switch (themeTypeString) {
+        case 'defaultTheme':
+          return AppThemeType.defaultTheme;
+        case 'cyberpunk':
+          return AppThemeType.cyberpunk;
+        case 'minimalist':
+          return AppThemeType.minimalist;
+        default:
+          return AppThemeType.defaultTheme;
+      }
+    } catch (e) {
+      return AppThemeType.defaultTheme;
+    }
+  }
+
+  /// Save the theme type to SharedPreferences
+  static Future<void> saveThemeType(AppThemeType type) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_themeTypeKey, type.name);
+    } catch (e) {
+      debugPrint('Failed to save theme type: $e');
+    }
+  }
+
+  /// Clear saved theme type (resets to default)
+  static Future<void> clearThemeType() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_themeTypeKey);
+    } catch (e) {
+      debugPrint('Failed to clear theme type: $e');
     }
   }
 }

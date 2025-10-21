@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app_template/shared/widgets/app_button.dart';
 import 'package:app_template/core/theme/app_theme.dart';
+import 'package:app_template/core/theme/app_themes.dart';
 
 void main() {
   Widget createTestWidget(Widget child) {
     return MaterialApp(
-      theme: AppTheme.light(),
+      theme: AppTheme.fromThemeData(AppThemeData.minimalist()),
       home: Scaffold(body: child),
     );
   }

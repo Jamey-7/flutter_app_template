@@ -3,11 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:app_template/shared/widgets/app_text_field.dart';
 import 'package:app_template/shared/forms/validators.dart';
 import 'package:app_template/core/theme/app_theme.dart';
+import 'package:app_template/core/theme/app_themes.dart';
 
 void main() {
   Widget createTestWidget(Widget child) {
     return MaterialApp(
-      theme: AppTheme.light(),
+      theme: AppTheme.fromThemeData(AppThemeData.minimalist()),
       home: Scaffold(body: child),
     );
   }
