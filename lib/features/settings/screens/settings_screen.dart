@@ -292,7 +292,7 @@ class SettingsScreen extends ConsumerWidget {
       context,
       title: 'Delete Account?',
       message:
-          'This will permanently delete your account and all associated data. This action cannot be undone.\n\nAre you absolutely sure?',
+          'This will permanently delete your account and all associated data. This action cannot be undone.',
       confirmText: 'Yes, Delete',
       cancelText: 'Cancel',
     );

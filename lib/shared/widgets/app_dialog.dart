@@ -86,7 +86,12 @@ class AppDialog {
                   Text(
                     title,
                     style: context.textTheme.titleMedium?.copyWith(
-                      fontSize: 18,
+                      fontSize: context.responsive<double>(
+                        smallMobile: 18,
+                        mobile: 20,
+                        tablet: 22,
+                        desktop: 22,
+                      ),
                       fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.center,
@@ -97,7 +102,12 @@ class AppDialog {
                   Text(
                     message,
                     style: context.textTheme.bodySmall?.copyWith(
-                      fontSize: 13,
+                      fontSize: context.responsive<double>(
+                        smallMobile: 13,
+                        mobile: 14,
+                        tablet: 15,
+                        desktop: 15,
+                      ),
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                     textAlign: TextAlign.center,
@@ -110,7 +120,12 @@ class AppDialog {
                       if (cancelText != null) ...[
                         Expanded(
                           child: SizedBox(
-                            height: 44,
+                            height: context.responsive<double>(
+                              smallMobile: 44,
+                              mobile: 48,
+                              tablet: 48,
+                              desktop: 48,
+                            ),
                             child: OutlinedButton(
                               onPressed: () => Navigator.of(context).pop(false),
                               style: OutlinedButton.styleFrom(
@@ -125,7 +140,12 @@ class AppDialog {
                               child: Text(
                                 cancelText,
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: context.responsive<double>(
+                                    smallMobile: 14,
+                                    mobile: 14,
+                                    tablet: 14,
+                                    desktop: 14,
+                                  ),
                                   fontWeight: FontWeight.w500,
                                   color: theme.colorScheme.onSurface,
                                 ),
@@ -138,7 +158,12 @@ class AppDialog {
                       if (confirmText != null)
                         Expanded(
                           child: SizedBox(
-                            height: 44,
+                            height: context.responsive<double>(
+                              smallMobile: 44,
+                              mobile: 48,
+                              tablet: 48,
+                              desktop: 48,
+                            ),
                             child: ElevatedButton(
                               onPressed: () {
                                 onConfirm?.call();
@@ -155,8 +180,13 @@ class AppDialog {
                               ),
                               child: Text(
                                 confirmText,
-                                style: const TextStyle(
-                                  fontSize: 14,
+                                style: TextStyle(
+                                  fontSize: context.responsive<double>(
+                                    smallMobile: 14,
+                                    mobile: 14,
+                                    tablet: 14,
+                                    desktop: 14,
+                                  ),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
