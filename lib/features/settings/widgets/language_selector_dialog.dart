@@ -21,82 +21,89 @@ class LanguageSelectorDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLanguage = ref.watch(languageProvider);
     final theme = Theme.of(context);
-    final maxHeight = MediaQuery.of(context).size.height * 0.94;
 
-    return Container(
-      constraints: BoxConstraints(maxHeight: maxHeight),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xxlarge)),
-      ),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Drag handle (FIXED - always visible)
-            Center(
-              child: Container(
-                margin: EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
-                width: context.responsive<double>(
-                  smallMobile: 36,
-                  mobile: 40,
-                  tablet: 44,
-                  desktop: 44,
-                ),
-                height: 4,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(AppRadius.small),
-                ),
-              ),
-            ),
-            // Scrollable content (header + languages)
-            Flexible(
-              child: ListView(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  // Header
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.sm),
-                    child: Text(
-                      'Choose Language',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7, // Start at 70% screen height
+      minChildSize: 0.25, // Can't be smaller than 25%
+      maxChildSize: 0.94, // Max height is 94% of screen
+      snap: true, // Enable snapping
+      snapSizes: const [0.7, 0.94], // Snap points at 70% and 94%
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xxlarge)),
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Drag handle (FIXED - always visible)
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
+                    width: context.responsive<double>(
+                      smallMobile: 36,
+                      mobile: 40,
+                      tablet: 44,
+                      desktop: 44,
+                    ),
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(AppRadius.small),
                     ),
                   ),
-                  // Description
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
-                    child: Text(
-                      'Select your preferred language',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                // Scrollable content (header + languages)
+                Expanded(
+                  child: ListView(
+                    controller: scrollController, // Connect to DraggableScrollableSheet
+                    physics: const ClampingScrollPhysics(),
+                    children: [
+                      // Header
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.sm),
+                        child: Text(
+                          'Choose Language',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  // Language options
-                  ...AppLanguage.values.map((language) {
-                    final isSelected = currentLanguage == language;
+                      // Description
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
+                        child: Text(
+                          'Select your preferred language',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                        ),
+                      ),
+                      // Language options
+                      ...AppLanguage.values.map((language) {
+                        final isSelected = currentLanguage == language;
 
-                    return _LanguageOption(
-                      language: language,
-                      isSelected: isSelected,
-                      theme: theme,
-                      onTap: () {
-                        ref.read(languageProvider.notifier).setLanguage(language);
-                      },
-                    );
-                  }),
-                  SizedBox(height: AppSpacing.lg),
-                ],
-              ),
+                        return _LanguageOption(
+                          language: language,
+                          isSelected: isSelected,
+                          theme: theme,
+                          onTap: () {
+                            ref.read(languageProvider.notifier).setLanguage(language);
+                          },
+                        );
+                      }),
+                      SizedBox(height: AppSpacing.lg),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
