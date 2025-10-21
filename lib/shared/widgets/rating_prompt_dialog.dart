@@ -18,11 +18,11 @@ class RatingPromptDialog extends ConsumerWidget {
   /// Returns:
   /// - true if user clicked "Yes"
   /// - false if user clicked "Not Really"
-  /// - null if dialog was dismissed
+  /// - null should not occur (barrierDismissible: false forces button choice)
   static Future<bool?> show(BuildContext context) {
     return showDialog<bool>(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (context) => const RatingPromptDialog(),
     );
   }

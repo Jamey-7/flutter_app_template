@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -72,6 +73,15 @@ class _AppHomeScreenState extends ConsumerState<AppHomeScreen> {
     }
   }
 
+  /// Debug-only method to manually trigger rating dialog for testing/styling
+  /// Bypasses shouldShow() check to allow repeated testing
+  Future<void> _debugShowRatingDialog() async {
+    if (!mounted) return;
+
+    // Force show dialog regardless of conditions (for debugging/styling)
+    await RateService.showRatingPromptWithFeedback(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final subscriptionAsync = ref.watch(subscriptionProvider);
@@ -89,6 +99,16 @@ class _AppHomeScreenState extends ConsumerState<AppHomeScreen> {
           ),
         ],
       ),
+      // Debug-only button to test rating dialog for styling/testing
+      floatingActionButton: kDebugMode
+          ? FloatingActionButton.extended(
+              onPressed: _debugShowRatingDialog,
+              icon: const Icon(Icons.star_outline),
+              label: const Text('Test Rating'),
+              backgroundColor: context.colors.secondary,
+              tooltip: 'Show rating dialog (debug only)',
+            )
+          : null,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(context.responsivePadding),

@@ -11,9 +11,8 @@ import '../../core/responsive/breakpoints.dart';
 /// Allows users to provide feedback or feature requests
 ///
 /// Returns:
-/// - true if user clicked "Send" (with optional feedback text)
-/// - false if user clicked "Later"
-/// - null if dialog was dismissed
+/// - Map with 'submitted' and 'feedback' keys
+/// - null should not occur (barrierDismissible: false forces button choice)
 class FeedbackDialog extends ConsumerStatefulWidget {
   const FeedbackDialog({super.key});
 
@@ -25,7 +24,7 @@ class FeedbackDialog extends ConsumerStatefulWidget {
   static Future<Map<String, dynamic>?> show(BuildContext context) {
     return showDialog<Map<String, dynamic>>(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (context) => const FeedbackDialog(),
     );
   }
