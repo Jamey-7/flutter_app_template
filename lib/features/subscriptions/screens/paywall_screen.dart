@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:ming_cute_icons/ming_cute_icons.dart';
 
 import '../../../core/logger/logger.dart';
 import '../../../core/theme/app_theme.dart';
@@ -131,6 +132,22 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   }
 
   Widget _buildOfferingsContent(Offerings? offerings) {
+    // Auto-select yearly package on first load
+    if (offerings != null && offerings.current != null) {
+      final packages = offerings.current!.availablePackages;
+      if (_selectedPackageId == null && packages.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final yearlyPackage = packages.firstWhere(
+            (pkg) => pkg.packageType == PackageType.annual,
+            orElse: () => packages.first,
+          );
+          setState(() {
+            _selectedPackageId = yearlyPackage.identifier;
+          });
+        });
+      }
+    }
+
     if (offerings == null || offerings.current == null) {
       return Stack(
         children: [
@@ -305,7 +322,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: screenHeight - topPadding),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.responsive<double>(
+                    smallMobile: AppSpacing.md,
+                    mobile: AppSpacing.md,
+                    tablet: AppSpacing.lg,
+                    desktop: AppSpacing.lg,
+                  ),
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -328,8 +352,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         _buildHeader(),
                         const SizedBox(height: AppSpacing.xl),
 
-                        // Product Cards
-                        ...packages.map((package) => _buildProductCard(package)),
+                        // Product Cards - Yearly first, then Monthly
+                        ...packages.where((pkg) => pkg.packageType == PackageType.annual).map((package) => _buildProductCard(package)),
+                        ...packages.where((pkg) => pkg.packageType == PackageType.monthly).map((package) => _buildProductCard(package)),
 
                         const SizedBox(height: AppSpacing.sm),
 
@@ -354,28 +379,29 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           ),
         ),
 
-        // Close button positioned over the image
-        Positioned(
-          top: topPadding,
-          left: AppSpacing.sm,
-          child: IconButton(
-            icon: const Icon(
-              Icons.close_rounded,
-              color: AppColors.white,
-              size: 28,
+        // Close button positioned over the image - only show if user has active subscription
+        if (ref.watch(subscriptionProvider).value?.isActive ?? false)
+          Positioned(
+            top: topPadding,
+            left: AppSpacing.sm,
+            child: IconButton(
+              icon: const Icon(
+                Icons.close_rounded,
+                color: AppColors.white,
+                size: 28,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
             ),
-            onPressed: () => Navigator.of(context).pop(),
           ),
-        ),
 
         // Settings button in top right
         Positioned(
           top: topPadding,
           right: AppSpacing.sm,
           child: IconButton(
-            icon: const Icon(
-              Icons.settings_outlined,
-              color: AppColors.white,
+            icon: Icon(
+              MingCuteIcons.mgc_settings_1_line,
+              color: AppColors.white.withValues(alpha: 0.6),
               size: 28,
             ),
             onPressed: () => context.push('/settings'),
@@ -500,7 +526,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         });
       },
       child: Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+        padding: const EdgeInsets.only(bottom: AppSpacing.md - 2),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
