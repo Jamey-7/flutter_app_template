@@ -82,9 +82,60 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     }
   }
 
+  Widget _buildTopRightButton(BuildContext context) {
+    return Container(
+      height: context.responsive<double>(
+        mobile: 36,
+        tablet: 40,
+        desktop: 40,
+      ),
+      child: ElevatedButton(
+        onPressed: _isLoading
+            ? null
+            : () {
+                context.pushReplacement('/login');
+              },
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: AppColors.authInputFill,
+          foregroundColor: AppColors.white,
+          padding: EdgeInsets.symmetric(
+            horizontal: context.responsive<double>(
+              mobile: 16,
+              tablet: 20,
+              desktop: 20,
+            ),
+            vertical: 0,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.large),
+            side: const BorderSide(
+              color: AppColors.authBorderLight,
+              width: 1.0,
+            ),
+          ),
+        ),
+        child: Text(
+          'Sign In',
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: context.responsive<double>(
+              mobile: 14,
+              tablet: 15,
+              desktop: 15,
+            ),
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.3,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AuthScaffold(
+      topRightAction: _buildTopRightButton(context),
       child: Form(
         key: _formKey,
         child: Column(

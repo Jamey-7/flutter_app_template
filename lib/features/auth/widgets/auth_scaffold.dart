@@ -7,12 +7,14 @@ class AuthScaffold extends StatelessWidget {
   final Widget child;
   final bool showBackButton;
   final VoidCallback? onBackPressed;
+  final Widget? topRightAction;
 
   const AuthScaffold({
     super.key,
     required this.child,
     this.showBackButton = true,
     this.onBackPressed,
+    this.topRightAction,
   });
 
   @override
@@ -94,6 +96,14 @@ class AuthScaffold extends StatelessWidget {
                   ),
                   onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
                 ),
+              ),
+
+            // Top right action button
+            if (topRightAction != null)
+              Positioned(
+                top: topPadding + 8,
+                right: 16,
+                child: topRightAction!,
               ),
           ],
         ),
