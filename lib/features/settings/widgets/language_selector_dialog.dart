@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/language_provider.dart';
@@ -131,7 +132,7 @@ class _LanguageOption extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
           child: Row(
             children: [
-              // Flag emoji
+              // Flag SVG
               Container(
                 width: context.responsive<double>(
                   smallMobile: 40,
@@ -150,15 +151,12 @@ class _LanguageOption extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppRadius.medium),
                 ),
                 alignment: Alignment.center,
-                child: Text(
-                  language.flag,
-                  style: TextStyle(
-                    fontSize: context.responsive<double>(
-                      smallMobile: 24,
-                      mobile: 26,
-                      tablet: 28,
-                      desktop: 28,
-                    ),
+                padding: EdgeInsets.all(AppSpacing.sm),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.small - 2),
+                  child: SvgPicture.asset(
+                    language.flagPath,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -260,9 +261,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      currentLanguage.flag,
-                      style: const TextStyle(fontSize: 20),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(AppRadius.small - 2),
+                      child: SvgPicture.asset(
+                        currentLanguage.flagPath,
+                        width: 20,
+                        height: 15,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Text(
