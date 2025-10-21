@@ -91,15 +91,42 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ),
                   const SizedBox(height: AppSpacing.xl),
 
-                  // Next/Get Started button (only show on pages 0 and 1)
+                  // Next button (only show on pages 0 and 1)
                   if (_currentPage < 2)
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 400),
                       child: AppButton.primary(
-                        text: _currentPage == 1 ? 'Next' : 'Next',
+                        text: 'Next',
                         onPressed: _nextPage,
                         icon: Icons.arrow_forward_ios,
                         isFullWidth: true,
+                      ),
+                    ),
+
+                  // Rating buttons (only show on page 2)
+                  if (_currentPage == 2)
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: Row(
+                        children: [
+                          // Later button
+                          Expanded(
+                            child: AppButton.text(
+                              text: 'Later',
+                              onPressed: _handleSkipRating,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          // Rate App button
+                          Expanded(
+                            child: AppButton.primary(
+                              text: 'Rate App',
+                              onPressed: _handleRateApp,
+                              icon: Icons.star,
+                              isFullWidth: true,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                 ],
@@ -237,11 +264,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
               child: Icon(
                 Icons.star,
-                size: context.responsive<double>(
-                  mobile: 100,
-                  tablet: 120,
-                  desktop: 140,
-                ),
+                size: 100,
                 color: context.colors.primary,
               ),
             ),
@@ -265,77 +288,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: AppSpacing.xl),
-
-            // Benefits list
-            _buildBenefitsList(context),
-            const SizedBox(height: AppSpacing.xxl),
-
-            // Buttons
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Not Right Now button
-                  Expanded(
-                    child: AppButton.text(
-                      text: 'Not Right Now',
-                      onPressed: _handleSkipRating,
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  // Rate App button
-                  Expanded(
-                    flex: 2,
-                    child: AppButton.primary(
-                      text: 'Rate App',
-                      onPressed: _handleRateApp,
-                      icon: Icons.star,
-                      isFullWidth: true,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildBenefitsList(BuildContext context) {
-    final benefits = [
-      'Support independent developers',
-      'Help us add features you love',
-      'Only takes 5 seconds',
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: benefits.map((benefit) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: Row(
-            children: [
-              Icon(
-                Icons.check_circle,
-                color: context.colors.primary,
-                size: 24,
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Text(
-                  benefit,
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: context.colors.onSurface,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
     );
   }
 

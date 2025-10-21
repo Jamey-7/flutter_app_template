@@ -1,0 +1,32 @@
+{
+  "@@locale": "en",
+
+  "@@info": "This is the English source file. Extract all your hardcoded strings here.",
+  "@@instructions": "Format: 'key': 'value' with optional @key metadata for descriptions/placeholders",
+
+  "appTitle": "App Template",
+  "@appTitle": {
+    "description": "Application title shown in app bar"
+  },
+
+  "welcomeMessage": "Welcome to {appName}!",
+  "@welcomeMessage": {
+    "description": "Greeting message on home screen",
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "My App"
+      }
+    }
+  },
+
+  "loginButton": "Log In",
+  "@loginButton": {
+    "description": "Button text for login action"
+  },
+
+  "signUpButton": "Sign Up",
+  "@signUpButton": {
+    "description": "Button text for sign up action"
+  }
+}

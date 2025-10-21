@@ -8,6 +8,7 @@ import '../../subscriptions/providers/subscription_provider.dart';
 import '../../../core/theme/app_themes.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/providers/language_provider.dart';
+import '../../../core/services/onboarding_service.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../widgets/theme_selector_dialog.dart';
@@ -349,6 +350,8 @@ class SettingsScreen extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       try {
         await AuthService.signOut();
+        // Clear onboarding status so user goes to onboarding screen
+        await OnboardingService.clearOnboardingStatus();
         ref.invalidate(subscriptionProvider);
       } catch (e) {
         if (context.mounted) {

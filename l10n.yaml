@@ -1,0 +1,11 @@
+# Flutter Localization Configuration
+# This file tells Flutter where to find your ARB translation files
+
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+
+# Supported locales (add more as you translate)
+# Example: ['en', 'es', 'fr', 'de', 'ja', 'pt', 'ko', 'zh', 'ar', 'hi']
+preferred-supported-locales: ['en']
