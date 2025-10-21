@@ -45,14 +45,14 @@ class AppDialog {
               borderRadius: BorderRadius.circular(AppRadius.xxlarge),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              padding: const EdgeInsets.all(AppSpacing.lg - 2),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Icon with gradient
                   Container(
-                    width: 56,
-                    height: 56,
+                    width: 52,
+                    height: 52,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
@@ -76,31 +76,33 @@ class AppDialog {
                       child: Icon(
                         _getIcon(type),
                         color: Colors.white,
-                        size: 28,
+                        size: 26,
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  const SizedBox(height: 14),
 
                   // Title
                   Text(
                     title,
-                    style: context.textTheme.titleLarge?.copyWith(
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: 7),
 
                   // Message
                   Text(
                     message,
-                    style: context.textTheme.bodyMedium?.copyWith(
+                    style: context.textTheme.bodySmall?.copyWith(
+                      fontSize: 13,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  const SizedBox(height: 20),
 
                   // Buttons
                   Row(
@@ -108,10 +110,11 @@ class AppDialog {
                       if (cancelText != null) ...[
                         Expanded(
                           child: SizedBox(
-                            height: 48,
+                            height: 44,
                             child: OutlinedButton(
                               onPressed: () => Navigator.of(context).pop(false),
                               style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                                 side: BorderSide(
                                   color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                                 ),
@@ -122,7 +125,7 @@ class AppDialog {
                               child: Text(
                                 cancelText,
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: theme.colorScheme.onSurface,
                                 ),
@@ -130,18 +133,19 @@ class AppDialog {
                             ),
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.sm),
+                        const SizedBox(width: 7),
                       ],
                       if (confirmText != null)
                         Expanded(
                           child: SizedBox(
-                            height: 48,
+                            height: 44,
                             child: ElevatedButton(
                               onPressed: () {
                                 onConfirm?.call();
                                 Navigator.of(context).pop(true);
                               },
                               style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                                 backgroundColor: theme.colorScheme.primary,
                                 foregroundColor: theme.colorScheme.onPrimary,
                                 elevation: 0,
@@ -152,7 +156,7 @@ class AppDialog {
                               child: Text(
                                 confirmText,
                                 style: const TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
