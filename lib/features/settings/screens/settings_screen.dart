@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../subscriptions/providers/subscription_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../../core/responsive/breakpoints.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -37,6 +38,17 @@ class SettingsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Appearance Section
+                      Text(
+                        'Appearance',
+                        style: context.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      _ThemeToggleCard(ref: ref),
+                      const SizedBox(height: AppSpacing.xl),
+
                       // Account Information Section
                       Text(
                         'Account Information',
@@ -440,5 +452,55 @@ class _SubscriptionCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+}
+
+class _ThemeToggleCard extends StatelessWidget {
+  final WidgetRef ref;
+
+  const _ThemeToggleCard({required this.ref});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeModeProvider);
+    final isDarkMode = themeMode == ThemeMode.dark;
+
+    return AppCard.elevated(
+      child: Row(
+        children: [
+          Icon(
+            isDarkMode ? Icons.dark_mode : Icons.light_mode,
+            color: context.colors.primary,
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Dark Mode',
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Switch between light and dark theme',
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: isDarkMode,
+            onChanged: (_) {
+              ref.read(themeModeProvider.notifier).toggleTheme();
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
