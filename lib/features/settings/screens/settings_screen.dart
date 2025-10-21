@@ -48,6 +48,9 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: 16),
 
+              // Premium Unlock Card (only for free users)
+              _PremiumUnlockCard(ref: ref, isDark: isDark),
+
               // Email Section
               _buildSectionHeader('Email', isDark),
               _buildSettingsTile(
@@ -354,6 +357,120 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+// Premium Unlock Card Widget
+class _PremiumUnlockCard extends StatelessWidget {
+  final WidgetRef ref;
+  final bool isDark;
+
+  const _PremiumUnlockCard({
+    required this.ref,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final subscriptionAsync = ref.watch(subscriptionProvider);
+
+    return subscriptionAsync.when(
+      data: (subscription) {
+        // Only show for free plan users
+        if (subscription.isActive) {
+          return const SizedBox.shrink();
+        }
+
+        return Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.gradientStart,
+                AppColors.gradientEnd,
+              ],
+            ),
+          ),
+          child: Container(
+            margin: const EdgeInsets.all(1.5),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              borderRadius: BorderRadius.circular(14.5),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => context.go('/paywall'),
+                borderRadius: BorderRadius.circular(14.5),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Row(
+                      children: [
+                        // Icon
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.1)
+                                : AppColors.grey100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.workspace_premium,
+                            color: isDark ? Colors.white : Colors.black,
+                            size: 26,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        // Text Content
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Unlock Access Now',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'Get unlimited access to all features',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: isDark
+                                      ? Colors.white60
+                                      : AppColors.grey600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Arrow
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: isDark
+                              ? Colors.white38
+                              : AppColors.grey400,
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (error, stack) => const SizedBox.shrink(),
+    );
+  }
+}
+
 // Subscription Tile Widget
 class _SubscriptionTile extends StatelessWidget {
   final WidgetRef ref;
@@ -387,7 +504,7 @@ class _SubscriptionTile extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    isActive ? Icons.workspace_premium : Icons.card_membership,
+                    Icons.workspace_premium,
                     size: 22,
                     color: isDark ? Colors.white70 : AppColors.grey700,
                   ),
