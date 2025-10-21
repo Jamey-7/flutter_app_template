@@ -349,9 +349,10 @@ class SettingsScreen extends ConsumerWidget {
 
     if (confirmed == true && context.mounted) {
       try {
-        await AuthService.signOut();
-        // Clear onboarding status so user goes to onboarding screen
+        // Clear onboarding status BEFORE signing out to avoid race condition
+        // When user signs out, router checks onboarding status immediately
         await OnboardingService.clearOnboardingStatus();
+        await AuthService.signOut();
         ref.invalidate(subscriptionProvider);
       } catch (e) {
         if (context.mounted) {
