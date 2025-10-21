@@ -134,8 +134,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             // Top spacing
             SizedBox(
               height: context.responsive<double>(
-                smallMobile: 60,
-                mobile: 80,
+                smallMobile: 20,
+                mobile: 30,
                 tablet: 0,
                 desktop: 0,
               ),

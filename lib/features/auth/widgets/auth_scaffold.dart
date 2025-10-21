@@ -45,66 +45,83 @@ class AuthScaffold extends StatelessWidget {
             ),
 
             // Main content with responsive layout
-            SafeArea(
-              child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: screenHeight - topPadding,
-                  ),
-                  child: Align(
-                    alignment: context.isMobile
-                        ? Alignment.topCenter
-                        : Alignment.center,
-                    child: Transform.translate(
-                      offset: context.responsive<Offset>(
-                        mobile: Offset.zero,
-                        tablet: const Offset(0, -20),
-                        desktop: const Offset(0, -20),
+            SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: screenHeight,
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      // Top spacing for status bar
+                      SizedBox(height: topPadding),
+
+                      // Top bar with back button and action button
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12, right: 16, top: 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Back button
+                            if (showBackButton)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.arrow_back_ios,
+                                  color: AppColors.white,
+                                  size: 24,
+                                ),
+                                onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
+                              )
+                            else
+                              const SizedBox(width: 48), // Spacer to maintain layout
+
+                            // Top right action button
+                            if (topRightAction != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: topRightAction!,
+                              )
+                            else
+                              const SizedBox.shrink(),
+                          ],
+                        ),
                       ),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: context.responsive<double>(
-                            mobile: context.screenWidth,
-                            tablet: 600,
-                            desktop: 500,
+
+                      // Flexible spacer for centering on tablet/desktop
+                      if (!context.isMobile) const Spacer(),
+
+                      // Main content
+                      Transform.translate(
+                        offset: context.responsive<Offset>(
+                          mobile: Offset.zero,
+                          tablet: const Offset(0, -20),
+                          desktop: const Offset(0, -20),
+                        ),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: context.responsive<double>(
+                              mobile: context.screenWidth,
+                              tablet: 600,
+                              desktop: 500,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.responsiveHorizontalPadding,
+                            ),
+                            child: child,
                           ),
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.responsiveHorizontalPadding,
-                          ),
-                          child: child,
-                        ),
                       ),
-                    ),
+
+                      // Flexible spacer for centering on tablet/desktop
+                      if (!context.isMobile) const Spacer(),
+                    ],
                   ),
                 ),
               ),
             ),
-
-            // Back button
-            if (showBackButton)
-              Positioned(
-                top: topPadding,
-                left: 12,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: AppColors.white,
-                    size: 24,
-                  ),
-                  onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
-                ),
-              ),
-
-            // Top right action button
-            if (topRightAction != null)
-              Positioned(
-                top: topPadding + 8,
-                right: 16,
-                child: topRightAction!,
-              ),
           ],
         ),
       ),
