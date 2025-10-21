@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_themes.dart';
 import '../../../core/providers/theme_provider.dart';
+import '../../../core/responsive/breakpoints.dart';
 
 class ThemeSelectorDialog extends ConsumerWidget {
   const ThemeSelectorDialog({super.key});
@@ -25,7 +27,7 @@ class ThemeSelectorDialog extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xxlarge)),
       ),
       child: SafeArea(
         child: Column(
@@ -35,17 +37,22 @@ class ThemeSelectorDialog extends ConsumerWidget {
             // Header with handle
             Center(
               child: Container(
-                margin: const EdgeInsets.only(top: 12, bottom: 8),
-                width: 40,
+                margin: EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
+                width: context.responsive<double>(
+                  smallMobile: 36,
+                  mobile: 40,
+                  tablet: 44,
+                  desktop: 44,
+                ),
                 height: 4,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(AppRadius.small),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+              padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.sm),
               child: Text(
                 'Choose Theme',
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -54,7 +61,7 @@ class ThemeSelectorDialog extends ConsumerWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
               child: Text(
                 'Select your preferred theme',
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -78,7 +85,7 @@ class ThemeSelectorDialog extends ConsumerWidget {
                 },
               );
             }),
-            const SizedBox(height: 20),
+            SizedBox(height: AppSpacing.lg),
           ],
         ),
       ),
@@ -110,15 +117,25 @@ class _ThemeOption extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
           child: Row(
             children: [
               // Color preview
               Container(
-                width: 44,
-                height: 44,
+                width: context.responsive<double>(
+                  smallMobile: 40,
+                  mobile: 44,
+                  tablet: 48,
+                  desktop: 48,
+                ),
+                height: context.responsive<double>(
+                  smallMobile: 40,
+                  mobile: 44,
+                  tablet: 48,
+                  desktop: 48,
+                ),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AppRadius.medium),
                   gradient: LinearGradient(
                     colors: [
                       themeData.gradientStart,
@@ -127,7 +144,7 @@ class _ThemeOption extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: AppSpacing.md),
               // Theme info
               Expanded(
                 child: Column(
@@ -138,25 +155,35 @@ class _ThemeOption extends StatelessWidget {
                         Text(
                           themeType.displayName,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: context.responsive<double>(
+                              smallMobile: 15,
+                              mobile: 16,
+                              tablet: 17,
+                              desktop: 17,
+                            ),
                             fontWeight: FontWeight.w600,
                             color: theme.colorScheme.onSurface,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: AppSpacing.sm),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: AppSpacing.xxs,
                           ),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(AppRadius.small),
                           ),
                           child: Text(
                             themeData.mode == ThemeMode.dark ? 'Dark' : 'Light',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: context.responsive<double>(
+                                smallMobile: 10,
+                                mobile: 11,
+                                tablet: 12,
+                                desktop: 12,
+                              ),
                               fontWeight: FontWeight.w600,
                               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
@@ -164,11 +191,16 @@ class _ThemeOption extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: AppSpacing.xs),
                     Text(
                       themeType.description,
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: context.responsive<double>(
+                          smallMobile: 12,
+                          mobile: 13,
+                          tablet: 14,
+                          desktop: 14,
+                        ),
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
@@ -180,13 +212,23 @@ class _ThemeOption extends StatelessWidget {
                 Icon(
                   Icons.check_circle,
                   color: theme.colorScheme.primary,
-                  size: 24,
+                  size: context.responsive<double>(
+                    smallMobile: 22,
+                    mobile: 24,
+                    tablet: 26,
+                    desktop: 26,
+                  ),
                 )
               else
                 Icon(
                   Icons.circle_outlined,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                  size: 24,
+                  size: context.responsive<double>(
+                    smallMobile: 22,
+                    mobile: 24,
+                    tablet: 26,
+                    desktop: 26,
+                  ),
                 ),
             ],
           ),
