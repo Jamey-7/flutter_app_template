@@ -5,10 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_themes.dart';
 import '../../../core/responsive/breakpoints.dart';
+import '../../../core/services/rate_service.dart';
 import '../../../shared/widgets/app_button.dart';
 
-/// Onboarding screen with 2 pages
-/// Shows app introduction and key features before signup
+/// Onboarding screen with 3 pages
+/// Shows app introduction, key features, and rating request before signup
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -27,7 +28,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   void _nextPage() {
-    if (_currentPage < 1) {
+    if (_currentPage < 2) {
       _pageController.animateToPage(
         _currentPage + 1,
         duration: const Duration(milliseconds: 300),
@@ -67,6 +68,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 children: [
                   _buildPage1(context),
                   _buildPage2(context),
+                  _buildPage3(context),
                 ],
               ),
             ),
@@ -83,20 +85,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       _buildPageIndicator(0, context),
                       const SizedBox(width: AppSpacing.sm),
                       _buildPageIndicator(1, context),
+                      const SizedBox(width: AppSpacing.sm),
+                      _buildPageIndicator(2, context),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.xl),
 
-                  // Next/Get Started button
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 400),
-                    child: AppButton.primary(
-                      text: _currentPage == 1 ? 'Get Started' : 'Next',
-                      onPressed: _nextPage,
-                      icon: _currentPage == 1 ? Icons.arrow_forward : Icons.arrow_forward_ios,
-                      isFullWidth: true,
+                  // Next/Get Started button (only show on pages 0 and 1)
+                  if (_currentPage < 2)
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: AppButton.primary(
+                        text: _currentPage == 1 ? 'Next' : 'Next',
+                        onPressed: _nextPage,
+                        icon: Icons.arrow_forward_ios,
+                        isFullWidth: true,
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -214,6 +219,144 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildPage3(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(context.responsivePadding),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Hero icon - Star
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              decoration: BoxDecoration(
+                color: context.colors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.star,
+                size: context.responsive<double>(
+                  mobile: 100,
+                  tablet: 120,
+                  desktop: 140,
+                ),
+                color: context.colors.primary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xxl),
+
+            // Title
+            Text(
+              'Help Us Grow!',
+              style: context.textTheme.displaySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.md),
+
+            // Subtitle
+            Text(
+              'Your rating helps us reach more users and improve the app',
+              style: context.textTheme.titleMedium?.copyWith(
+                color: context.colors.onSurface.withValues(alpha: 0.6),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.xl),
+
+            // Benefits list
+            _buildBenefitsList(context),
+            const SizedBox(height: AppSpacing.xxl),
+
+            // Buttons
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Not Right Now button
+                  Expanded(
+                    child: AppButton.text(
+                      text: 'Not Right Now',
+                      onPressed: _handleSkipRating,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  // Rate App button
+                  Expanded(
+                    flex: 2,
+                    child: AppButton.primary(
+                      text: 'Rate App',
+                      onPressed: _handleRateApp,
+                      icon: Icons.star,
+                      isFullWidth: true,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBenefitsList(BuildContext context) {
+    final benefits = [
+      'Support independent developers',
+      'Help us add features you love',
+      'Only takes 5 seconds',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: benefits.map((benefit) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+          child: Row(
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: context.colors.primary,
+                size: 24,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  benefit,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: context.colors.onSurface,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  void _handleRateApp() async {
+    // Show the native rating dialog
+    await RateService.showRatingDialog(context);
+
+    // Navigate to signup after rating
+    if (mounted) {
+      context.push('/signup');
+    }
+  }
+
+  void _handleSkipRating() async {
+    // Track that user skipped - will remind later
+    await RateService.handleSkip();
+
+    // Navigate to signup
+    if (mounted) {
+      context.push('/signup');
+    }
   }
 
 }

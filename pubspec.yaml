@@ -74,6 +74,9 @@ dependencies:
   url_launcher: ^6.2.0
   shared_preferences: ^2.5.3
 
+  # App Rating
+  rate_my_app: ^2.3.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
