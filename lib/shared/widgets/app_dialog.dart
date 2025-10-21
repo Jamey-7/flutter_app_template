@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
-import 'app_button.dart';
+import '../../core/theme/app_themes.dart';
+import '../../core/providers/theme_provider.dart';
 
 enum AppDialogType {
   confirmation,
@@ -23,45 +25,140 @@ class AppDialog {
     return showDialog<bool>(
       context: context,
       barrierDismissible: barrierDismissible,
-      builder: (context) => AlertDialog(
-        icon: Icon(
-          _getIcon(type),
-          color: _getIconColor(type),
-          size: 48,
-        ),
-        title: Text(
-          title,
-          style: context.textTheme.titleLarge,
-          textAlign: TextAlign.center,
-        ),
-        content: Text(
-          message,
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        actionsAlignment: MainAxisAlignment.center,
-        actionsPadding: const EdgeInsets.only(
-          left: AppSpacing.lg,
-          right: AppSpacing.lg,
-          bottom: AppSpacing.lg,
-        ),
-        actions: [
-          if (cancelText != null)
-            AppButton.secondary(
-              text: cancelText,
-              onPressed: () => Navigator.of(context).pop(false),
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          final theme = Theme.of(context);
+          final themeType = ref.watch(themeTypeProvider);
+          final themeData = themeType.data;
+
+          return Dialog(
+            backgroundColor: theme.colorScheme.surfaceContainerHighest,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.xxlarge),
             ),
-          if (confirmText != null)
-            AppButton.primary(
-              text: confirmText,
-              onPressed: () {
-                onConfirm?.call();
-                Navigator.of(context).pop(true);
-              },
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Icon with gradient
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          themeData.gradientStart.withValues(alpha: 0.15),
+                          themeData.gradientEnd.withValues(alpha: 0.15),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(AppRadius.large),
+                    ),
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          themeData.gradientStart,
+                          themeData.gradientEnd,
+                        ],
+                      ).createShader(bounds),
+                      child: Icon(
+                        _getIcon(type),
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // Title
+                  Text(
+                    title,
+                    style: context.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+
+                  // Message
+                  Text(
+                    message,
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+
+                  // Buttons
+                  Row(
+                    children: [
+                      if (cancelText != null) ...[
+                        Expanded(
+                          child: SizedBox(
+                            height: 48,
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.large),
+                                ),
+                              ),
+                              child: Text(
+                                cancelText,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                      ],
+                      if (confirmText != null)
+                        Expanded(
+                          child: SizedBox(
+                            height: 48,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                onConfirm?.call();
+                                Navigator.of(context).pop(true);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                foregroundColor: theme.colorScheme.onPrimary,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(AppRadius.large),
+                                ),
+                              ),
+                              child: Text(
+                                confirmText,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -141,15 +238,6 @@ class AppDialog {
       AppDialogType.error => Icons.error_outline,
       AppDialogType.success => Icons.check_circle_outline,
       AppDialogType.info => Icons.info_outline,
-    };
-  }
-
-  static Color _getIconColor(AppDialogType type) {
-    return switch (type) {
-      AppDialogType.confirmation => AppColors.info,
-      AppDialogType.error => AppColors.error,
-      AppDialogType.success => AppColors.success,
-      AppDialogType.info => AppColors.info,
     };
   }
 }
