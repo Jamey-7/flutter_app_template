@@ -23,13 +23,13 @@ class SettingsScreen extends ConsumerWidget {
         backgroundColor: isDark ? const Color(0xFF1C1C1E) : AppColors.grey100,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, size: 22),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           'Settings',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -44,20 +44,21 @@ class SettingsScreen extends ConsumerWidget {
           return ListView(
             padding: EdgeInsets.zero,
             children: [
+              const SizedBox(height: 4),
               // Profile Card
               Container(
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(
                   children: [
                     // Avatar
                     Container(
-                      width: 60,
-                      height: 60,
+                      width: 56,
+                      height: 56,
                       decoration: BoxDecoration(
                         color: isDark
                             ? const Color(0xFF3A3A3C)
@@ -66,11 +67,11 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       child: Icon(
                         Icons.person,
-                        size: 32,
+                        size: 28,
                         color: isDark ? Colors.white70 : AppColors.grey600,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 12),
                     // Name and Email
                     Expanded(
                       child: Column(
@@ -79,32 +80,32 @@ class SettingsScreen extends ConsumerWidget {
                           Text(
                             _getDisplayName(user.email),
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: isDark ? Colors.white : Colors.black,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           Text(
                             user.email ?? 'No email',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               color: isDark ? Colors.white60 : AppColors.grey600,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6),
                           Row(
                             children: [
                               Icon(
                                 Icons.edit_outlined,
-                                size: 14,
+                                size: 13,
                                 color: isDark ? Colors.white60 : AppColors.grey600,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 'Edit profile',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 13,
                                   color: isDark ? Colors.white60 : AppColors.grey600,
                                 ),
                               ),
@@ -117,21 +118,24 @@ class SettingsScreen extends ConsumerWidget {
                     IconButton(
                       icon: Icon(
                         Icons.settings_outlined,
+                        size: 22,
                         color: isDark ? Colors.white70 : AppColors.grey700,
                       ),
                       onPressed: () {},
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
 
               // Subscription Section
               _buildSectionHeader('Subscription', isDark),
               _SubscriptionTile(ref: ref, isDark: isDark),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Account Section
               _buildSectionHeader('Account', isDark),
@@ -156,7 +160,7 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () => context.push('/settings/change-password'),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // General Section
               _buildSectionHeader('General', isDark),
@@ -184,7 +188,7 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () {},
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Support Section
               _buildSectionHeader('Support and Legal', isDark),
@@ -202,7 +206,7 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () {},
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               // Action Buttons
               Padding(
@@ -216,7 +220,7 @@ class SettingsScreen extends ConsumerWidget {
                       isDanger: false,
                       onPressed: () => _handleSignOut(context, ref),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     _buildActionButton(
                       text: 'Delete Account',
                       icon: Icons.delete_outline,
@@ -228,7 +232,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
             ],
           );
         },
@@ -240,14 +244,14 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _buildSectionHeader(String title, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 13,
+          fontSize: 12,
           fontWeight: FontWeight.w500,
           color: isDark ? Colors.white54 : AppColors.grey600,
-          letterSpacing: 0.5,
+          letterSpacing: 0.3,
         ),
       ),
     );
@@ -265,20 +269,20 @@ class SettingsScreen extends ConsumerWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
           child: Row(
             children: [
               Icon(
                 icon,
-                size: 24,
+                size: 22,
                 color: isDark ? Colors.white70 : AppColors.grey700,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w400,
                     color: isDark ? Colors.white : Colors.black,
                   ),
@@ -288,14 +292,14 @@ class SettingsScreen extends ConsumerWidget {
                 Text(
                   trailing,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     color: isDark ? Colors.white60 : AppColors.grey600,
                   ),
                 ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Icon(
                 Icons.chevron_right,
-                size: 20,
+                size: 18,
                 color: isDark ? Colors.white38 : AppColors.grey400,
               ),
             ],
@@ -313,42 +317,45 @@ class SettingsScreen extends ConsumerWidget {
     required ValueChanged<bool> onChanged,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
           Icon(
             icon,
-            size: 24,
+            size: 22,
             color: isDark ? Colors.white70 : AppColors.grey700,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Text(
               title,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w400,
                 color: isDark ? Colors.white : Colors.black,
               ),
             ),
           ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            thumbColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return isDark ? Colors.white : Colors.black;
-              }
-              return isDark ? Colors.white60 : AppColors.grey400;
-            }),
-            trackColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return isDark
-                    ? Colors.white.withValues(alpha: 0.3)
-                    : Colors.black.withValues(alpha: 0.3);
-              }
-              return isDark ? Colors.white24 : AppColors.grey300;
-            }),
+          Transform.scale(
+            scale: 0.85,
+            child: Switch(
+              value: value,
+              onChanged: onChanged,
+              thumbColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return isDark ? Colors.white : Colors.black;
+                }
+                return isDark ? Colors.white60 : AppColors.grey400;
+              }),
+              trackColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return isDark
+                      ? Colors.white.withValues(alpha: 0.3)
+                      : Colors.black.withValues(alpha: 0.3);
+                }
+                return isDark ? Colors.white24 : AppColors.grey300;
+              }),
+            ),
           ),
         ],
       ),
@@ -357,7 +364,7 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _buildDivider(bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(left: 56),
+      padding: const EdgeInsets.only(left: 52),
       child: Divider(
         height: 1,
         thickness: 0.5,
@@ -377,16 +384,17 @@ class SettingsScreen extends ConsumerWidget {
       width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: onPressed,
-        icon: Icon(icon, size: 18),
+        icon: Icon(icon, size: 16),
         label: Text(text),
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 14),
           side: BorderSide(
             color: isDanger
                 ? AppColors.error.withValues(alpha: 0.5)
                 : isDark
                     ? Colors.white24
                     : AppColors.grey300,
+            width: 1,
           ),
           foregroundColor: isDanger
               ? AppColors.error
@@ -394,7 +402,11 @@ class SettingsScreen extends ConsumerWidget {
                   ? Colors.white
                   : Colors.black,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
@@ -478,15 +490,15 @@ class _SubscriptionTile extends StatelessWidget {
               }
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
               child: Row(
                 children: [
                   Icon(
                     isActive ? Icons.workspace_premium : Icons.card_membership,
-                    size: 24,
+                    size: 22,
                     color: isDark ? Colors.white70 : AppColors.grey700,
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -494,17 +506,17 @@ class _SubscriptionTile extends StatelessWidget {
                         Text(
                           subscription.tier.toUpperCase(),
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: isDark ? Colors.white : Colors.black,
-                            letterSpacing: 0.5,
+                            letterSpacing: 0.4,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 1),
                         Text(
                           isActive ? 'Active' : 'Free Plan',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 12,
                             color: isDark ? Colors.white60 : AppColors.grey600,
                           ),
                         ),
@@ -513,7 +525,7 @@ class _SubscriptionTile extends StatelessWidget {
                   ),
                   Icon(
                     Icons.chevron_right,
-                    size: 20,
+                    size: 18,
                     color: isDark ? Colors.white38 : AppColors.grey400,
                   ),
                 ],
@@ -523,11 +535,11 @@ class _SubscriptionTile extends StatelessWidget {
         );
       },
       loading: () => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Center(
           child: SizedBox(
-            width: 24,
-            height: 24,
+            width: 20,
+            height: 20,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               color: isDark ? Colors.white38 : AppColors.grey400,
@@ -542,20 +554,20 @@ class _SubscriptionTile extends StatelessWidget {
             ref.invalidate(subscriptionProvider);
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
             child: Row(
               children: [
                 Icon(
                   Icons.error_outline,
-                  size: 24,
+                  size: 22,
                   color: isDark ? Colors.white70 : AppColors.grey700,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Text(
                     'Failed to load subscription',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
@@ -563,7 +575,7 @@ class _SubscriptionTile extends StatelessWidget {
                 Text(
                   'Retry',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     color: isDark ? Colors.white60 : AppColors.grey600,
                   ),
                 ),
