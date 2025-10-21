@@ -6,6 +6,8 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_themes.dart';
 import '../../../core/responsive/breakpoints.dart';
 import '../../../core/services/rate_service.dart';
+import '../../../core/providers/language_provider.dart';
+import '../../settings/widgets/language_selector_dialog.dart';
 import '../../../shared/widgets/app_button.dart';
 
 /// Onboarding screen with 3 pages
@@ -42,6 +44,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentLanguage = ref.watch(languageProvider);
+
     // Force Default Dark theme for onboarding
     return Theme(
       data: AppTheme.fromThemeData(AppThemeData.defaultTheme()),
@@ -157,6 +161,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Widget _buildPage1(BuildContext context) {
+    final currentLanguage = ref.watch(languageProvider);
+
     return Padding(
       padding: EdgeInsets.all(context.responsivePadding),
       child: Center(
@@ -165,25 +171,50 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             // Hero icon
             Container(
-              padding: const EdgeInsets.all(AppSpacing.xl),
+              padding: EdgeInsets.all(context.responsive<double>(
+                smallMobile: AppSpacing.lg,
+                mobile: AppSpacing.xl,
+                tablet: AppSpacing.xl,
+                desktop: AppSpacing.xl,
+              )),
               decoration: BoxDecoration(
                 color: context.colors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.flutter_dash,
-                size: 100,
+                size: context.responsive<double>(
+                  smallMobile: 70,
+                  mobile: 100,
+                  tablet: 100,
+                  desktop: 100,
+                ),
                 color: context.colors.primary,
               ),
             ),
-            const SizedBox(height: AppSpacing.xxl),
+            SizedBox(height: context.responsive<double>(
+              smallMobile: AppSpacing.lg,
+              mobile: AppSpacing.xl,
+              tablet: AppSpacing.xl,
+              desktop: AppSpacing.xl,
+            )),
 
             // Title
             Text(
               'Welcome to\nApp Template',
-              style: context.textTheme.displaySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: (context.responsive<bool>(
+                smallMobile: true,
+                mobile: false,
+                tablet: false,
+                desktop: false,
+              ))
+                  ? context.textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                    )
+                  : context.textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.md),
@@ -195,6 +226,63 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 color: context.colors.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
+            ),
+            SizedBox(height: context.responsive<double>(
+              smallMobile: AppSpacing.md,
+              mobile: AppSpacing.lg,
+              tablet: AppSpacing.xxl,
+              desktop: AppSpacing.xxl,
+            )),
+
+            // Language selector button
+            GestureDetector(
+              onTap: () {
+                LanguageSelectorDialog.show(context);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.responsive<double>(
+                    smallMobile: AppSpacing.md,
+                    mobile: AppSpacing.lg,
+                    tablet: AppSpacing.lg,
+                    desktop: AppSpacing.lg,
+                  ),
+                  vertical: context.responsive<double>(
+                    smallMobile: AppSpacing.sm,
+                    mobile: AppSpacing.sm,
+                    tablet: AppSpacing.md,
+                    desktop: AppSpacing.md,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: context.colors.onSurface.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      currentLanguage.flag,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(
+                      currentLanguage.nativeName,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: context.colors.onSurface,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 20,
+                      color: context.colors.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -211,25 +299,50 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             // Hero icon
             Container(
-              padding: const EdgeInsets.all(AppSpacing.xl),
+              padding: EdgeInsets.all(context.responsive<double>(
+                smallMobile: AppSpacing.lg,
+                mobile: AppSpacing.xl,
+                tablet: AppSpacing.xl,
+                desktop: AppSpacing.xl,
+              )),
               decoration: BoxDecoration(
                 color: context.colors.secondary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.workspace_premium,
-                size: 100,
+                size: context.responsive<double>(
+                  smallMobile: 70,
+                  mobile: 100,
+                  tablet: 100,
+                  desktop: 100,
+                ),
                 color: context.colors.secondary,
               ),
             ),
-            const SizedBox(height: AppSpacing.xxl),
+            SizedBox(height: context.responsive<double>(
+              smallMobile: AppSpacing.lg,
+              mobile: AppSpacing.xl,
+              tablet: AppSpacing.xl,
+              desktop: AppSpacing.xl,
+            )),
 
             // Title
             Text(
               'Everything You Need',
-              style: context.textTheme.displaySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: (context.responsive<bool>(
+                smallMobile: true,
+                mobile: false,
+                tablet: false,
+                desktop: false,
+              ))
+                  ? context.textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                    )
+                  : context.textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.md),
@@ -257,25 +370,50 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             // Hero icon - Star
             Container(
-              padding: const EdgeInsets.all(AppSpacing.xl),
+              padding: EdgeInsets.all(context.responsive<double>(
+                smallMobile: AppSpacing.lg,
+                mobile: AppSpacing.xl,
+                tablet: AppSpacing.xl,
+                desktop: AppSpacing.xl,
+              )),
               decoration: BoxDecoration(
                 color: context.colors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.star,
-                size: 100,
+                size: context.responsive<double>(
+                  smallMobile: 70,
+                  mobile: 100,
+                  tablet: 100,
+                  desktop: 100,
+                ),
                 color: context.colors.primary,
               ),
             ),
-            const SizedBox(height: AppSpacing.xxl),
+            SizedBox(height: context.responsive<double>(
+              smallMobile: AppSpacing.lg,
+              mobile: AppSpacing.xl,
+              tablet: AppSpacing.xl,
+              desktop: AppSpacing.xl,
+            )),
 
             // Title
             Text(
               'Help Us Grow!',
-              style: context.textTheme.displaySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: (context.responsive<bool>(
+                smallMobile: true,
+                mobile: false,
+                tablet: false,
+                desktop: false,
+              ))
+                  ? context.textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                    )
+                  : context.textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.md),
