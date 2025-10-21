@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_themes.dart';
 import '../../core/providers/theme_provider.dart';
+import '../../core/responsive/breakpoints.dart';
 
 enum AppDialogType {
   confirmation,
@@ -34,6 +35,12 @@ class AppDialog {
           return Dialog(
             backgroundColor: theme.colorScheme.surfaceContainerHighest,
             surfaceTintColor: Colors.transparent,
+            insetPadding: context.responsive<EdgeInsets>(
+              smallMobile: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.lg),
+              mobile: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
+              tablet: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
+              desktop: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppRadius.xxlarge),
             ),
@@ -234,7 +241,7 @@ class AppDialog {
 
   static IconData _getIcon(AppDialogType type) {
     return switch (type) {
-      AppDialogType.confirmation => Icons.help_outline,
+      AppDialogType.confirmation => Icons.logout,
       AppDialogType.error => Icons.error_outline,
       AppDialogType.success => Icons.check_circle_outline,
       AppDialogType.info => Icons.info_outline,
