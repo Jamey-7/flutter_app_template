@@ -87,6 +87,20 @@ class Subscription extends _$Subscription {
 
   Future<SubscriptionInfo> _fetchSubscription() async {
     try {
+      // Check if bypass mode is enabled - grant premium access to all authenticated users
+      if (SubscriptionService.isBypassMode()) {
+        Logger.warning(
+          '🔓 BYPASS MODE ENABLED - All authenticated users have premium access',
+          tag: 'SubscriptionNotifier',
+        );
+        return SubscriptionInfo(
+          isActive: true,
+          tier: 'premium',
+          expirationDate: null, // No expiration in bypass mode
+          productIdentifier: 'bypass_mode_premium',
+        );
+      }
+
       // Check if test mode is enabled - return free tier immediately
       if (SubscriptionService.isTestMode()) {
         Logger.log(
@@ -176,6 +190,15 @@ class SubscriptionService {
 
     final testMode = dotenv.env['SUBSCRIPTION_TEST_MODE']?.toLowerCase();
     return testMode == 'true' || testMode == '1';
+  }
+
+  /// Check if subscription bypass mode is enabled
+  /// When enabled, all authenticated users are treated as having premium access
+  static bool isBypassMode() {
+    if (kIsWeb) return false; // Web doesn't use .env
+
+    final bypassMode = dotenv.env['SUBSCRIPTION_BYPASS_MODE']?.toLowerCase();
+    return bypassMode == 'true' || bypassMode == '1';
   }
 
   /// Initialize RevenueCat with platform-specific API keys
